@@ -21,14 +21,14 @@ public class FRIDGEConsumptionTask extends Thread {
     }
 
     @Override
-    public void run() {
+    public void start() {
         createGetRequestObserving();
     }
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URL);
 
-        logger.info("OBSERVING FRIDGE... {}", URL);
+        System.out.println("OBSERVING FRIDGE... {}"+ URL);
 
         Request request = Request.newGet().setURI(URL).setObserve();
         request.setConfirmable(true);
@@ -39,7 +39,7 @@ public class FRIDGEConsumptionTask extends Thread {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
 
-                logger.info("NOTIFICATION FRIDGE Body: " + content);
+                System.out.println("NOTIFICATION FRIDGE Body: " + content);
             }
 
             public void onError() {

@@ -20,7 +20,7 @@ public class HEATINGConsumptionTask extends Thread {
     }
 
     @Override
-    public void run() {
+    public void start() {
         createGetRequestObserving();
     }
 

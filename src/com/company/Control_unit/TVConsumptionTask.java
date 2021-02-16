@@ -21,7 +21,7 @@ public class TVConsumptionTask extends Thread{
     }
 
     @Override
-    public void run() {
+    public void start() {
         createGetRequestObserving();
     }
 
