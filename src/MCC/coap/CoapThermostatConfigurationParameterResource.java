@@ -3,13 +3,12 @@ package MCC.coap;
 import MCC.DataListener;
 import MCC.SmartObject;
 import MCC.coap.model.ThermostatConfigurationModel;
-import MCC.coap.model.ThermostatConfigurationParameter;
+import MCC.resource.ThermostatConfigurationParameter;
 import MCC.utils.CoreInterfaces;
 import MCC.utils.SenMLPack;
 import MCC.utils.SenMLRecord;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -19,25 +18,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-/**
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-demo-smarthome
- * @created 11/11/2020 - 15:22
- */
 public class CoapThermostatConfigurationParameterResource extends CoapResource {
 
     private final static Logger logger = LoggerFactory.getLogger(CoapThermostatConfigurationParameterResource.class);
-
     private static final String OBJECT_TITLE = "ThermostatConfiguration";
-
     private static final Number VERSION = 0.1;
 
     private ThermostatConfigurationParameter thermostatRawConfigurationParameter;
-
     private ThermostatConfigurationModel configurationModelValue;
 
     private ObjectMapper objectMapper;
-
     private String deviceId;
 
     public CoapThermostatConfigurationParameterResource(String deviceId, String name, ThermostatConfigurationParameter thermostatRawConfigurationParameter) {
