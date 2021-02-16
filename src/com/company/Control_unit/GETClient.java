@@ -11,18 +11,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.TreeMap;
 
 
-public class POSTClient {
+public class GETClient {
     private final static Logger logger = LoggerFactory.getLogger(POSTClient.class);
-
-    public POSTClient(String URLendpoint) {
+    public boolean TurnedOff=false;
+    public GETClient(String URLendpoint) {
 
 
         CoapClient coapClient = new CoapClient(URLendpoint);
 
 
-        Request request = new Request(CoAP.Code.POST);
+        Request request = new Request(CoAP.Code.GET);
 
 
         request.setConfirmable(true);
@@ -36,18 +37,23 @@ public class POSTClient {
 
             coapResp = coapClient.advanced(request);
 
-            //Pretty print for the received response
             logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(coapResp));
-
-            //The "CoapResponse" message contains the response.
 
             String text = coapResp.getResponseText();
             logger.info("Payload: {}", text);
             logger.info("Message ID: " + coapResp.advanced().getMID());
             logger.info("Token: " + coapResp.advanced().getTokenString());
+            isOn(coapResp.getResponseText());
 
         } catch (ConnectorException | IOException e) {
             e.printStackTrace();
         }
+    }
+    public void isOn(String content){
+        if(content.equals("false"));
+        {
+            TurnedOff= !TurnedOff;
+        }
+
     }
 }

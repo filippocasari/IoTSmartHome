@@ -46,15 +46,24 @@ public class LIGHTSConsumptionTask extends Thread {
 
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
-                Consuption += Double.parseDouble(content);
+                double InstantConsumption = Double.parseDouble(content);
+                Consuption += InstantConsumption;
                 System.out.println("Total Consumption : " + Consuption);
                 System.out.println("NOTIFICATION Body: " + content);
-                if (ControlUnit.checkConsumption(Consuption)) {
 
+                if (ControlUnit.checkConsumption(Consuption) && InstantConsumption != 0.0) {
 
-                    new Thread(() -> new POSTClient(URLswitch)).start();
+                    Runnable runnable = () -> {
+                        GETClient getClient = new GETClient(URLswitch);
+                        if (!getClient.TurnedOff) {
+                            new Thread(() -> new POSTClient(URLswitch)).start();
+                        } else {
+                            logger.info("Switch just off");
+                        }
+                    };
+                    Thread t = new Thread(runnable);
+                    t.start();
 
-                    //System.out.println("consumo energetico fuori range: metodo POST per spegnere le lampadine... ");
                     Notificationconsumption();
 
                 }
