@@ -9,19 +9,19 @@ import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class TVConsumptionTask extends Thread{
+public class TVConsumptionTask extends Thread{
     public int Consuption = 0;
     public static String URL;
     private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
     public TVConsumptionTask(String URLserver) {
-        super("FRIDGE TASK CONSUPTION");
+        super("TV TASK CONSUPTION");
         URL = URLserver;
 
     }
 
     @Override
-    public void run() {
+    public void start() {
         createGetRequestObserving();
     }
 
@@ -43,7 +43,7 @@ class TVConsumptionTask extends Thread{
             }
 
             public void onError() {
-                logger.error("OBSERVING FAILED");
+                logger.error("OBSERVING TV FAILED");
             }
         });
 
