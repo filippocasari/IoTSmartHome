@@ -116,6 +116,14 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
     }
 
+    public Boolean getOn() {
+        return isOn;
+    }
+
+    public void setOn(Boolean on) {
+        isOn = on;
+    }
+
     @Override
     public void handlePOST(CoapExchange exchange) {
 
@@ -129,6 +137,7 @@ public class CoapSwitchActuatorResource extends CoapResource {
                 this.switchActuator.setActive(isOn);
                 logger.info("Resource Status Updated: {}", this.isOn);
                 exchange.respond(CoAP.ResponseCode.CHANGED);
+
             }
             else
                 exchange.respond(CoAP.ResponseCode.BAD_REQUEST);

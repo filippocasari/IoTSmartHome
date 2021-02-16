@@ -68,7 +68,6 @@ public class LIGHTSConsumptionTask extends Thread {
 
                 }
 
-
             }
 
             public void onError() {

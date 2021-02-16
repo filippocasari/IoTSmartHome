@@ -41,6 +41,14 @@ public class CoapEnergyConsumptionResource extends CoapResource {
         this.updatedEnergyValue = 0.0;
     }
 
+    public Double getUpdatedEnergyValue() {
+        return updatedEnergyValue;
+    }
+
+    public void setUpdatedEnergyValue(Double updatedEnergyValue) {
+        this.updatedEnergyValue = updatedEnergyValue;
+    }
+
     public CoapEnergyConsumptionResource(String deviceId, String name, EnergySensor rawSensor) {
 
         super(name);
