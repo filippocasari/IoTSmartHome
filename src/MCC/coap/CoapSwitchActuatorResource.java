@@ -125,6 +125,7 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
                 //Update internal status
                 this.isOn = !isOn;
+
                 this.switchActuator.setActive(isOn);
                 logger.info("Resource Status Updated: {}", this.isOn);
                 exchange.respond(CoAP.ResponseCode.CHANGED);

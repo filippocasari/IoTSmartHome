@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 
 public class TVConsumptionTask extends Thread{
     public int Consuption = 0;
-    public static String URL;
+    public static String URLenergy;
+    public static String URLswitch;
     private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
-    public TVConsumptionTask(String URLserver) {
+    public TVConsumptionTask(String URLenergy) {
         super("TV TASK CONSUPTION");
-        URL = URLserver;
+        this.URLenergy = URLenergy;
+        this.URLswitch = URLswitch;
 
     }
 
@@ -26,11 +28,11 @@ public class TVConsumptionTask extends Thread{
     }
 
     private void createGetRequestObserving() {
-        CoapClient client = new CoapClient(URL);
+        CoapClient client = new CoapClient(URLenergy);
 
         //logger.info("OBSERVING ... {}", URL);
 
-        Request request = Request.newGet().setURI(URL).setObserve();
+        Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
 
 

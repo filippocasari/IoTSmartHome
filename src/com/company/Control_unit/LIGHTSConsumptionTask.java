@@ -1,13 +1,17 @@
 package com.company.Control_unit;
 
 
-
-import org.eclipse.californium.core.*;
-import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapObserveRelation;
+import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.Utils;
+import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.elements.exception.ConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.eclipse.californium.core.CoapHandler;
+
 
 import java.io.IOException;
 
@@ -47,7 +51,14 @@ public class LIGHTSConsumptionTask extends Thread {
                 System.out.println("NOTIFICATION Body: " + content);
                 if (ControlUnit.checkConsumption(Consuption)) {
 
-                    new Thread(() -> createPostRequest());
+                    try {
+                        createPostRequest();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        logger.info("Post failed");
+                    }
+
+
 
                     System.out.println("consumo energetico fuori range: metodo POST per spegnere le lampadine... ");
 
@@ -73,32 +84,22 @@ public class LIGHTSConsumptionTask extends Thread {
     }
 
     //POST CON BODY VUOTO PER SPEGNERE LE LUCI
-    private void createPostRequest() {
-
-        CoapClient coapClient = new CoapClient(URLswitch);
-
-        Request request = new Request(CoAP.Code.POST);
-
-        request.setConfirmable(true);
-
-        System.out.println("Post to turn the swich off");
-
-        CoapResponse coapResp = null;
-
-        try {
-
-            coapResp = coapClient.advanced(request);
-
-            System.out.println("Post Request sent!!");
-            String text = coapResp.getResponseText();
-            System.out.println(text+"\n");
+    private void createPostRequest() throws InterruptedException {
 
 
+        Request request = new Request(Code.POST);
 
 
-        } catch (ConnectorException | IOException e) {
-            e.printStackTrace();
+        request.setURI(URLswitch);
+
+
+        String coapResp = request.send().waitForResponse().getPayloadString();
+        if (request.isSent()) {
+            System.out.println("POST inviata");
         }
+        System.out.println("The Response is : " + coapResp);
+
+
     }
 
 }
