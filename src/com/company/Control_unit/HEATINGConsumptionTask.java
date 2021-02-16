@@ -14,7 +14,7 @@ public class HEATINGConsumptionTask extends Thread {
     private final static Logger logger = LoggerFactory.getLogger(HEATINGConsumptionTask.class);
 
     public HEATINGConsumptionTask(String URLserver) {
-        super("FRIDGE TASK CONSUPTION");
+        super("HEATING system TASK CONSUPTION");
         URL = URLserver;
 
     }
@@ -27,7 +27,7 @@ public class HEATINGConsumptionTask extends Thread {
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URL);
 
-        logger.info("OBSERVING ... {}", URL);
+        logger.info("OBSERVING HEATING system... {}", URL);
 
         Request request = Request.newGet().setURI(URL).setObserve();
         request.setConfirmable(true);
@@ -42,7 +42,7 @@ public class HEATINGConsumptionTask extends Thread {
             }
 
             public void onError() {
-                logger.error("OBSERVING FAILED");
+                logger.error("OBSERVING HEATING system FAILED");
             }
         });
 

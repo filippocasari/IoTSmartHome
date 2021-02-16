@@ -15,7 +15,7 @@ public class LIGHTSConsumptionTask extends Thread {
     private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public LIGHTSConsumptionTask(String URLserver) {
-        super("FRIDGE TASK CONSUPTION");
+        super("LIGHTS TASK CONSUPTION");
         URL = URLserver;
 
     }
@@ -28,7 +28,7 @@ public class LIGHTSConsumptionTask extends Thread {
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URL);
 
-        logger.info("OBSERVING ... {}", URL);
+        logger.info("OBSERVING LIGHTS... {}", URL);
 
         Request request = Request.newGet().setURI(URL).setObserve();
         request.setConfirmable(true);
@@ -43,7 +43,7 @@ public class LIGHTSConsumptionTask extends Thread {
             }
 
             public void onError() {
-                logger.error("OBSERVING FAILED");
+                logger.error("OBSERVING LIGHTS FAILED");
             }
         });
 

@@ -15,7 +15,7 @@ public class TVConsumptionTask extends Thread{
     private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
     public TVConsumptionTask(String URLserver) {
-        super("FRIDGE TASK CONSUPTION");
+        super("TV TASK CONSUPTION");
         URL = URLserver;
 
     }
@@ -43,7 +43,7 @@ public class TVConsumptionTask extends Thread{
             }
 
             public void onError() {
-                logger.error("OBSERVING FAILED");
+                logger.error("OBSERVING TV FAILED");
             }
         });
 
