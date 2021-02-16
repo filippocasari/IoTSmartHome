@@ -51,11 +51,11 @@ public class LIGHTSConsumptionTask extends Thread {
                 System.out.println("Total Consumption : " + Consuption);
                 System.out.println("NOTIFICATION Body: " + content);
 
-                if (ControlUnit.checkConsumption(Consuption) && InstantConsumption != 0.0) {
+                if (ControlUnit.checkConsumption(Consuption, InstantConsumption) ) {
 
                     Runnable runnable = () -> {
                         GETClient getClient = new GETClient(URLswitch);
-                        if (!getClient.TurnedOff) {
+                        if (getClient.TurnedOn) {
                             new Thread(() -> new POSTClient(URLswitch)).start();
                         } else {
                             logger.info("Switch just off");
@@ -74,6 +74,11 @@ public class LIGHTSConsumptionTask extends Thread {
                 logger.error("OBSERVING LIGHTS FAILED");
             }
         });
+        try {
+            Thread.sleep(60*3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // Observes the coap resource for 30 seconds then the observing relation is deleted
         try {

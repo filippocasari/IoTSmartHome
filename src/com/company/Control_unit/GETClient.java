@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 public class GETClient {
     private final static Logger logger = LoggerFactory.getLogger(POSTClient.class);
-    public boolean TurnedOff=false;
+    public boolean TurnedOn=true;
     public GETClient(String URLendpoint) {
 
 
@@ -52,7 +52,7 @@ public class GETClient {
     public void isOn(String content){
         if(content.equals("false"));
         {
-            TurnedOff= !TurnedOff;
+            TurnedOn= false;
         }
 
     }

@@ -32,8 +32,8 @@ class ControlUnit {
 
 
     }
-    public static boolean checkConsumption(Double TotalConsumption){
-        return TotalConsumption > 2.0;
+    public static boolean checkConsumption(Double TotalConsumption, Double InstantConsumption){
+        return TotalConsumption > 50 && InstantConsumption>2.0;
 
 
     }
