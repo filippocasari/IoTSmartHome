@@ -12,9 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
-
-import java.io.IOException;
-
 public class LIGHTSConsumptionTask extends Thread {
     public Double Consuption = 0.0;
     public static String URLenergy;
