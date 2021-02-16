@@ -2,8 +2,8 @@ package MCC.coap;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.sensor.EnergySensor;
-import MCC.sensor.TemperatureSensor;
+import MCC.resource.sensor.EnergySensor;
+import MCC.resource.sensor.TemperatureSensor;
 import MCC.utils.CoreInterfaces;
 import MCC.utils.SenMLPack;
 import MCC.utils.SenMLRecord;

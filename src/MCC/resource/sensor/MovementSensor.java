@@ -1,4 +1,4 @@
-package MCC.sensor;
+package MCC.resource.sensor;
 
 import MCC.DataListener;
 import MCC.SmartObject;

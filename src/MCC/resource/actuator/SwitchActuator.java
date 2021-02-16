@@ -1,4 +1,4 @@
-package MCC.actuator;
+package MCC.resource.actuator;
 
 import MCC.DataListener;
 import MCC.SmartObject;

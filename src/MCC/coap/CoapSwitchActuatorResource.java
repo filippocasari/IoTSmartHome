@@ -2,7 +2,7 @@ package MCC.coap;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.actuator.SwitchActuator;
+import MCC.resource.actuator.SwitchActuator;
 import MCC.utils.CoreInterfaces;
 import MCC.utils.SenMLPack;
 import MCC.utils.SenMLRecord;
