@@ -36,19 +36,19 @@ public class SwitchActuator extends SmartObject<Boolean> {
 
     public static void main(String[] args) {
 
-        SwitchActuator rawResource = new SwitchActuator();
+        SwitchActuator actuatorResource = new SwitchActuator();
         logger.info("New {} Resource Created with Id: {} ! {} New Value: {}",
-                rawResource.getType(),
-                rawResource.getId(),
+                actuatorResource.getType(),
+                actuatorResource.getId(),
                 LOG_DISPLAY_NAME,
-                rawResource.loadUpdatedValue());
-
+                actuatorResource.loadUpdatedValue());
+    /*
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    for(int i=0; i<100; i++){
-                        rawResource.setActive(!rawResource.loadUpdatedValue());
+                    for(int i=0; i<3; i++){
+                        actuatorResource.setActive(!actuatorResource.loadUpdatedValue());
                         Thread.sleep(1000);
                     }
                 }catch (Exception e){
@@ -56,8 +56,8 @@ public class SwitchActuator extends SmartObject<Boolean> {
                 }
             }
         }).start();
-
-        rawResource.addDataListener(new DataListener<Boolean>() {
+    */
+        actuatorResource.addDataListener(new DataListener<Boolean>() {
             @Override
             public void onDataChanged(SmartObject <Boolean> resource, Boolean updatedValue) {
 
@@ -69,4 +69,5 @@ public class SwitchActuator extends SmartObject<Boolean> {
         });
 
     }
+
 }

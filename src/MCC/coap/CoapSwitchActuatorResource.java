@@ -17,11 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-/**
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-demo-smarthome
- * @created 11/11/2020 - 16:01
- */
 public class CoapSwitchActuatorResource extends CoapResource {
 
     private final static Logger logger = LoggerFactory.getLogger(CoapEnergyConsumptionResource.class);
@@ -32,20 +27,20 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
     private ObjectMapper objectMapper;
 
-    private SwitchActuator switchRawActuator;
+    private SwitchActuator switchActuator;
 
     private Boolean isOn = true;
 
     private String deviceId;
 
-    public CoapSwitchActuatorResource(String deviceId, String name, SwitchActuator switchRawActuator) {
+    public CoapSwitchActuatorResource(String deviceId, String name, SwitchActuator switchActuator) {
         super(name);
 
-        if(switchRawActuator != null && deviceId != null){
+        if(switchActuator != null && deviceId != null){
 
             this.deviceId = deviceId;
 
-            this.switchRawActuator = switchRawActuator;
+            this.switchActuator = switchActuator;
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -56,15 +51,15 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
             getAttributes().setTitle(OBJECT_TITLE);
             getAttributes().setObservable();
-            getAttributes().addAttribute("rt", switchRawActuator.getType());
+            getAttributes().addAttribute("rt", switchActuator.getType());
             getAttributes().addAttribute("if", CoreInterfaces.CORE_A.getValue());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_SENML_JSON));
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.TEXT_PLAIN));
 
-            switchRawActuator.addDataListener(new DataListener<Boolean>() {
+            switchActuator.addDataListener(new DataListener<Boolean>() {
                 @Override
                 public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
-                    logger.info("Raw Resource Notification Callback ! New Value: {}", updatedValue);
+                    logger.info("Resource Notification Callback ! New Value: {}", updatedValue);
                     isOn = updatedValue;
                     changed();
                 }
@@ -130,10 +125,8 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
                 //Update internal status
                 this.isOn = !isOn;
-                this.switchRawActuator.setActive(isOn);
-
+                this.switchActuator.setActive(isOn);
                 logger.info("Resource Status Updated: {}", this.isOn);
-
                 exchange.respond(CoAP.ResponseCode.CHANGED);
             }
             else
@@ -160,7 +153,8 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
                 //Update internal status
                 this.isOn = submittedValue;
-                this.switchRawActuator.setActive(this.isOn);
+                this.switchActuator.setActive(this.isOn);
+
 
                 logger.info("Resource Status Updated: {}", this.isOn);
 

@@ -15,7 +15,7 @@ public class CoapPostClientProcess {
 
 	private final static Logger logger = LoggerFactory.getLogger(CoapPostClientProcess.class);
 
-	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5683/compressor/switch";
+	private static final String COAP_ENDPOINT = "coap://192.168.0.171:5683/lights/switch";
 
 	public static void main(String[] args) {
 		

@@ -10,8 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-
-
 public class TemperatureSensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(TemperatureSensor.class);
 

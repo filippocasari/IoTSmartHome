@@ -18,11 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-/**
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-demo-smarthome
- * @created 11/11/2020 - 15:22
- */
 public class CoapEnergyConsumptionResource extends CoapResource {
 
     private final static Logger logger = LoggerFactory.getLogger(CoapEnergyConsumptionResource.class);
@@ -41,6 +36,10 @@ public class CoapEnergyConsumptionResource extends CoapResource {
     private Double updatedEnergyValue = 0.0;
 
     private String deviceId;
+
+    public void setConsumptionNull(){
+        this.updatedEnergyValue = 0.0;
+    }
 
     public CoapEnergyConsumptionResource(String deviceId, String name, EnergySensor rawSensor) {
 
@@ -106,7 +105,7 @@ public class CoapEnergyConsumptionResource extends CoapResource {
     }
 
     @Override
-    public void handleGET(CoapExchange exchange) {
+    public void handleGET(CoapExchange exchange){
 
         // the Max-Age value should match the update interval
         exchange.setMaxAge(TemperatureSensor.UPDATE_PERIOD);

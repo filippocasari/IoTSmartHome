@@ -14,8 +14,8 @@ public class EnergySensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(EnergySensor.class);
 
     /** ENERGY RANGE VALUE & VARIATION **/
-    private static final double MIN_ENERGY_VALUE = 0.1;
-    private static final double MAX_ENERGY_VALUE = 1.0;
+    private static final double MIN_ENERGY_VALUE = 1.0; //kWh - kilowatt-hour
+    private static final double MAX_ENERGY_VALUE = 3.0;
     private static final double MIN_ENERGY_VARIATION = 0.1;
     private static final double MAX_ENERGY_VARIATION = 0.5;
 

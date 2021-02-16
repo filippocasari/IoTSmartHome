@@ -24,29 +24,29 @@ public class LightCoapProcess extends CoapServer {
 
     private CoapResource createLightResource(String deviceId){
 
-        CoapResource compressorRootResource = new CoapResource("light");
+        CoapResource lightsRootResource = new CoapResource("lights");
 
         //INIT Emulated Physical Sensors and Actuators
-        EnergySensor compressorEnergyRawSensor = new EnergySensor();
-        SwitchActuator compressorSwitchRawActuator = new SwitchActuator();
+        EnergySensor lightsEnergySensor = new EnergySensor();
+        SwitchActuator lightsSwitchActuator = new SwitchActuator();
 
         //Resource
-        CoapEnergyConsumptionResource compressorEnergyResource = new CoapEnergyConsumptionResource(deviceId, "energy", compressorEnergyRawSensor);
-        CoapSwitchActuatorResource compressorSwitchResource = new CoapSwitchActuatorResource(deviceId, "switch", compressorSwitchRawActuator);
+        CoapEnergyConsumptionResource lightsEnergyResource = new CoapEnergyConsumptionResource(deviceId, "energy", lightsEnergySensor);
+        CoapSwitchActuatorResource lightsSwitchResource = new CoapSwitchActuatorResource(deviceId, "switch", lightsSwitchActuator);
 
-        compressorRootResource.add(compressorEnergyResource);
-        compressorRootResource.add(compressorSwitchResource);
+        lightsRootResource.add(lightsEnergyResource);
+        lightsRootResource.add(lightsSwitchResource);
 
         //Handle Emulated Resource notification
-        compressorSwitchRawActuator.addDataListener(new DataListener<Boolean>() {
+        lightsSwitchActuator.addDataListener(new DataListener<Boolean>() {
             @Override
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
                 logger.info("[LIGHTS-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[LIGHTS-BEHAVIOUR] -> Updating energy sensor configuration ...");
-                compressorEnergyRawSensor.setActive(updatedValue);
+                lightsEnergySensor.setActive(updatedValue);
             }
         });
-        return compressorRootResource;
+        return lightsRootResource;
     }
 
     public static void main(String[] args) {
@@ -54,7 +54,7 @@ public class LightCoapProcess extends CoapServer {
         LightCoapProcess lightCoapProcess = new LightCoapProcess();
         lightCoapProcess.start();
 
-        logger.info("Coap Server Started ! Available resources: ");
+        logger.info("Coap Server Started! Available resources: ");
 
         lightCoapProcess.getRoot().getChildren().stream().forEach(resource -> {
             logger.info("Resource {} -> URI: {} (Observable: {})", resource.getName(), resource.getURI(), resource.isObservable());
