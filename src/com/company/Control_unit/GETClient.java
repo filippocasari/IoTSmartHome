@@ -11,12 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.TreeMap;
 
 
 public class GETClient {
     private final static Logger logger = LoggerFactory.getLogger(POSTClient.class);
-    public boolean TurnedOn=true;
+    public boolean TurnedOn = true;
+
     public GETClient(String URLendpoint) {
 
 
@@ -43,16 +45,20 @@ public class GETClient {
             logger.info("Payload: {}", text);
             logger.info("Message ID: " + coapResp.advanced().getMID());
             logger.info("Token: " + coapResp.advanced().getTokenString());
-            isOn(coapResp.getResponseText());
+            isOn(Arrays.toString(coapResp.getPayload()));
+            logger.info(Arrays.toString(coapResp.getPayload()));
 
         } catch (ConnectorException | IOException e) {
             e.printStackTrace();
         }
     }
-    public void isOn(String content){
-        if(content.equals("false"));
-        {
-            TurnedOn= false;
+
+    public void isOn(String content) {
+        if (content.equals("true")) {
+            System.out.println("cambio di stato: " + TurnedOn);
+            TurnedOn = false;
+        } else {
+            logger.info("Switch just off!!");
         }
 
     }
