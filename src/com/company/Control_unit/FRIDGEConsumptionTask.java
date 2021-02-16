@@ -1,6 +1,6 @@
 package com.company.Control_unit;
 
-import it.unimore.dipi.iot.client.CoapGetSenmlClientProcess;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
