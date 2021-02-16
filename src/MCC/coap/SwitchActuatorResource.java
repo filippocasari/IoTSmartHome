@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class CoapSwitchActuatorResource extends CoapResource {
+public class SwitchActuatorResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(CoapEnergyConsumptionResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(EnergyConsumptionResource.class);
 
     private static final String OBJECT_TITLE = "SwitchActuator";
 
@@ -33,7 +33,7 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
     private String deviceId;
 
-    public CoapSwitchActuatorResource(String deviceId, String name, SwitchActuator switchActuator) {
+    public SwitchActuatorResource(String deviceId, String name, SwitchActuator switchActuator) {
         super(name);
 
         if(switchActuator != null && deviceId != null){
@@ -70,10 +70,6 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
     }
 
-    /**
-     * Create the SenML Response with the updated value and the resource information
-     * @return
-     */
     private Optional<String> getJsonSenmlResponse(){
 
         try{
@@ -133,7 +129,6 @@ public class CoapSwitchActuatorResource extends CoapResource {
 
                 //Update internal status
                 this.isOn = !isOn;
-
                 this.switchActuator.setActive(isOn);
                 logger.info("Resource Status Updated: {}", this.isOn);
                 exchange.respond(CoAP.ResponseCode.CHANGED);

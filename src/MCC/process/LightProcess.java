@@ -2,8 +2,8 @@ package MCC.process;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.coap.CoapEnergyConsumptionResource;
-import MCC.coap.CoapSwitchActuatorResource;
+import MCC.coap.EnergyConsumptionResource;
+import MCC.coap.SwitchActuatorResource;
 import MCC.resource.actuator.SwitchActuator;
 import MCC.resource.sensor.EnergySensor;
 import org.eclipse.californium.core.CoapResource;
@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-public class LightCoapProcess extends CoapServer {
-    private final static Logger logger = LoggerFactory.getLogger(LightCoapProcess.class);
+public class LightProcess extends CoapServer {
+    private final static Logger logger = LoggerFactory.getLogger(LightProcess.class);
 
-    public LightCoapProcess() {
+    public LightProcess() {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
         this.add(createLightResource(deviceId));
@@ -26,14 +26,13 @@ public class LightCoapProcess extends CoapServer {
 
         CoapResource lightsRootResource = new CoapResource("lights");
 
-        //INIT Emulated Physical Sensors and Actuators
+        //INIT (Emulated) Physical Sensors and Actuators
         EnergySensor lightsEnergySensor = new EnergySensor();
         SwitchActuator lightsSwitchActuator = new SwitchActuator();
 
         //Resource
-        CoapEnergyConsumptionResource lightsEnergyResource = new CoapEnergyConsumptionResource(deviceId, "energy", lightsEnergySensor);
-
-        CoapSwitchActuatorResource lightsSwitchResource = new CoapSwitchActuatorResource(deviceId, "switch", lightsSwitchActuator);
+        EnergyConsumptionResource lightsEnergyResource = new EnergyConsumptionResource(deviceId, "energy", lightsEnergySensor);
+        SwitchActuatorResource lightsSwitchResource = new SwitchActuatorResource(deviceId, "switch", lightsSwitchActuator);
         if(!lightsSwitchResource.getOn()){
             lightsEnergyResource.setUpdatedEnergyValue(0.0);
 
@@ -42,6 +41,7 @@ public class LightCoapProcess extends CoapServer {
         lightsRootResource.add(lightsEnergyResource);
         lightsRootResource.add(lightsSwitchResource);
 
+        /*
         //Handle Emulated Resource notification
         lightsSwitchActuator.addDataListener(new DataListener<Boolean>() {
             @Override
@@ -51,12 +51,14 @@ public class LightCoapProcess extends CoapServer {
                 lightsEnergySensor.setActive(updatedValue);
             }
         });
+
+         */
         return lightsRootResource;
     }
 
     public static void main(String[] args) {
 
-        LightCoapProcess lightCoapProcess = new LightCoapProcess();
+        LightProcess lightCoapProcess = new LightProcess();
         lightCoapProcess.start();
 
         logger.info("Coap Server Started! Available resources: ");

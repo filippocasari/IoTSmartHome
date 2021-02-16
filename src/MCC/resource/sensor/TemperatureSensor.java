@@ -14,7 +14,7 @@ public class TemperatureSensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(TemperatureSensor.class);
 
     /** TEMPERATURE RANGE VALUE & VARIATION **/
-    private static final double MIN_TEMPERATURE_VALUE = 24.0;
+    private static final double MIN_TEMPERATURE_VALUE = 23.0;
     private static final double MAX_TEMPERATURE_VALUE = 30.0;
     private static final double MIN_TEMPERATURE_VARIATION = 0.1;
     private static final double MAX_TEMPERATURE_VARIATION = 1.0;
@@ -67,28 +67,6 @@ public class TemperatureSensor extends SmartObject<Double> {
     @Override
     public Double loadUpdatedValue() {
         return this.updatedValue;
-    }
-
-    public static void main(String[] args) {
-
-        TemperatureSensor rawResource = new TemperatureSensor();
-        logger.info("New {} resource created!\t\t\t\tId: {}\t\t{} Starting Value: {}",
-                rawResource.getType(),
-                rawResource.getId(),
-                LOG_DISPLAY_NAME,
-                rawResource.loadUpdatedValue());
-
-        rawResource.addDataListener(new DataListener<Double>() {
-            @Override
-            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-
-                if(resource != null && updatedValue != null)
-                    logger.info("Device: {} \t\t\tNew Value Received: {}", resource.getId(), updatedValue);
-                else
-                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
-            }
-        });
-
     }
 
 }

@@ -2,7 +2,6 @@ package MCC.coap;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.resource.sensor.EnergySensor;
 import MCC.resource.sensor.TemperatureSensor;
 import MCC.utils.CoreInterfaces;
 import MCC.utils.SenMLPack;
@@ -18,46 +17,39 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class CoapEnergyConsumptionResource extends CoapResource {
+/**
+ * @author Marco Picone, Ph.D. - picone.m@gmail.com
+ * @project coap-demo-smarthome
+ * @created 11/11/2020 - 15:22
+ */
+public class TemperatureResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(CoapEnergyConsumptionResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(TemperatureResource.class);
 
-    private static final String OBJECT_TITLE = "EnergyConsumptionSensor";
+    private static final String OBJECT_TITLE = "TemperatureSensor";
 
     private static final Number SENSOR_VERSION = 0.1;
 
     //Resource Unit according to SenML Units Registry (http://www.iana.org/assignments/senml/senml.xhtml)
-    private String UNIT = "kWh";
+    private String UNIT = "Cel";
 
-    private EnergySensor rawSensor;
+    private TemperatureSensor temperatureRawSensor;
 
     private ObjectMapper objectMapper;
 
-    private Double updatedEnergyValue = 0.0;
+    private Double updatedTemperatureValue = 0.0;
 
     private String deviceId;
 
-    public void setConsumptionNull(){
-        this.updatedEnergyValue = 0.0;
-    }
-
-    public Double getUpdatedEnergyValue() {
-        return updatedEnergyValue;
-    }
-
-    public void setUpdatedEnergyValue(Double updatedEnergyValue) {
-        this.updatedEnergyValue = updatedEnergyValue;
-    }
-
-    public CoapEnergyConsumptionResource(String deviceId, String name, EnergySensor rawSensor) {
+    public TemperatureResource(String deviceId, String name, TemperatureSensor temperatureRawSensor) {
 
         super(name);
 
-        if(rawSensor != null && deviceId != null){
+        if(temperatureRawSensor != null && deviceId != null){
 
             this.deviceId = deviceId;
 
-            this.rawSensor = rawSensor;
+            this.temperatureRawSensor = temperatureRawSensor;
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -68,7 +60,7 @@ public class CoapEnergyConsumptionResource extends CoapResource {
 
             getAttributes().setTitle(OBJECT_TITLE);
             getAttributes().setObservable();
-            getAttributes().addAttribute("rt", rawSensor.getType());
+            getAttributes().addAttribute("rt", temperatureRawSensor.getType());
             getAttributes().addAttribute("if", CoreInterfaces.CORE_S.getValue());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_SENML_JSON));
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.TEXT_PLAIN));
@@ -76,10 +68,10 @@ public class CoapEnergyConsumptionResource extends CoapResource {
         else
             logger.error("Error -> NULL Raw Reference !");
 
-        this.rawSensor.addDataListener(new DataListener<Double>() {
+        this.temperatureRawSensor.addDataListener(new DataListener<Double>() {
             @Override
             public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-                updatedEnergyValue = updatedValue;
+                updatedTemperatureValue = updatedValue;
                 changed();
             }
         });
@@ -100,7 +92,7 @@ public class CoapEnergyConsumptionResource extends CoapResource {
             senMLRecord.setBn(String.format("%s:%s", this.deviceId, this.getName()));
             senMLRecord.setBver(SENSOR_VERSION);
             senMLRecord.setU(UNIT);
-            senMLRecord.setV(updatedEnergyValue);
+            senMLRecord.setV(updatedTemperatureValue);
             senMLRecord.setT(System.currentTimeMillis());
 
             senMLPack.add(senMLRecord);
@@ -113,7 +105,7 @@ public class CoapEnergyConsumptionResource extends CoapResource {
     }
 
     @Override
-    public void handleGET(CoapExchange exchange){
+    public void handleGET(CoapExchange exchange) {
 
         // the Max-Age value should match the update interval
         exchange.setMaxAge(TemperatureSensor.UPDATE_PERIOD);
@@ -131,7 +123,7 @@ public class CoapEnergyConsumptionResource extends CoapResource {
         }
         //Otherwise respond with the default textplain payload
         else
-            exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(updatedEnergyValue), MediaTypeRegistry.TEXT_PLAIN);
+            exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(updatedTemperatureValue), MediaTypeRegistry.TEXT_PLAIN);
 
     }
 }

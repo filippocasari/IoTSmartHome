@@ -18,12 +18,9 @@ public class POSTClient {
 
     public POSTClient(String URLendpoint) {
 
-
         CoapClient coapClient = new CoapClient(URLendpoint);
 
-
         Request request = new Request(CoAP.Code.POST);
-
 
         request.setConfirmable(true);
 

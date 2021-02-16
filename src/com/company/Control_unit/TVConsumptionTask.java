@@ -15,7 +15,7 @@ public class TVConsumptionTask extends Thread{
     public static String URLswitch;
     private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
-    public TVConsumptionTask(String URLenergy) {
+    public TVConsumptionTask(String URLenergy, String URLswitch) {
         super("TV TASK CONSUPTION");
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
