@@ -9,7 +9,7 @@ import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class TVConsumptionTask extends Thread{
+public class TVConsumptionTask extends Thread{
     public int Consuption = 0;
     public static String URL;
     private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
