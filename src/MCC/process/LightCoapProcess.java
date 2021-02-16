@@ -32,6 +32,7 @@ public class LightCoapProcess extends CoapServer {
 
         //Resource
         CoapEnergyConsumptionResource lightsEnergyResource = new CoapEnergyConsumptionResource(deviceId, "energy", lightsEnergySensor);
+
         CoapSwitchActuatorResource lightsSwitchResource = new CoapSwitchActuatorResource(deviceId, "switch", lightsSwitchActuator);
 
         lightsRootResource.add(lightsEnergyResource);

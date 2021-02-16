@@ -51,16 +51,11 @@ public class LIGHTSConsumptionTask extends Thread {
                 System.out.println("NOTIFICATION Body: " + content);
                 if (ControlUnit.checkConsumption(Consuption)) {
 
-                    try {
-                        createPostRequest();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        logger.info("Post failed");
-                    }
 
+                    new Thread(() -> new POSTClient(URLswitch)).start();
 
-
-                    System.out.println("consumo energetico fuori range: metodo POST per spegnere le lampadine... ");
+                    //System.out.println("consumo energetico fuori range: metodo POST per spegnere le lampadine... ");
+                    Notificationconsumption();
 
                 }
 
@@ -74,7 +69,7 @@ public class LIGHTSConsumptionTask extends Thread {
 
         // Observes the coap resource for 30 seconds then the observing relation is deleted
         try {
-            Thread.sleep(60 * 2000);
+            Thread.sleep(60 * 3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -83,23 +78,9 @@ public class LIGHTSConsumptionTask extends Thread {
         relation.proactiveCancel();
     }
 
-    //POST CON BODY VUOTO PER SPEGNERE LE LUCI
-    private void createPostRequest() throws InterruptedException {
 
-
-        Request request = new Request(Code.POST);
-
-
-        request.setURI(URLswitch);
-
-
-        String coapResp = request.send().waitForResponse().getPayloadString();
-        if (request.isSent()) {
-            System.out.println("POST inviata");
-        }
-        System.out.println("The Response is : " + coapResp);
-
-
+    public void Notificationconsumption() {
+        logger.info("Too hight Consumption from Lights: switch must be set off");
     }
 
 }
