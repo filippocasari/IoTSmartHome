@@ -33,6 +33,11 @@ public class LIGHTSConsumptionTask extends Thread {
         createGetRequestObserving();
     }
 
+    @Override
+    public void interrupt() {
+        super.interrupt();
+    }
+
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
@@ -47,35 +52,38 @@ public class LIGHTSConsumptionTask extends Thread {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
+
                 Consuption += InstantConsumption;
                 System.out.println("Total Consumption : " + Consuption);
                 System.out.println("NOTIFICATION Body: " + content);
+                Runnable runnable = () -> {
+                    GETClient getClient = new GETClient(URLswitch);
+                    if (getClient.TurnedOn) {
+                        new Thread(() -> new POSTClient(URLswitch)).start();
 
-                if (ControlUnit.checkConsumption(Consuption, InstantConsumption) ) {
+                    } else {
+                        logger.info("Switch just off");
+                    }
+                };
+                if (ControlUnit.checkConsumption(Consuption, InstantConsumption) && InstantConsumption != 0.0) {
 
-                    Runnable runnable = () -> {
-                        GETClient getClient = new GETClient(URLswitch);
-                        if (getClient.TurnedOn) {
-                            new Thread(() -> new POSTClient(URLswitch)).start();
-                        } else {
-                            logger.info("Switch just off");
-                        }
-                    };
                     Thread t = new Thread(runnable);
                     t.start();
 
                     Notificationconsumption();
+                    interrupt();
 
                 }
 
             }
+
 
             public void onError() {
                 logger.error("OBSERVING LIGHTS FAILED");
             }
         });
         try {
-            Thread.sleep(60*3000);
+            Thread.sleep(60 * 3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -95,6 +103,7 @@ public class LIGHTSConsumptionTask extends Thread {
     public void Notificationconsumption() {
         logger.info("Too hight Consumption from Lights: switch must be set off");
     }
+
 
 }
 
