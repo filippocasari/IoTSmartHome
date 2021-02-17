@@ -42,8 +42,8 @@ public class LIGHTSConsumptionTask implements Runnable {
 
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption : " + Consuption);
-                System.out.println("NOTIFICATION Body: " + content);
+                System.out.println("Total Consumption Lights : " + Consuption);
+                System.out.println("Instant Consumption Lights : " + content);
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
 
