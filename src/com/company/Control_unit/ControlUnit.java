@@ -1,20 +1,26 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.UtilsTime.SimTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ControlUnit {
-    private final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
+    public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
+
+    public boolean isEcoMode() {
+        return EcoMode;
+    }
 
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
-    private static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
-    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/tv/switch";
-    private static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/tv/energy";
-    private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://192.168.0.169:5683/heating-system/energy";
+    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
+    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/TV/switch";
+    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/TV/energy";
+    private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR ="coap://127.0.0.1:5683/movement-sensor/status";
     private boolean EcoMode = false;
 
     public ControlUnit(SimTime simTime) {
@@ -30,21 +36,22 @@ class ControlUnit {
 
 
         Runnable PeriodicTaskEcoMode = () -> {
-            while(true){
+            while (true) {
                 if (checkEcoMode(simTime)) {
                     logger.info("Periodic Consumption Control...");
-                    System.out.println(simTime.getDay()+", "+simTime.getHour()+" : "+simTime.getMinute());
+                    System.out.println(simTime.getDay() + ", " + simTime.getHour() + " : " + simTime.getMinute());
                 }
 
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }}
+                }
+            }
         };
         Thread periodicTaskEcoMode = new Thread(PeriodicTaskEcoMode);
 
-        periodicTaskEcoMode.start();
+
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
         Thread t2 = new Thread(lightsConsumptionTask);
@@ -55,9 +62,8 @@ class ControlUnit {
         t2.start();
         t3.start();
         t4.start();
-
-
-
+        //start periodic task to check ecomode
+        periodicTaskEcoMode.start();
 
 
     }
@@ -87,6 +93,10 @@ class ControlUnit {
         logger.info("Eco Mode: " + EcoMode);
         return EcoMode;
 
+    }
+
+    public static void Notificationconsumption(String fromWho) {
+        logger.info("Too hight Consumption from " + fromWho + ": switch must be set off");
     }
 
 

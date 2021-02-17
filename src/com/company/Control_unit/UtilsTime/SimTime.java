@@ -1,4 +1,4 @@
-package com.company.Control_unit;
+package com.company.Control_unit.UtilsTime;
 
 /**
  *  The SimTime object keeps simulated time, tracking the day of the week and
@@ -58,7 +58,7 @@ public class SimTime extends Observable implements Runnable {
       /* attributes
       /*************/
 
-    private Day     day;                // the current day
+    private Day day;                // the current day
     private int     hour;               // the current hour
     private int     minute;             // the current minute
     private int     second;             // the current second
@@ -76,7 +76,7 @@ public class SimTime extends Observable implements Runnable {
      *    @post simulated time is stopped
      */
 
-    SimTime() {
+    public SimTime() {
 
         // start out the day and time at right now
         Calendar now = Calendar.getInstance();
@@ -209,7 +209,7 @@ public class SimTime extends Observable implements Runnable {
      *  @throws IllegalArgumentException if precondition violated
      */
 
-    void setSpeed( int speed ) {
+    public void setSpeed(int speed) {
         if ( (speed < 1) || (10000 < speed) )
             throw new IllegalArgumentException();
 

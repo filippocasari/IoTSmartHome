@@ -1,19 +1,19 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.ClientsType.GETClient;
+import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
 public class TVConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    //private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
     public TVConsumptionTask(String URLenergy, String URLswitch) {
 
@@ -27,7 +27,7 @@ public class TVConsumptionTask implements Runnable {
         CoapClient client = new CoapClient(URLenergy);
 
         //logger.info("OBSERVING TV... {}", URLenergy);
-        System.out.println("OBSERVING TV... at "+URLenergy);
+        System.out.println("OBSERVING TV... @ "+URLenergy);
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
 
@@ -46,7 +46,8 @@ public class TVConsumptionTask implements Runnable {
                     GETClient getClient = new GETClient(URLswitch);
 
                     if (getClient.isOn(getClient.getResponseString())){
-                        Notificationconsumption();
+                        ControlUnit.Notificationconsumption("TV system");
+                        System.err.println("POST REQUEST TO TV SWITCH...");
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
@@ -89,11 +90,6 @@ public class TVConsumptionTask implements Runnable {
         relation.proactiveCancel();
     }
 
-
-    public void Notificationconsumption() {
-        System.out.println("Too hight Consumption from Tv: switch must be set off");
-        //logger.info("Too hight Consumption from Tv: switch must be set off");
-    }
 
 
     @Override

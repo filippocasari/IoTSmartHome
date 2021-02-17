@@ -1,6 +1,8 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.ClientsType.GETClient;
+import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
@@ -13,7 +15,7 @@ public class HEATINGConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    private final static Logger logger = LoggerFactory.getLogger(HEATINGConsumptionTask.class);
 
     public HEATINGConsumptionTask(String URLenergy, String URLswitch) {
 
@@ -26,8 +28,8 @@ public class HEATINGConsumptionTask implements Runnable {
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
-        logger.info("OBSERVING HEATING system... {}", URLenergy);
-
+        //logger.info("OBSERVING HEATING system... {}", URLenergy);
+        System.out.println("OBSERVING HEATING system @ "+URLenergy);
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
 
@@ -46,7 +48,8 @@ public class HEATINGConsumptionTask implements Runnable {
                     GETClient getClient = new GETClient(URLswitch);
 
                     if (getClient.isOn(getClient.getResponseString())) {
-                        Notificationconsumption();
+                        ControlUnit.Notificationconsumption("HEATING system");
+                        System.err.println("POST REQUEST TO HEATING SWITCH");
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
@@ -85,12 +88,6 @@ public class HEATINGConsumptionTask implements Runnable {
         logger.info("CANCELLATION.....");
         relation.proactiveCancel();
     }
-
-
-    public void Notificationconsumption() {
-        logger.info("Too hight Consumption from Heating system: switch must be set off");
-    }
-
 
     @Override
     public void run() {

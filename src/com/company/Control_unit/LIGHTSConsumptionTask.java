@@ -1,12 +1,12 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.ClientsType.GETClient;
+import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
 public class LIGHTSConsumptionTask implements Runnable {
@@ -48,8 +48,9 @@ public class LIGHTSConsumptionTask implements Runnable {
                     GETClient getClient = new GETClient(URLswitch);
 
                     if (getClient.isOn(getClient.getResponseString())){
-                        Notificationconsumption();
-                        new Thread(() -> new POSTClient(URLswitch)).start();
+                        ControlUnit.Notificationconsumption("LIGHTS");
+                        System.err.println("POST REQUEST TO LIGHTS SWITCH");
+                        new Thread(() -> new POSTClient(URLswitch )).start();
 
                     } else {
                         System.err.println("Switch just off");
@@ -89,12 +90,6 @@ public class LIGHTSConsumptionTask implements Runnable {
         System.err.println("CANCELLATION...");
         //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
-    }
-
-
-    public void Notificationconsumption() {
-        System.err.println("Too hight Consumption from Lights: switch must be set off");
-        //logger.info("Too hight Consumption from Lights: switch must be set off");
     }
 
 
