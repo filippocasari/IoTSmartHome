@@ -1,4 +1,4 @@
-package MCC.resource.sensor;
+package MCC.Resource.Sensor;
 
 import MCC.DataListener;
 import MCC.SmartObject;
@@ -42,8 +42,8 @@ public class TemperatureSensor extends SmartObject<Double> {
                 MIN_TEMPERATURE_VALUE = 0;
                 MAX_TEMPERATURE_VALUE = 7;
             }else if (type.contentEquals("thermostat")){
-               MIN_TEMPERATURE_VALUE = 24;
-               MAX_TEMPERATURE_VALUE = 30;
+                MIN_TEMPERATURE_VALUE = 24;
+                MAX_TEMPERATURE_VALUE = 30;
             }
             this.random = new Random(System.currentTimeMillis());
             this.updatedValue = MIN_TEMPERATURE_VALUE + this.random.nextDouble()*(MAX_TEMPERATURE_VALUE - MIN_TEMPERATURE_VALUE);

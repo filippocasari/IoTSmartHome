@@ -60,10 +60,6 @@ class ControlUnit {
         t3.start();
         t4.start();
 
-
-
-
-
     }
 
 

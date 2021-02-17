@@ -1,11 +1,11 @@
-package MCC.process;
+package MCC.ProcessControlUnit.Process;
 
-import MCC.coap.EnergyResource;
-import MCC.coap.SwitchResource;
-import MCC.coap.TemperatureResource;
-import MCC.resource.actuator.SwitchActuator;
-import MCC.resource.sensor.EnergySensor;
-import MCC.resource.sensor.TemperatureSensor;
+import MCC.Coap.EnergyResource;
+import MCC.Coap.SwitchResource;
+import MCC.Coap.TemperatureResource;
+import MCC.Resource.Actuator.SwitchActuator;
+import MCC.Resource.Sensor.EnergySensor;
+import MCC.Resource.Sensor.TemperatureSensor;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
