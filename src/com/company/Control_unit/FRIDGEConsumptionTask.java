@@ -22,8 +22,6 @@ public class FRIDGEConsumptionTask implements Runnable{
 
     }
 
-
-
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 

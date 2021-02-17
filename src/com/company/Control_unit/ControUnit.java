@@ -21,7 +21,7 @@ class ControlUnit {
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
     private boolean EcoMode = false;
 
-    public ControlUnit(SimTime simTime) throws BrokenBarrierException, InterruptedException {
+    public ControlUnit(SimTime simTime)  {
 
 
         TVConsumptionTask tvConsuptionTask = new TVConsumptionTask(COAP_ENDPOINT_ENERGY_TV, COAP_ENDPOINT_SWITCH_TV);
@@ -41,7 +41,7 @@ class ControlUnit {
                 }
 
                 try {
-                    Thread.sleep(4000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }}
@@ -49,7 +49,9 @@ class ControlUnit {
         Thread periodicTaskEcoMode = new Thread(PeriodicTaskEcoMode);
 
         periodicTaskEcoMode.start();
+
         //create new Task for Energy Consumption
+
         Thread t1 = new Thread(fridgeConsumptionTask);
         Thread t2 = new Thread(lightsConsumptionTask);
         Thread t3 = new Thread(tvConsuptionTask);
@@ -61,13 +63,10 @@ class ControlUnit {
         t4.start();
 
 
-
-
-
     }
 
 
-    public static void main(String[] args) throws BrokenBarrierException, InterruptedException {
+    public static void main(String[] args)  {
         SimTime simTime = new SimTime();
 
         System.out.println("Starting Time...\nDay: " + simTime.getDay().toString());
