@@ -13,7 +13,7 @@ public class LIGHTSConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
 
@@ -27,8 +27,8 @@ public class LIGHTSConsumptionTask implements Runnable {
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
-
-        logger.info("OBSERVING LIGHTS... {}", URLenergy);
+        System.out.println("OBSERVING LIGHTS... @ "+URLenergy);
+        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
@@ -52,7 +52,8 @@ public class LIGHTSConsumptionTask implements Runnable {
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
-                        logger.info("Switch just off");
+                        System.err.println("Switch just off");
+                        //logger.info("Switch just off");
                     }
 
                 };
@@ -69,7 +70,8 @@ public class LIGHTSConsumptionTask implements Runnable {
 
 
             public void onError() {
-                logger.error("OBSERVING LIGHTS FAILED");
+                System.err.println("OBSERVING LIGHTS FAILED");
+                //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
         try {
@@ -84,14 +86,15 @@ public class LIGHTSConsumptionTask implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        logger.info("CANCELLATION.....");
+        System.err.println("CANCELLATION...");
+        //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
     }
 
 
     public void Notificationconsumption() {
-        logger.info("Too hight Consumption from Lights: switch must be set off");
+        System.err.println("Too hight Consumption from Lights: switch must be set off");
+        //logger.info("Too hight Consumption from Lights: switch must be set off");
     }
 
 
