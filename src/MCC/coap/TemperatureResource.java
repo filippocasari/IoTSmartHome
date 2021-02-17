@@ -78,10 +78,6 @@ public class TemperatureResource extends CoapResource {
 
     }
 
-    /**
-     * Create the SenML Response with the updated value and the resource information
-     * @return
-     */
     private Optional<String> getJsonSenmlResponse(){
 
         try{

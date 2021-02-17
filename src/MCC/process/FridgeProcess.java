@@ -28,24 +28,13 @@ public class FridgeProcess extends CoapServer {
         CoapResource fridgeRootResource = new CoapResource("fridge");
 
         EnergySensor fridgeEnergySensor = new EnergySensor();
-        SwitchActuator fridgeSwitchActuator = new SwitchActuator();
         TemperatureSensor fridgeTemperatureSensor = new TemperatureSensor(fridgeRootResource.getName());
 
         EnergyResource fridgeEnergyResource = new EnergyResource(deviceId, "energy", fridgeEnergySensor);
         TemperatureResource fridgeTemperatureResource = new TemperatureResource(deviceId, "temperature", fridgeTemperatureSensor);
-        SwitchResource fridgeSwitchResource = new SwitchResource(deviceId, "switch", fridgeSwitchActuator);
 
         fridgeRootResource.add(fridgeEnergyResource);
         fridgeRootResource.add(fridgeTemperatureResource);
-
-        fridgeSwitchActuator.addDataListener(new DataListener<Boolean>() {
-            @Override
-            public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
-                logger.info("[FRIDGE-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
-                logger.info("[FRIDGE-BEHAVIOUR] -> Updating energy sensor configuration ...");
-                fridgeEnergySensor.setActive(updatedValue);
-            }
-        });
 
         return fridgeRootResource;
     }
