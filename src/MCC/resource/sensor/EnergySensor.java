@@ -81,7 +81,7 @@ public class EnergySensor extends SmartObject<Double> {
     public void setActive(boolean active) {
         isActive = active;
     }
-
+/*
     public static void main(String[] args) {
 
         EnergySensor rawResource = new EnergySensor();
@@ -104,5 +104,5 @@ public class EnergySensor extends SmartObject<Double> {
         });
 
     }
-
+ */
 }

@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class CoapThermostatConfigurationParameterResource extends CoapResource {
+public class ThermostatConfigParameterResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(CoapThermostatConfigurationParameterResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(ThermostatConfigParameterResource.class);
     private static final String OBJECT_TITLE = "ThermostatConfiguration";
     private static final Number VERSION = 0.1;
 
@@ -30,7 +30,7 @@ public class CoapThermostatConfigurationParameterResource extends CoapResource {
     private ObjectMapper objectMapper;
     private String deviceId;
 
-    public CoapThermostatConfigurationParameterResource(String deviceId, String name, ThermostatConfigurationParameter thermostatRawConfigurationParameter) {
+    public ThermostatConfigParameterResource(String deviceId, String name, ThermostatConfigurationParameter thermostatRawConfigurationParameter) {
 
         super(name);
 

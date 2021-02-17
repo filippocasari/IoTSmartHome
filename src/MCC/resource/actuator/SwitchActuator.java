@@ -33,28 +33,4 @@ public class SwitchActuator extends SmartObject<Boolean> {
     public Boolean loadUpdatedValue() {
         return this.isActive;
     }
-
-    //public static void main(String[] args) {
-
-
-
-    /*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    for(int i=0; i<3; i++){
-                        actuatorResource.setActive(!actuatorResource.loadUpdatedValue());
-                        Thread.sleep(1000);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    */
-
-
-   // }
-
 }
