@@ -4,10 +4,6 @@ package com.company.Control_unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-
-
 class ControlUnit {
     private final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
@@ -21,7 +17,7 @@ class ControlUnit {
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
     private boolean EcoMode = false;
 
-    public ControlUnit(SimTime simTime) throws BrokenBarrierException, InterruptedException {
+    public ControlUnit(SimTime simTime) {
 
         //Creation of Energy Consumption Monitoring Tasks
         TVConsumptionTask tvConsuptionTask = new TVConsumptionTask(COAP_ENDPOINT_ENERGY_TV, COAP_ENDPOINT_SWITCH_TV);
@@ -67,7 +63,7 @@ class ControlUnit {
     }
 
 
-    public static void main(String[] args) throws BrokenBarrierException, InterruptedException {
+    public static void main(String[] args) {
         SimTime simTime = new SimTime();
 
         System.out.println("Starting Time...\nDay: " + simTime.getDay().toString());
