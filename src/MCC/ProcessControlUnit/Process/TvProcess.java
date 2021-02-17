@@ -1,13 +1,11 @@
 package MCC.ProcessControlUnit.Process;
 
 import MCC.DataListener;
-import MCC.ProcessControlUnit.PCU;
 import MCC.SmartObject;
-import MCC.Coap.EnergyResource;
-import MCC.Coap.SwitchResource;
-import MCC.Resource.Actuator.SwitchActuator;
-import MCC.Resource.Sensor.EnergySensor;
-import org.eclipse.californium.core.CoapResource;
+import MCC.CoapResource.EnergyResource;
+import MCC.CoapResource.SwitchResource;
+import MCC.EmulatedResource.Actuator.SwitchActuator;
+import MCC.EmulatedResource.Sensor.EnergySensor;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

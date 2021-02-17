@@ -2,12 +2,12 @@ package MCC.ProcessControlUnit;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.Coap.EnergyResource;
-import MCC.Coap.SwitchResource;
-import MCC.Coap.TemperatureResource;
-import MCC.Resource.Actuator.SwitchActuator;
-import MCC.Resource.Sensor.EnergySensor;
-import MCC.Resource.Sensor.TemperatureSensor;
+import MCC.CoapResource.EnergyResource;
+import MCC.CoapResource.SwitchResource;
+import MCC.CoapResource.TemperatureResource;
+import MCC.EmulatedResource.Actuator.SwitchActuator;
+import MCC.EmulatedResource.Sensor.EnergySensor;
+import MCC.EmulatedResource.Sensor.TemperatureSensor;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
@@ -143,5 +143,4 @@ public class PCU extends CoapServer {
             }
         });
     }
-
 }

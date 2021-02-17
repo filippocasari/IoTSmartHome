@@ -1,19 +1,17 @@
-package MCC.Resource.Sensor;
+package MCC.EmulatedResource.Sensor;
 
 import MCC.DataListener;
 import MCC.SmartObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.UUID;
 
-
 public class MovementSensor extends SmartObject<Boolean> {
-    private static Logger logger = LoggerFactory.getLogger(MovementSensor.class);
-
     /** LABEL **/
-    private static final String LOG_DISPLAY_NAME = "MovementSensor";
-    private static final String RESOURCE_TYPE = "sensor.movement";
+    private static Logger logger = LoggerFactory.getLogger(MCC.EmulatedResource.Actuator.SwitchActuator.class);
+    private static final String LOG_DISPLAY_NAME = "SwitchActuator";
+    private static final String RESOURCE_TYPE = "actuator.switch";
 
     private Boolean isActive;
 
@@ -31,23 +29,27 @@ public class MovementSensor extends SmartObject<Boolean> {
         notifyUpdate(isActive);
     }
 
+    @Override
+    public Boolean loadUpdatedValue() {
+        return this.isActive;
+    }
 
     public static void main(String[] args) {
 
-        MovementSensor rawResource = new MovementSensor();
+        MovementSensor moveResource = new MovementSensor();
         logger.info("New {} Resource Created with Id: {} ! {} New Value: {}",
-                rawResource.getType(),
-                rawResource.getId(),
+                moveResource.getType(),
+                moveResource.getId(),
                 LOG_DISPLAY_NAME,
-                rawResource.loadUpdatedValue());
+                moveResource.loadUpdatedValue());
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
                     for(int i=0; i<100; i++){
-                        rawResource.setActive(!rawResource.loadUpdatedValue());
-                        Thread.sleep(5000);
+                        moveResource.setActive(!moveResource.loadUpdatedValue());
+                        Thread.sleep(1000);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -55,7 +57,7 @@ public class MovementSensor extends SmartObject<Boolean> {
             }
         }).start();
 
-        rawResource.addDataListener(new DataListener<Boolean>() {
+        moveResource.addDataListener(new DataListener<Boolean>() {
             @Override
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
 
@@ -66,10 +68,5 @@ public class MovementSensor extends SmartObject<Boolean> {
             }
         });
 
-    }
-
-    @Override
-    public Boolean loadUpdatedValue() {
-        return null;
     }
 }

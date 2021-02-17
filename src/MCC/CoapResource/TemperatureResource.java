@@ -1,11 +1,11 @@
-package MCC.Coap;
+package MCC.CoapResource;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.Resource.Sensor.TemperatureSensor;
-import MCC.utils.CoreInterfaces;
-import MCC.utils.SenMLPack;
-import MCC.utils.SenMLRecord;
+import MCC.EmulatedResource.Sensor.TemperatureSensor;
+import MCC.Utils.CoreInterfaces;
+import MCC.Utils.SenMLPack;
+import MCC.Utils.SenMLRecord;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.californium.core.CoapResource;

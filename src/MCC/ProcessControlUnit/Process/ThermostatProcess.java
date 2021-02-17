@@ -1,11 +1,11 @@
 package MCC.ProcessControlUnit.Process;
 
-import MCC.Coap.EnergyResource;
-import MCC.Coap.SwitchResource;
-import MCC.Coap.TemperatureResource;
-import MCC.Resource.Actuator.SwitchActuator;
-import MCC.Resource.Sensor.EnergySensor;
-import MCC.Resource.Sensor.TemperatureSensor;
+import MCC.CoapResource.EnergyResource;
+import MCC.CoapResource.SwitchResource;
+import MCC.CoapResource.TemperatureResource;
+import MCC.EmulatedResource.Actuator.SwitchActuator;
+import MCC.EmulatedResource.Sensor.EnergySensor;
+import MCC.EmulatedResource.Sensor.TemperatureSensor;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ public class ThermostatProcess extends CoapServer {
     public ThermostatProcess() {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
-        //TODO ADD();
+        this.add(createThermostatResource(deviceId));
     }
 
     private CoapResource createThermostatResource (String deviceID){

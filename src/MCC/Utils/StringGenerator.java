@@ -1,4 +1,4 @@
-package MCC.utils;
+package MCC.Utils;
 
 import java.util.Random;
 

@@ -1,10 +1,9 @@
 package MCC.ProcessControlUnit.Process;
 
-import MCC.Coap.EnergyResource;
-import MCC.Coap.TemperatureResource;
-import MCC.Resource.Sensor.EnergySensor;
-import MCC.Resource.Sensor.TemperatureSensor;
-import org.eclipse.californium.core.CoapResource;
+import MCC.CoapResource.EnergyResource;
+import MCC.CoapResource.TemperatureResource;
+import MCC.EmulatedResource.Sensor.EnergySensor;
+import MCC.EmulatedResource.Sensor.TemperatureSensor;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
