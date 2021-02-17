@@ -4,28 +4,34 @@ package com.company.Control_unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 
 class ControlUnit {
     private final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
     private static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
+    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/tv/switch";
     private static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/tv/energy";
     private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://192.168.0.169:5683/heating-system/energy";
+    //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
+    private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
     private boolean EcoMode = false;
 
-    public ControlUnit(SimTime simTime) {
+    public ControlUnit(SimTime simTime) throws BrokenBarrierException, InterruptedException {
 
 
-        //TVConsumptionTask tvConsuptionTask = new TVConsumptionTask(COAP_ENDPOINT_ENERGY_TV);
-        //FRIDGEConsumptionTask fridgeConsumptionTask = new FRIDGEConsumptionTask(COAP_ENDPOINT_ENERGY_FRIDGE);
-
+        TVConsumptionTask tvConsuptionTask = new TVConsumptionTask(COAP_ENDPOINT_ENERGY_TV, COAP_ENDPOINT_SWITCH_TV);
+        FRIDGEConsumptionTask fridgeConsumptionTask = new FRIDGEConsumptionTask(COAP_ENDPOINT_ENERGY_FRIDGE);
+        LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
+        HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
 
         simTime.setSpeed(20);
         simTime.start();
 
-        checkEcoMode(simTime);
 
         Runnable PeriodicTaskEcoMode = () -> {
             while(true){
@@ -41,20 +47,27 @@ class ControlUnit {
                 }}
         };
         Thread periodicTaskEcoMode = new Thread(PeriodicTaskEcoMode);
-        periodicTaskEcoMode.start();
-        LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
 
-        //HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING);
-        //fridgeConsumptionTask.run();
-        //tvConsuptionTask.run();
-        //heatingConsumptionTask.run();
-        lightsConsumptionTask.start();
+        periodicTaskEcoMode.start();
+        //create new Task for Energy Consumption
+        Thread t1 = new Thread(fridgeConsumptionTask);
+        Thread t2 = new Thread(lightsConsumptionTask);
+        Thread t3 = new Thread(tvConsuptionTask);
+        Thread t4 = new Thread(heatingConsumptionTask);
+        //start thread for observable resource energy
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+
+
+
 
 
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BrokenBarrierException, InterruptedException {
         SimTime simTime = new SimTime();
 
         System.out.println("Starting Time...\nDay: " + simTime.getDay().toString());

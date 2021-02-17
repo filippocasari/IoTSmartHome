@@ -2,35 +2,31 @@ package com.company.Control_unit;
 
 
 import org.eclipse.californium.core.CoapClient;
-import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.eclipse.californium.core.CoapHandler;
 
-public class TVConsumptionTask extends Thread{
-    public int Consuption = 0;
+public class TVConsumptionTask implements Runnable {
+    public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
+    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public TVConsumptionTask(String URLenergy, String URLswitch) {
-        super("TV TASK CONSUPTION");
+
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
 
     }
 
-    @Override
-    public void start() {
-        createGetRequestObserving();
-    }
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
-        //logger.info("OBSERVING ... {}", URL);
+        logger.info("OBSERVING TV... {}", URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
@@ -40,18 +36,49 @@ public class TVConsumptionTask extends Thread{
 
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
+                double InstantConsumption = Double.parseDouble(content);
 
-                logger.info("NOTIFICATION Body: " + content);
+                Consuption += InstantConsumption;
+
+                System.out.println("Total Consumption : " + Consuption);
+                System.out.println("Instant Consumption: " + content);
+                Runnable runnable = () -> {
+                    GETClient getClient = new GETClient(URLswitch);
+
+                    if (getClient.isOn(getClient.getResponseString())){
+                        Notificationconsumption();
+                        new Thread(() -> new POSTClient(URLswitch)).start();
+
+                    } else {
+                        logger.info("Switch just off");
+                    }
+
+                };
+
+                if(ControlUnit.checkConsumption(Consuption, InstantConsumption) ){
+                    Thread t = new Thread(runnable);
+                    t.start();
+
+                }
+
+
+
             }
+
 
             public void onError() {
                 logger.error("OBSERVING TV FAILED");
             }
         });
+        try {
+            Thread.sleep(60 * 3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // Observes the coap resource for 30 seconds then the observing relation is deleted
         try {
-            Thread.sleep(60 * 2000);
+            Thread.sleep(60 * 3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -61,4 +88,14 @@ public class TVConsumptionTask extends Thread{
     }
 
 
+    public void Notificationconsumption() {
+        logger.info("Too hight Consumption from Tv: switch must be set off");
+    }
+
+
+    @Override
+    public void run() {
+        createGetRequestObserving();
+    }
 }
+

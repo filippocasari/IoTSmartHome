@@ -9,28 +9,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
-public class LIGHTSConsumptionTask extends Thread {
+public class LIGHTSConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
     private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
-        super("LIGHTS TASK CONSUPTION");
+
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
 
     }
 
-    @Override
-    public void start() {
-        createGetRequestObserving();
-    }
 
-    @Override
-    public void interrupt() {
-        super.interrupt();
-    }
+
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
@@ -102,5 +95,9 @@ public class LIGHTSConsumptionTask extends Thread {
     }
 
 
+    @Override
+    public void run() {
+        createGetRequestObserving();
+    }
 }
 
