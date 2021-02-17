@@ -2,8 +2,8 @@ package MCC.process;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.coap.EnergyConsumptionResource;
-import MCC.coap.SwitchActuatorResource;
+import MCC.coap.EnergyResource;
+import MCC.coap.SwitchResource;
 import MCC.resource.actuator.SwitchActuator;
 import MCC.resource.sensor.EnergySensor;
 import org.eclipse.californium.core.CoapResource;
@@ -27,8 +27,8 @@ public class TvProcess extends CoapServer {
         EnergySensor tvEnergySensor = new EnergySensor();
         SwitchActuator tvSwitchActuator = new SwitchActuator();
 
-        EnergyConsumptionResource lightsEnergyResource = new EnergyConsumptionResource(deviceId, "energy", tvEnergySensor);
-        SwitchActuatorResource lightsSwitchResource = new SwitchActuatorResource(deviceId, "switch", tvSwitchActuator);
+        EnergyResource lightsEnergyResource = new EnergyResource(deviceId, "energy", tvEnergySensor);
+        SwitchResource lightsSwitchResource = new SwitchResource(deviceId, "switch", tvSwitchActuator);
 
         if(!lightsSwitchResource.getOn()){
             lightsEnergyResource.setUpdatedEnergyValue(0.0);

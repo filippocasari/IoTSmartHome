@@ -2,8 +2,8 @@ package MCC.process;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.coap.EnergyConsumptionResource;
-import MCC.coap.SwitchActuatorResource;
+import MCC.coap.EnergyResource;
+import MCC.coap.SwitchResource;
 import MCC.resource.actuator.SwitchActuator;
 import MCC.resource.sensor.EnergySensor;
 import org.eclipse.californium.core.CoapResource;
@@ -26,14 +26,12 @@ public class LightProcess extends CoapServer {
 
         CoapResource lightsRootResource = new CoapResource("lights");
 
-        //INIT (Emulated) Physical Sensors and Actuators
         EnergySensor lightsEnergySensor = new EnergySensor();
         SwitchActuator lightsSwitchActuator = new SwitchActuator();
 
-        //Resource
-        EnergyConsumptionResource lightsEnergyResource = new EnergyConsumptionResource(deviceId, "energy", lightsEnergySensor);
-        SwitchActuatorResource lightsSwitchResource = new SwitchActuatorResource(deviceId, "switch", lightsSwitchActuator);
-        if(!lightsSwitchActuator.getActive()){
+        EnergyResource lightsEnergyResource = new EnergyResource(deviceId, "energy", lightsEnergySensor);
+        SwitchResource lightsSwitchResource = new SwitchResource(deviceId, "switch", lightsSwitchActuator);
+        if(!lightsSwitchResource.getOn()){
             lightsEnergyResource.setUpdatedEnergyValue(0.0);
 
         }
@@ -41,7 +39,6 @@ public class LightProcess extends CoapServer {
         lightsRootResource.add(lightsEnergyResource);
         lightsRootResource.add(lightsSwitchResource);
 
-        //QUESTA PARTE SERVE
         //Handle Emulated Resource notification
         lightsSwitchActuator.addDataListener(new DataListener<Boolean>() {
             @Override
@@ -51,7 +48,6 @@ public class LightProcess extends CoapServer {
                 lightsEnergySensor.setActive(updatedValue);
             }
         });
-
 
         return lightsRootResource;
     }

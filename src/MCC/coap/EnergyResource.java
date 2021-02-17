@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class EnergyConsumptionResource extends CoapResource {
+public class EnergyResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(EnergyConsumptionResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(EnergyResource.class);
     private static final String OBJECT_TITLE = "EnergyConsumptionSensor";
     private static final Number SENSOR_VERSION = 0.1;
 
@@ -44,7 +44,7 @@ public class EnergyConsumptionResource extends CoapResource {
         this.updatedEnergyValue = updatedEnergyValue;
     }
 
-    public EnergyConsumptionResource(String deviceId, String name, EnergySensor rawSensor) {
+    public EnergyResource(String deviceId, String name, EnergySensor rawSensor) {
 
         super(name);
 

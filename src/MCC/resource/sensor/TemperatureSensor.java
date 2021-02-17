@@ -14,8 +14,8 @@ public class TemperatureSensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(TemperatureSensor.class);
 
     /** TEMPERATURE RANGE VALUE & VARIATION **/
-    private static final double MIN_TEMPERATURE_VALUE = 23.0;
-    private static final double MAX_TEMPERATURE_VALUE = 30.0;
+    private static double MIN_TEMPERATURE_VALUE;
+    private static double MAX_TEMPERATURE_VALUE;
     private static final double MIN_TEMPERATURE_VARIATION = 0.1;
     private static final double MAX_TEMPERATURE_VARIATION = 1.0;
 
@@ -31,13 +31,20 @@ public class TemperatureSensor extends SmartObject<Double> {
     private Random random;
     private Timer updateTimer = null;
 
-    public TemperatureSensor() {
+    public TemperatureSensor(String device) {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
-        init();
+        init(device);
     }
 
-    private void init(){
+    private void init(String type){
         try{
+            if (type.contentEquals("fridge")){
+                MIN_TEMPERATURE_VALUE = 0;
+                MAX_TEMPERATURE_VALUE = 7;
+            }else if (type.contentEquals("thermostat")){
+               MIN_TEMPERATURE_VALUE = 24;
+               MAX_TEMPERATURE_VALUE = 30;
+            }
             this.random = new Random(System.currentTimeMillis());
             this.updatedValue = MIN_TEMPERATURE_VALUE + this.random.nextDouble()*(MAX_TEMPERATURE_VALUE - MIN_TEMPERATURE_VALUE);
             startPeriodicEventValueUpdateTask();
@@ -67,6 +74,28 @@ public class TemperatureSensor extends SmartObject<Double> {
     @Override
     public Double loadUpdatedValue() {
         return this.updatedValue;
+    }
+
+    public static void main(String[] args) {
+
+        TemperatureSensor resource = new TemperatureSensor("thermostat");
+        logger.info("New {} resource created!\t\t\t\tId: {}\t\t{} Starting Value: {}",
+                resource.getType(),
+                resource.getId(),
+                LOG_DISPLAY_NAME,
+                resource.loadUpdatedValue());
+
+        resource.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
+            }
+        });
+
     }
 
 }

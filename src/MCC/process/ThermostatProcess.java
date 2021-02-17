@@ -1,16 +1,12 @@
 package MCC.process;
 
-import MCC.DataListener;
-import MCC.SmartObject;
-import MCC.coap.EnergyConsumptionResource;
-import MCC.coap.SwitchActuatorResource;
+import MCC.coap.EnergyResource;
+import MCC.coap.SwitchResource;
 import MCC.coap.TemperatureResource;
-import MCC.coap.ThermostatConfigParameterResource;
-import MCC.coap.model.ThermostatConfigurationModel;
-import MCC.resource.ThermostatConfigurationParameter;
 import MCC.resource.actuator.SwitchActuator;
 import MCC.resource.sensor.EnergySensor;
 import MCC.resource.sensor.TemperatureSensor;
+import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,30 +19,30 @@ public class ThermostatProcess extends CoapServer {
 
     public ThermostatProcess() {
         super();
-
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
-
-        TemperatureSensor temperatureSensor = new TemperatureSensor();
-        SwitchActuator switchActuator = new SwitchActuator();
-        EnergySensor energySensor = new EnergySensor();
-
-        TemperatureResource temperatureResource = new TemperatureResource(deviceId, "temperature", temperatureSensor);
-        SwitchActuatorResource switchResource = new SwitchActuatorResource(deviceId, "switch", switchActuator);
-        EnergyConsumptionResource energyConsumptionResource = new EnergyConsumptionResource(deviceId, "energy", energySensor);
-
-        this.add(temperatureResource);
-        this.add(switchResource);
-        this.add(energyConsumptionResource);
-
+        //TODO ADD();
     }
 
+    private CoapResource createThermostatResource (String deviceID){
+        CoapResource thermostatRootResource = new CoapResource("thermostat");
+
+        EnergySensor thEnergySensor = new EnergySensor();
+        SwitchActuator thSwitchActuator = new SwitchActuator();
+        TemperatureSensor thTemperatureSensor = new TemperatureSensor(thermostatRootResource.getName());
+
+        EnergyResource thEnergyResource = new EnergyResource(deviceID, "energy", thEnergySensor);
+        TemperatureResource thTemperatureResource = new TemperatureResource(deviceID, "temperature", thTemperatureSensor);
+        SwitchResource thSwitchResource= new SwitchResource(deviceID, "switch", thSwitchActuator);
+
+        return thermostatRootResource;
+    }
 
     public static void main(String[] args) {
 
         ThermostatProcess smartObjectProcess = new ThermostatProcess();
         smartObjectProcess.start();
 
-        logger.info("Coap Server Started ! Available resources: ");
+        logger.info("Coap Server Started! Available resources: ");
 
         smartObjectProcess.getRoot().getChildren().stream().forEach(resource -> {
             logger.info("Resource {} -> URI: {} (Observable: {})", resource.getName(), resource.getURI(), resource.isObservable());

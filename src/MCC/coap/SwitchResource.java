@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class SwitchActuatorResource extends CoapResource {
+public class SwitchResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(EnergyConsumptionResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(EnergyResource.class);
 
     private static final String OBJECT_TITLE = "SwitchActuator";
 
@@ -33,7 +33,7 @@ public class SwitchActuatorResource extends CoapResource {
 
     private String deviceId;
 
-    public SwitchActuatorResource(String deviceId, String name, SwitchActuator switchActuator) {
+    public SwitchResource(String deviceId, String name, SwitchActuator switchActuator) {
         super(name);
 
         if(switchActuator != null && deviceId != null){
