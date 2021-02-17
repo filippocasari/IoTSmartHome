@@ -17,7 +17,11 @@ import java.util.TreeMap;
 
 public class GETClient {
     private final static Logger logger = LoggerFactory.getLogger(POSTClient.class);
-    public boolean TurnedOn = true;
+    public String ResponseString = null;
+
+    public String getResponseString() {
+        return ResponseString;
+    }
 
     public GETClient(String URLendpoint) {
 
@@ -42,10 +46,11 @@ public class GETClient {
             logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(coapResp));
 
             String text = coapResp.getResponseText();
+            this.ResponseString = text;
             logger.info("Payload: {}", text);
             logger.info("Message ID: " + coapResp.advanced().getMID());
             logger.info("Token: " + coapResp.advanced().getTokenString());
-            isOn(Arrays.toString(coapResp.getPayload()));
+
             logger.info(Arrays.toString(coapResp.getPayload()));
 
         } catch (ConnectorException | IOException e) {
@@ -53,13 +58,9 @@ public class GETClient {
         }
     }
 
-    public void isOn(String content) {
-        if (content.equals("true")) {
-            System.out.println("cambio di stato: " + TurnedOn);
-            TurnedOn = false;
-        } else {
-            logger.info("Switch just off!!");
-        }
+    public boolean isOn(String content) {
+        return content.equals("true");
+
 
     }
 }

@@ -4,10 +4,7 @@ package com.company.Control_unit;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.Utils;
-import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.elements.exception.ConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
@@ -51,26 +48,29 @@ public class LIGHTSConsumptionTask extends Thread {
                 double InstantConsumption = Double.parseDouble(content);
 
                 Consuption += InstantConsumption;
+
                 System.out.println("Total Consumption : " + Consuption);
                 System.out.println("NOTIFICATION Body: " + content);
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
-                    if (getClient.TurnedOn) {
+
+                    if (getClient.isOn(getClient.getResponseString())){
+                        Notificationconsumption();
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
                         logger.info("Switch just off");
                     }
-                };
-                if (ControlUnit.checkConsumption(Consuption, InstantConsumption) && InstantConsumption != 0.0) {
 
+                };
+
+                if(ControlUnit.checkConsumption(Consuption, InstantConsumption) ){
                     Thread t = new Thread(runnable);
                     t.start();
 
-                    Notificationconsumption();
-                    interrupt();
-
                 }
+
+
 
             }
 

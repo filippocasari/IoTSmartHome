@@ -33,7 +33,7 @@ public class LightProcess extends CoapServer {
         //Resource
         EnergyConsumptionResource lightsEnergyResource = new EnergyConsumptionResource(deviceId, "energy", lightsEnergySensor);
         SwitchActuatorResource lightsSwitchResource = new SwitchActuatorResource(deviceId, "switch", lightsSwitchActuator);
-        if(!lightsSwitchResource.getOn()){
+        if(!lightsSwitchActuator.getActive()){
             lightsEnergyResource.setUpdatedEnergyValue(0.0);
 
         }
@@ -41,7 +41,7 @@ public class LightProcess extends CoapServer {
         lightsRootResource.add(lightsEnergyResource);
         lightsRootResource.add(lightsSwitchResource);
 
-        /*
+        //QUESTA PARTE SERVE
         //Handle Emulated Resource notification
         lightsSwitchActuator.addDataListener(new DataListener<Boolean>() {
             @Override
@@ -52,7 +52,7 @@ public class LightProcess extends CoapServer {
             }
         });
 
-         */
+
         return lightsRootResource;
     }
 
