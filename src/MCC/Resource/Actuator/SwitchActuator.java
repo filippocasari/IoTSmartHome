@@ -1,6 +1,5 @@
-package MCC.resource.actuator;
+package MCC.Resource.Actuator;
 
-import MCC.DataListener;
 import MCC.SmartObject;
 
 import org.slf4j.Logger;

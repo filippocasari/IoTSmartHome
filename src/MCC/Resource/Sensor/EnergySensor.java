@@ -1,6 +1,5 @@
-package MCC.resource.sensor;
+package MCC.Resource.Sensor;
 
-import MCC.DataListener;
 import MCC.SmartObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

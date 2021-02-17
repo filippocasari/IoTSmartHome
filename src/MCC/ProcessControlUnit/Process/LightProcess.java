@@ -1,11 +1,11 @@
-package MCC.process;
+package MCC.ProcessControlUnit.Process;
 
 import MCC.DataListener;
 import MCC.SmartObject;
-import MCC.coap.EnergyResource;
-import MCC.coap.SwitchResource;
-import MCC.resource.actuator.SwitchActuator;
-import MCC.resource.sensor.EnergySensor;
+import MCC.Coap.EnergyResource;
+import MCC.Coap.SwitchResource;
+import MCC.Resource.Actuator.SwitchActuator;
+import MCC.Resource.Sensor.EnergySensor;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
@@ -19,13 +19,6 @@ public class LightProcess extends CoapServer {
     public LightProcess() {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
-        this.add(createLightResource(deviceId));
-    }
-
-    private CoapResource createLightResource(String deviceId){
-
-        CoapResource lightsRootResource = new CoapResource("lights");
-
         EnergySensor lightsEnergySensor = new EnergySensor();
         SwitchActuator lightsSwitchActuator = new SwitchActuator();
 
@@ -36,8 +29,8 @@ public class LightProcess extends CoapServer {
 
         }
 
-        lightsRootResource.add(lightsEnergyResource);
-        lightsRootResource.add(lightsSwitchResource);
+        this.add(lightsEnergyResource);
+        this.add(lightsSwitchResource);
 
         //Handle Emulated Resource notification
         lightsSwitchActuator.addDataListener(new DataListener<Boolean>() {
@@ -49,24 +42,8 @@ public class LightProcess extends CoapServer {
             }
         });
 
-        return lightsRootResource;
+        this.add(lightsEnergyResource);
+        this.add(lightsSwitchResource);
     }
 
-    public static void main(String[] args) {
-
-        LightProcess lightCoapProcess = new LightProcess();
-        lightCoapProcess.start();
-
-        logger.info("Coap Server Started! Available resources: ");
-
-        lightCoapProcess.getRoot().getChildren().stream().forEach(resource -> {
-            logger.info("Resource {} -> URI: {} (Observable: {})", resource.getName(), resource.getURI(), resource.isObservable());
-            if(!resource.getURI().equals("/.well-known")){
-                resource.getChildren().stream().forEach(childResource -> {
-                    logger.info("\t Resource {} -> URI: {} (Observable: {})", childResource.getName(), childResource.getURI(), childResource.isObservable());
-                });
-            }
-        });
-
-    }
 }
