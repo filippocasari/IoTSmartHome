@@ -13,6 +13,7 @@ public class LIGHTSConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
+    int count = 0;
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
@@ -23,11 +24,9 @@ public class LIGHTSConsumptionTask implements Runnable {
     }
 
 
-
-
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
-        System.out.println("OBSERVING LIGHTS... @ "+URLenergy);
+        System.out.println("OBSERVING LIGHTS... @ " + URLenergy);
         //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
@@ -39,18 +38,18 @@ public class LIGHTSConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-
+                ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption Lights : " + Consuption);
-                System.out.println("Instant Consumption Lights : " + content);
+                System.out.println("Total Consumption Lights : " + Consuption+" kW");
+                System.out.println("Instant Consumption Lights : " + content+" kW");
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
 
-                    if (getClient.isOn(getClient.getResponseString())){
+                    if (getClient.isOn(getClient.getResponseString())) {
                         ControlUnit.Notificationconsumption("LIGHTS");
                         System.err.println("POST REQUEST TO LIGHTS SWITCH");
-                        new Thread(() -> new POSTClient(URLswitch )).start();
+                        new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
                         System.err.println("Switch just off");
@@ -59,15 +58,16 @@ public class LIGHTSConsumptionTask implements Runnable {
 
                 };
 
-                if(ControlUnit.checkConsumption(Consuption, InstantConsumption) ){
+                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 
                 }
 
 
-
             }
+
+
 
 
             public void onError() {

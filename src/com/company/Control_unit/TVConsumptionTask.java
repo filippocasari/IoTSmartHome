@@ -13,6 +13,7 @@ public class TVConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
+    public int count=0;
     //private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
     public TVConsumptionTask(String URLenergy, String URLswitch) {
@@ -40,8 +41,9 @@ public class TVConsumptionTask implements Runnable {
 
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption : " + Consuption);
-                System.out.println("Instant Consumption: " + content);
+                System.out.println("Total Consumption tv : " + Consuption+" kW");
+                System.out.println("Instant Consumption tv: " + content+" kW");
+                ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
 

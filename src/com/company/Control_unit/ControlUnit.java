@@ -1,11 +1,16 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.ClientsType.POSTClient;
 import com.company.Control_unit.UtilsTime.SimTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import java.util.ResourceBundle;
+
 class ControlUnit {
+
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
     public boolean isEcoMode() {
@@ -20,8 +25,9 @@ class ControlUnit {
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
-    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR ="coap://127.0.0.1:5683/movement-sensor/status";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/movement-sensor/status";
     private boolean EcoMode = false;
+    private String Datedetails = null;
 
     public ControlUnit(SimTime simTime) {
 
@@ -31,41 +37,65 @@ class ControlUnit {
         LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
         HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
 
-        simTime.setSpeed(20);
+        simTime.setSpeed(1000);
         simTime.start();
 
 
-        Runnable PeriodicTaskEcoMode = () -> {
-            while (true) {
-                if (checkEcoMode(simTime)) {
-                    logger.info("Periodic Consumption Control...");
-                    System.out.println(simTime.getDay() + ", " + simTime.getHour() + " : " + simTime.getMinute());
-                }
+        Runnable PeriodicTask = () -> {
+            String day = simTime.getDay().toString();
 
+            while (true) {
+
+                Datedetails = createStringDate(simTime);
+                System.out.println(Datedetails);
+
+                if (!day.equals(simTime.getDay().toString())) {
+                    printTotalConsumptionfromAll(day, lightsConsumptionTask, fridgeConsumptionTask, tvConsuptionTask);
+                }
+                if (checkEcoMode(simTime)) {
+                    System.out.println("Periodic Consumption Control...");
+
+                }
+                day = simTime.getDay().toString();
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
             }
         };
-        Thread periodicTaskEcoMode = new Thread(PeriodicTaskEcoMode);
-
+        Thread periodicTask = new Thread(PeriodicTask);
 
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
         Thread t2 = new Thread(lightsConsumptionTask);
         Thread t3 = new Thread(tvConsuptionTask);
-        Thread t4 = new Thread(heatingConsumptionTask);
+        //Thread t4 = new Thread(heatingConsumptionTask);
         //start thread for observable resource energy
         t1.start();
         t2.start();
         t3.start();
-        t4.start();
+        //t4.start();
         //start periodic task to check ecomode
-        periodicTaskEcoMode.start();
+        periodicTask.start();
 
 
+    }
+
+    private void printTotalConsumptionfromAll(String day, LIGHTSConsumptionTask lights, FRIDGEConsumptionTask fridge, TVConsumptionTask tv) {
+        System.out.println("Daily consumption for the day : " + day + " is : ");
+        System.out.println("for fridge: " + fridge.Consuption+" kW");
+        System.out.println("for tv: " + tv.Consuption+ " kW");
+        System.out.println("for lights: " + lights.Consuption+" kW");
+        lights.Consuption = 0.0;
+        fridge.Consuption = 0.0;
+        tv.Consuption = 0.0;
+
+    }
+
+    private String createStringDate(SimTime simTime) {
+        return simTime.getDay() + ", " + simTime.getHour() + " : " + simTime.getMinute();
     }
 
 
@@ -89,7 +119,7 @@ class ControlUnit {
 
     public boolean checkEcoMode(SimTime simTime) {
         EcoMode = simTime.getDay().toString().equals("Sunday")
-                || (simTime.getHour() > 22 || simTime.getHour() < 6);
+                || (simTime.getHour() > 23 || simTime.getHour() < 5);
         logger.info("Eco Mode: " + EcoMode);
         return EcoMode;
 
@@ -97,6 +127,15 @@ class ControlUnit {
 
     public static void Notificationconsumption(String fromWho) {
         logger.info("Too hight Consumption from " + fromWho + ": switch must be set off");
+    }
+    public static void turnOnSwitchCondition(double instantConsumption, String URLforPost, int count) {
+        if (instantConsumption == 0.0) {
+            count++;
+        }
+        if (count == 5) { //se ho piu' volte il fatto che sta consumando 0 kW, accendo lo switch
+            count = 0;
+            new Thread(() -> new POSTClient(URLforPost)).start();
+        }
     }
 
 
