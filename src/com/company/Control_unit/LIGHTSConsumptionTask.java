@@ -1,19 +1,20 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.ClientsType.GETClient;
+import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
 public class LIGHTSConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    int count = 0;
+    //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
 
@@ -23,12 +24,10 @@ public class LIGHTSConsumptionTask implements Runnable {
     }
 
 
-
-
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
-
-        logger.info("OBSERVING LIGHTS... {}", URLenergy);
+        System.out.println("OBSERVING LIGHTS... @ " + URLenergy);
+        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
@@ -39,37 +38,41 @@ public class LIGHTSConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-
+                ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption Lights : " + Consuption);
-                System.out.println("Instant Consumption Lights : " + content);
+                System.out.println("Total Consumption Lights : " + Consuption+" kW");
+                System.out.println("Instant Consumption Lights : " + content+" kW");
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
 
-                    if (getClient.isOn(getClient.getResponseString())){
-                        Notificationconsumption();
+                    if (getClient.isOn(getClient.getResponseString())) {
+                        ControlUnit.Notificationconsumption("LIGHTS");
+                        System.err.println("POST REQUEST TO LIGHTS SWITCH");
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
-                        logger.info("Switch just off");
+                        System.err.println("Switch just off");
+                        //logger.info("Switch just off");
                     }
 
                 };
 
-                if(ControlUnit.checkConsumption(Consuption, InstantConsumption) ){
+                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 
                 }
 
 
-
             }
 
 
+
+
             public void onError() {
-                logger.error("OBSERVING LIGHTS FAILED");
+                System.err.println("OBSERVING LIGHTS FAILED");
+                //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
         try {
@@ -84,14 +87,9 @@ public class LIGHTSConsumptionTask implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        logger.info("CANCELLATION.....");
+        System.err.println("CANCELLATION...");
+        //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
-    }
-
-
-    public void Notificationconsumption() {
-        logger.info("Too hight Consumption from Lights: switch must be set off");
     }
 
 

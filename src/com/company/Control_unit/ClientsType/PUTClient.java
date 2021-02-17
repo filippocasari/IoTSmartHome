@@ -1,42 +1,43 @@
-package com.company.Control_unit;
+package com.company.Control_unit.ClientsType;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Request;
-
 import org.eclipse.californium.elements.exception.ConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+class PUTClientProcess {
 
-public class POSTClient {
-    private final static Logger logger = LoggerFactory.getLogger(POSTClient.class);
+    private final static Logger logger = LoggerFactory.getLogger(PUTClientProcess.class);
+    private static String COAP_ENDPOINT = null;
+    public PUTClientProcess(String URL, String payload) {
+        COAP_ENDPOINT=URL;
+        CoapClient coapClient = new CoapClient(COAP_ENDPOINT);
 
-    public POSTClient(String URLendpoint) {
+        Request request = new Request(CoAP.Code.PUT);
 
-        CoapClient coapClient = new CoapClient(URLendpoint);
 
-        Request request = new Request(CoAP.Code.POST);
+        logger.info("PUT Request Random Payload: {}", payload);
+        request.setPayload(payload);
 
         request.setConfirmable(true);
 
-        logger.info("Request Pretty Print:\n{}", Utils.prettyPrint(request));
+        logger.info("Request Pretty Print: \n{}", Utils.prettyPrint(request));
 
-
+        //Synchronously send the POST request (blocking call)
         CoapResponse coapResp = null;
 
         try {
 
             coapResp = coapClient.advanced(request);
 
-            //Pretty print for the received response
             logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(coapResp));
 
-            //The "CoapResponse" message contains the response.
 
             String text = coapResp.getResponseText();
             logger.info("Payload: {}", text);

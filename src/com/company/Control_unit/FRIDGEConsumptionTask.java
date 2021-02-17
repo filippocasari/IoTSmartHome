@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
-public class FRIDGEConsumptionTask implements Runnable{
+public class FRIDGEConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
 
-    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    private final static Logger logger = LoggerFactory.getLogger(FRIDGEConsumptionTask.class);
 
     public FRIDGEConsumptionTask(String URLenergy) {
 
@@ -25,7 +25,7 @@ public class FRIDGEConsumptionTask implements Runnable{
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
-        logger.info("OBSERVING FRIDGE system... {}", URLenergy);
+        logger.info("OBSERVING FRIDGE system...  @ " + URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
@@ -39,11 +39,11 @@ public class FRIDGEConsumptionTask implements Runnable{
 
                 Consuption += InstantConsumption;
                 if (InstantConsumption > 2.0) {
-                    Notificationconsumption();
+                    ControlUnit.Notificationconsumption("FRIDGE system");
                 }
 
-                System.out.println("Total Consumption Fridge : " + Consuption);
-                System.out.println("Instant Consumption Fridge: " + content);
+                System.out.println("Total Consumption Fridge : " + Consuption+" kW");
+                System.out.println("Instant Consumption Fridge: " + content+" kW");
 
             }
 
@@ -67,11 +67,6 @@ public class FRIDGEConsumptionTask implements Runnable{
 
         logger.info("CANCELLATION.....");
         relation.proactiveCancel();
-    }
-
-
-    public void Notificationconsumption() {
-        logger.info("Too hight Consumption from Fridge: switch must be set off");
     }
 
 

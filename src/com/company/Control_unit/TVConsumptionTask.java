@@ -1,19 +1,20 @@
 package com.company.Control_unit;
 
 
+import com.company.Control_unit.ClientsType.GETClient;
+import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eclipse.californium.core.CoapHandler;
 
 public class TVConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    public int count=0;
+    //private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
     public TVConsumptionTask(String URLenergy, String URLswitch) {
 
@@ -26,8 +27,8 @@ public class TVConsumptionTask implements Runnable {
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
-        logger.info("OBSERVING TV... {}", URLenergy);
-
+        //logger.info("OBSERVING TV... {}", URLenergy);
+        System.out.println("OBSERVING TV... @ "+URLenergy);
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
 
@@ -40,17 +41,20 @@ public class TVConsumptionTask implements Runnable {
 
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption : " + Consuption);
-                System.out.println("Instant Consumption: " + content);
+                System.out.println("Total Consumption tv : " + Consuption+" kW");
+                System.out.println("Instant Consumption tv: " + content+" kW");
+                ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
 
                     if (getClient.isOn(getClient.getResponseString())){
-                        Notificationconsumption();
+                        ControlUnit.Notificationconsumption("TV system");
+                        System.err.println("POST REQUEST TO TV SWITCH...");
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
-                        logger.info("Switch just off");
+                        System.err.println("Switch of Tv just off");
+                        //logger.info("Switch just off");
                     }
 
                 };
@@ -67,7 +71,8 @@ public class TVConsumptionTask implements Runnable {
 
 
             public void onError() {
-                logger.error("OBSERVING TV FAILED");
+                System.err.println("OBSERVING TV FAILED");
+                //logger.error("OBSERVING TV FAILED");
             }
         });
         try {
@@ -82,15 +87,11 @@ public class TVConsumptionTask implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        logger.info("CANCELLATION.....");
+        System.out.println("CANCELLATION.....");
+        //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
     }
 
-
-    public void Notificationconsumption() {
-        logger.info("Too hight Consumption from Tv: switch must be set off");
-    }
 
 
     @Override
