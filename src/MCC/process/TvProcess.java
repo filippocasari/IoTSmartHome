@@ -27,16 +27,16 @@ public class TvProcess extends CoapServer {
         EnergySensor tvEnergySensor = new EnergySensor();
         SwitchActuator tvSwitchActuator = new SwitchActuator();
 
-        EnergyResource lightsEnergyResource = new EnergyResource(deviceId, "energy", tvEnergySensor);
-        SwitchResource lightsSwitchResource = new SwitchResource(deviceId, "switch", tvSwitchActuator);
+        EnergyResource tvEnergyResource = new EnergyResource(deviceId, "energy", tvEnergySensor);
+        SwitchResource tvSwitchResource = new SwitchResource(deviceId, "switch", tvSwitchActuator);
 
-        if(!lightsSwitchResource.getOn()){
-            lightsEnergyResource.setUpdatedEnergyValue(0.0);
+        if(!tvSwitchResource.getOn()){
+            tvEnergyResource.setUpdatedEnergyValue(0.0);
 
         }
 
-        tvRootResource.add(lightsEnergyResource);
-        tvRootResource.add(lightsSwitchResource);
+        tvRootResource.add(tvEnergyResource);
+        tvRootResource.add(tvSwitchResource);
 
         tvSwitchActuator.addDataListener(new DataListener<Boolean>() {
             @Override
