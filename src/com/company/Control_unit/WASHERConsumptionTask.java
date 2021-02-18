@@ -9,14 +9,14 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
-public class LIGHTSConsumptionTask implements Runnable {
+public class WASHERConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
     int count = 0;
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
-    public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
+    public WASHERConsumptionTask(String URLenergy, String URLswitch) {
 
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
@@ -41,19 +41,19 @@ public class LIGHTSConsumptionTask implements Runnable {
                 count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption Lights : " + Consuption+" kW");
-                System.out.println("Instant Consumption Lights : " + content+" kW");
+                System.out.println("Total Consumption Washer : " + Consuption+" kW");
+                System.out.println("Instant Consumption Washer : " + content+" kW");
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 
                     //if (getClient.isOn(getClient.getResponseString())) {
-                    ControlUnit.Notificationconsumption("LIGHTS");
-                    System.err.println("POST REQUEST TO LIGHTS SWITCH");
+                    ControlUnit.Notificationconsumption("Washer");
+                    System.err.println("POST REQUEST TO Washer SWITCH");
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
-                        System.err.println("Switch just off");
-                        //logger.info("Switch just off");
+                        System.err.println("Switch's washer just off");
+                        logger.info("Switch just off");
                     }*/
 
                 };
@@ -64,14 +64,10 @@ public class LIGHTSConsumptionTask implements Runnable {
 
                 }
 
-
             }
 
-
-
-
             public void onError() {
-                System.err.println("OBSERVING LIGHTS FAILED");
+                System.err.println("OBSERVING WASHER FAILED");
                 //logger.error("OBSERVING LIGHTS FAILED");
             }
         });

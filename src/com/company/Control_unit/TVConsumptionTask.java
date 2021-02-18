@@ -43,19 +43,19 @@ public class TVConsumptionTask implements Runnable {
 
                 System.out.println("Total Consumption tv : " + Consuption+" kW");
                 System.out.println("Instant Consumption tv: " + content+" kW");
-                ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
+                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
                 Runnable runnable = () -> {
-                    GETClient getClient = new GETClient(URLswitch);
+                    //GETClient getClient = new GETClient(URLswitch);
 
-                    if (getClient.isOn(getClient.getResponseString())){
-                        ControlUnit.Notificationconsumption("TV system");
-                        System.err.println("POST REQUEST TO TV SWITCH...");
-                        new Thread(() -> new POSTClient(URLswitch)).start();
+                    // (getClient.isOn(getClient.getResponseString())){
+                    ControlUnit.Notificationconsumption("TV system");
+                    System.err.println("POST REQUEST TO TV SWITCH...");
+                    new Thread(() -> new POSTClient(URLswitch)).start();
 
-                    } else {
+                    /*} else {
                         System.err.println("Switch of Tv just off");
                         //logger.info("Switch just off");
-                    }
+                    }*/
 
                 };
 
