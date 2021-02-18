@@ -44,17 +44,17 @@ public class WASHERConsumptionTask implements Runnable {
                 System.out.println("Total Consumption Washer : " + Consuption+" kW");
                 System.out.println("Instant Consumption Washer : " + content+" kW");
                 Runnable runnable = () -> {
-                    GETClient getClient = new GETClient(URLswitch);
+                    //GETClient getClient = new GETClient(URLswitch);
 
-                    if (getClient.isOn(getClient.getResponseString())) {
-                        ControlUnit.Notificationconsumption("Washer");
-                        System.err.println("POST REQUEST TO Washer SWITCH");
-                        new Thread(() -> new POSTClient(URLswitch)).start();
+                    //if (getClient.isOn(getClient.getResponseString())) {
+                    ControlUnit.Notificationconsumption("Washer");
+                    System.err.println("POST REQUEST TO Washer SWITCH");
+                    new Thread(() -> new POSTClient(URLswitch)).start();
 
-                    } else {
+                    /*} else {
                         System.err.println("Switch's washer just off");
-                        //logger.info("Switch just off");
-                    }
+                        logger.info("Switch just off");
+                    }*/
 
                 };
 

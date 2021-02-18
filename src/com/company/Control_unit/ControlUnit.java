@@ -39,7 +39,7 @@ class ControlUnit {
         LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
         HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
         WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
-        simTime.setSpeed(4000);
+        simTime.setSpeed(1000);
         simTime.start();
 
 
@@ -123,7 +123,7 @@ class ControlUnit {
 
     public boolean checkEcoMode(SimTime simTime) {
         EcoMode = simTime.getDay().toString().equals("Sunday")
-                || (simTime.getHour() > 23 || simTime.getHour() < 5);
+                || ((simTime.getHour() > 23 || simTime.getHour() < 5));
         logger.info("Eco Mode: " + EcoMode);
         return EcoMode;
 
