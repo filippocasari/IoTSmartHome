@@ -15,10 +15,13 @@ import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+import java.util.Random.*;
 import java.util.UUID;
 
 public class PCU extends CoapServer {
     private final static Logger logger = LoggerFactory.getLogger(PCU.class);
+    private Random random;
 
     public PCU (){
         super();
@@ -41,7 +44,8 @@ public class PCU extends CoapServer {
         SwitchResource lightsSwitchResource = new SwitchResource(deviceId, "switch", lightsSwitchActuator);
         if(!lightsSwitchResource.getOn()){
             lightsEnergyResource.setUpdatedEnergyValue(0.0);
-
+        }else{
+            lightsEnergyResource.setUpdatedEnergyValue(random.nextDouble());
         }
 
         lightsRootResource.add(lightsEnergyResource);
@@ -86,7 +90,8 @@ public class PCU extends CoapServer {
 
         if(!tvSwitchResource.getOn()){
             tvEnergyResource.setUpdatedEnergyValue(0.0);
-
+        }else{
+            tvEnergyResource.setUpdatedEnergyValue(random.nextDouble());
         }
 
         tvRootResource.add(tvEnergyResource);
@@ -114,7 +119,8 @@ public class PCU extends CoapServer {
 
         if(!washerSwitchResource.getOn()){
             washerEnergyResource.setUpdatedEnergyValue(0.0);
-
+        }else{
+            washerEnergyResource.setUpdatedEnergyValue(random.nextDouble());
         }
 
         washerRootResource.add(washerEnergyResource);
