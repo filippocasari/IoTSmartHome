@@ -11,10 +11,8 @@ class ControlUnit {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
-    public boolean isEcoMode() {
-        return EcoMode;
-    }
 
+    public boolean flagEcoMode = false;
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://192.168.1.4:5683/lights/energy";
     public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://192.168.1.4:5683/lights/switch";
     private static final String COAP_ENDPOINT_SWITCH_TV = "coap://192.168.1.4:5683/TV/switch";
@@ -29,6 +27,7 @@ class ControlUnit {
     private boolean EcoMode = false;
     private String Datedetails = null;
 
+
     public ControlUnit(SimTime simTime) {
 
         //Creation of Energy Consumption Monitoring Tasks
@@ -39,7 +38,7 @@ class ControlUnit {
         WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
         MOVEMENTdetenctionTask movemenTdetenctionTask = new MOVEMENTdetenctionTask(COAP_ENDPOINT_MOVEMENT_SENSOR);
 
-        simTime.setSpeed(20);
+        simTime.setSpeed(900);
         simTime.start();
 
 
@@ -51,9 +50,12 @@ class ControlUnit {
                 if (!day.equals(simTime.getDay().toString())) {
                     printTotalConsumptionfromAll(day, lightsConsumptionTask, fridgeConsumptionTask, tvConsuptionTask);
                 }
-                if (checkEcoMode(simTime)) {
+                if (checkEcoMode(simTime) && !isEcoMode()) {
+                    EcoMode = true;
                     System.out.println("Periodic Consumption Control...");
 
+                } else {
+                    EcoMode = false;
                 }
                 day = simTime.getDay().toString();
                 try {
@@ -98,6 +100,10 @@ class ControlUnit {
         periodicTask.start();
 
 
+    }
+
+    public boolean isEcoMode() {
+        return EcoMode;
     }
 
     private void printTotalConsumptionfromAll(String day, LIGHTSConsumptionTask lights, FRIDGEConsumptionTask fridge, TVConsumptionTask tv) {
