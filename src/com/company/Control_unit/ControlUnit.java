@@ -60,7 +60,7 @@ class ControlUnit {
                 }
                 day = simTime.getDay().toString();
                 try {
-                    Thread.sleep(4000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -127,7 +127,7 @@ class ControlUnit {
 
     public boolean checkEcoMode(SimTime simTime) {
         EcoMode = simTime.getDay().toString().equals("Sunday")
-                || ((simTime.getHour() > 23 || simTime.getHour() < 5));
+                || ((simTime.getHour() > 0 || simTime.getHour() < 5));
         logger.info("Eco Mode: " + EcoMode);
 
         settingEcomode(EcoMode);
@@ -157,7 +157,7 @@ class ControlUnit {
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,String.valueOf(!ecomode))).start();
 
 
-        System.err.println("ECOMODE IS"+ecomode+": POST REQUESTS FOR EACH DEVICE");
+        System.err.println("ECOMODE IS "+ecomode+": POST REQUESTS FOR EACH DEVICE");
     }
     private void TotalCostEuros(Double TotalConsumption){
         System.out.println("Cost of the day is: "+TotalConsumption*0.06256+" euros");
