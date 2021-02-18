@@ -25,7 +25,7 @@ class ControlUnit {
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
-    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/movement-sensor/status";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/detector/movement";
     private boolean EcoMode = false;
     private String Datedetails = null;
 
@@ -114,6 +114,7 @@ class ControlUnit {
         System.out.println("\tSecond: " + simTime.getSecond());
 
         ControlUnit controUnit = new ControlUnit(simTime);
+        simTime.hasChanged();
 
 
     }
@@ -127,6 +128,7 @@ class ControlUnit {
         EcoMode = simTime.getDay().toString().equals("Sunday")
                 || ((simTime.getHour() > 23 || simTime.getHour() < 5));
         logger.info("Eco Mode: " + EcoMode);
+
         settingEcomode(EcoMode);
 
         return EcoMode;
@@ -149,12 +151,12 @@ class ControlUnit {
     public static void settingEcomode(boolean ecomode){
 
 
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(ecomode))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(ecomode))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,String.valueOf(ecomode))).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(!ecomode))).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(!ecomode))).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,String.valueOf(!ecomode))).start();
 
 
-        System.err.println("ECOMODE ON: POST REQUESTS FOR EACH DEVICE");
+        System.err.println("ECOMODE IS"+ecomode+": POST REQUESTS FOR EACH DEVICE");
     }
 
 
