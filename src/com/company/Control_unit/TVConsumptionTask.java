@@ -13,7 +13,7 @@ public class TVConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    public int count=0;
+    public int count = 0;
     //private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
 
     public TVConsumptionTask(String URLenergy, String URLswitch) {
@@ -28,7 +28,7 @@ public class TVConsumptionTask implements Runnable {
         CoapClient client = new CoapClient(URLenergy);
 
         //logger.info("OBSERVING TV... {}", URLenergy);
-        System.out.println("OBSERVING TV... @ "+URLenergy);
+        System.out.println("OBSERVING TV... @ " + URLenergy);
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
 
@@ -41,9 +41,9 @@ public class TVConsumptionTask implements Runnable {
 
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption tv : " + Consuption+" kW");
-                System.out.println("Instant Consumption tv: " + content+" kW");
-                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
+                System.out.println("Total Consumption tv : " + Consuption + " kW");
+                System.out.println("Instant Consumption tv: " + content + " kW");
+                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 
@@ -59,12 +59,11 @@ public class TVConsumptionTask implements Runnable {
 
                 };
 
-                if(ControlUnit.checkConsumption(Consuption, InstantConsumption) ){
+                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 
                 }
-
 
 
             }
@@ -91,7 +90,6 @@ public class TVConsumptionTask implements Runnable {
         //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
     }
-
 
 
     @Override

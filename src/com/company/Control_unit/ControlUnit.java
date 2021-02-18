@@ -2,6 +2,7 @@ package com.company.Control_unit;
 
 
 import com.company.Control_unit.ClientsType.POSTClient;
+import com.company.Control_unit.ClientsType.PUTClient;
 import com.company.Control_unit.UtilsTime.SimTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,10 @@ class ControlUnit {
         TVConsumptionTask tvConsuptionTask = new TVConsumptionTask(COAP_ENDPOINT_ENERGY_TV, COAP_ENDPOINT_SWITCH_TV);
         FRIDGEConsumptionTask fridgeConsumptionTask = new FRIDGEConsumptionTask(COAP_ENDPOINT_ENERGY_FRIDGE);
         LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
-        HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
+        //HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
         WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
+        MOVEMENTdetenctionTask movemenTdetenctionTask =new MOVEMENTdetenctionTask(COAP_ENDPOINT_MOVEMENT_SENSOR);
+
         simTime.setSpeed(1000);
         simTime.start();
 
@@ -67,13 +70,14 @@ class ControlUnit {
 
             }
         };
-        Thread periodicTask = new Thread(PeriodicTask);
+
 
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
         Thread t2 = new Thread(lightsConsumptionTask);
         Thread t3 = new Thread(tvConsuptionTask);
         Thread t4 = new Thread(washerConsumptionTask);
+        Thread t5 = new Thread(movemenTdetenctionTask);
         //Thread t5 = new Thread(heatingConsumptionTask);
         //start thread for observable resource energy
         t1.start();
@@ -82,6 +86,7 @@ class ControlUnit {
         t4.start();
         //t5.start();
         //start periodic task to check ecomode
+        Thread periodicTask = new Thread(PeriodicTask);
         periodicTask.start();
 
 
@@ -125,6 +130,9 @@ class ControlUnit {
         EcoMode = simTime.getDay().toString().equals("Sunday")
                 || ((simTime.getHour() > 23 || simTime.getHour() < 5));
         logger.info("Eco Mode: " + EcoMode);
+        if(EcoMode){
+            settingEcomodeOn();
+        }
         return EcoMode;
 
     }
@@ -142,6 +150,15 @@ class ControlUnit {
         }
         return count;
     }
+    public static void settingEcomodeOn(){
+
+        String request="false";
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, request)).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, request)).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,request)).start();
+        System.err.println("ECOMODE ON: POST REQUESTS FOR EACH DEVICE");
+    }
+
 
 
 }
