@@ -154,6 +154,13 @@ public class PCU extends CoapServer {
             }
         }).start();
 
+        detectorMovementSensor.addDataListener(new DataListener<Boolean>() {
+            @Override
+            public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
+                logger.info("[MOVEMENT-BEHAVIOUR] -> Updated Movement Value: {}", updatedValue);
+            }
+        });
+
         return detectorRootResource;
     }
 
