@@ -7,6 +7,13 @@ import com.company.Control_unit.UtilsTime.SimTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/** created by Filippo Casari
+ *     centralina / Control Unit
+ * @collaboration with: Luca Mantovani, Davide Casnici
+ */
+
+
 class ControlUnit {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
