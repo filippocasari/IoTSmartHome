@@ -140,20 +140,14 @@ public class PCU extends CoapServer {
 
         detectorRootResource.add(detectorMovementResource);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    for(int i=0; i<100; i++){
-                        detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
-                        Thread.sleep(4000);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+        try{
+            for(int i=0; i<100; i++){
+                detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
+                Thread.sleep(4000);
             }
-        }).start();
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return detectorRootResource;
     }
 
