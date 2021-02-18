@@ -1,6 +1,8 @@
 package MCC.ProcessControlUnit;
 
+import MCC.CoapResource.MovementResource;
 import MCC.DataListener;
+import MCC.EmulatedResource.Sensor.MovementSensor;
 import MCC.SmartObject;
 import MCC.CoapResource.EnergyResource;
 import MCC.CoapResource.SwitchResource;
@@ -25,6 +27,7 @@ public class PCU extends CoapServer {
         this.add(createFridgeResource(deviceId));
         this.add(createTvResource(deviceId));
         this.add(createWasherResource(deviceId));
+        this.add(createDetectorResource(deviceId));
     }
 
     private CoapResource createLightResource(String deviceId){
@@ -127,6 +130,31 @@ public class PCU extends CoapServer {
         });
 
         return washerRootResource;
+    }
+
+    private CoapResource createDetectorResource (String deviceId){
+        CoapResource detectorRootResource = new CoapResource("detector");
+
+        MovementSensor detectorMovementSensor = new MovementSensor();
+        MovementResource detectorMovementResource = new MovementResource(deviceId, "movement", detectorMovementSensor);
+
+        detectorRootResource.add(detectorMovementResource);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    for(int i=0; i<100; i++){
+                        detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
+                        Thread.sleep(4000);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        return detectorRootResource;
     }
 
     public static void main(String[] args){

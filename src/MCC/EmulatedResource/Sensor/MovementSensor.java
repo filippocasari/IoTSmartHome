@@ -43,20 +43,6 @@ public class MovementSensor extends SmartObject<Boolean> {
                 LOG_DISPLAY_NAME,
                 moveResource.loadUpdatedValue());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    for(int i=0; i<100; i++){
-                        moveResource.setActive(!moveResource.loadUpdatedValue());
-                        Thread.sleep(1000);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
         moveResource.addDataListener(new DataListener<Boolean>() {
             @Override
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {

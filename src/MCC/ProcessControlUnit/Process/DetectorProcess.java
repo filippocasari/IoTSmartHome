@@ -26,6 +26,20 @@ public class DetectorProcess extends CoapServer {
         this.add(detectorEnergyResource);
         this.add(detectorMovementResource);
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    for(int i=0; i<100; i++){
+                        detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
+                        Thread.sleep(1000);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     public static void main(String[] args) {
