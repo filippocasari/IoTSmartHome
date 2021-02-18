@@ -148,21 +148,16 @@ public class SwitchResource extends CoapResource {
     public void handlePUT(CoapExchange exchange) {
 
         try{
-
             //If the request body is available
             if(exchange.getRequestPayload() != null){
-
                 boolean submittedValue = Boolean.parseBoolean(new String(exchange.getRequestPayload()));
-
                 logger.info("Submitted value: {}", submittedValue);
 
                 //Update internal status
                 this.isOn = submittedValue;
                 this.switchActuator.setActive(this.isOn);
 
-
                 logger.info("Resource Status Updated: {}", this.isOn);
-
                 exchange.respond(CoAP.ResponseCode.CHANGED);
             }
             else

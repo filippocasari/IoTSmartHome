@@ -17,11 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-/**
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-demo-smarthome
- * @created 11/11/2020 - 15:22
- */
 public class TemperatureResource extends CoapResource {
 
     private final static Logger logger = LoggerFactory.getLogger(TemperatureResource.class);
@@ -117,9 +112,30 @@ public class TemperatureResource extends CoapResource {
             else
                 exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
         }
-        //Otherwise respond with the default textplain payload
         else
             exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(updatedTemperatureValue), MediaTypeRegistry.TEXT_PLAIN);
 
+    }
+
+    @Override
+    public void handlePUT(CoapExchange exchange) {
+        try{
+            if(exchange.getRequestPayload() != null){
+                Double submittedValue = Double.parseDouble(new String(exchange.getRequestPayload()));
+                logger.info("Submitted value: {}", submittedValue);
+
+                this.updatedTemperatureValue = submittedValue;
+                this.temperatureRawSensor.updateValue(updatedTemperatureValue);
+
+                logger.info("Resource Status Updated: {}", this.updatedTemperatureValue);
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+
+            }else
+                exchange.respond(CoAP.ResponseCode.BAD_REQUEST);
+
+        }catch(Exception e){
+            logger.error("Error Handling PUT -> {}", e.getLocalizedMessage());
+            exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }

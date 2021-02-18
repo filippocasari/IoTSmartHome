@@ -14,6 +14,7 @@ public class TemperatureSensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(TemperatureSensor.class);
 
     /** TEMPERATURE RANGE VALUE & VARIATION **/
+    private static double TEMPERATURE_VALUE;
     private static double MIN_TEMPERATURE_VALUE;
     private static double MAX_TEMPERATURE_VALUE;
     private static final double MIN_TEMPERATURE_VARIATION = 0.1;
@@ -39,11 +40,13 @@ public class TemperatureSensor extends SmartObject<Double> {
     private void init(String type){
         try{
             if (type.contentEquals("fridge")){
-                MIN_TEMPERATURE_VALUE = 0;
-                MAX_TEMPERATURE_VALUE = 7;
+                TEMPERATURE_VALUE = 3;
+                MIN_TEMPERATURE_VALUE = TEMPERATURE_VALUE - 2;
+                MAX_TEMPERATURE_VALUE = TEMPERATURE_VALUE + 2;
             }else if (type.contentEquals("thermostat")){
-                MIN_TEMPERATURE_VALUE = 24;
-                MAX_TEMPERATURE_VALUE = 30;
+                TEMPERATURE_VALUE = 23;
+                MIN_TEMPERATURE_VALUE = TEMPERATURE_VALUE - 2;
+                MAX_TEMPERATURE_VALUE = TEMPERATURE_VALUE + 2;
             }
             this.random = new Random(System.currentTimeMillis());
             this.updatedValue = MIN_TEMPERATURE_VALUE + this.random.nextDouble()*(MAX_TEMPERATURE_VALUE - MIN_TEMPERATURE_VALUE);
@@ -71,6 +74,11 @@ public class TemperatureSensor extends SmartObject<Double> {
         }
     }
 
+    public void updateValue (Double updateVal){
+        TEMPERATURE_VALUE = updateVal;
+        notifyUpdate(updatedValue);
+    }
+
     @Override
     public Double loadUpdatedValue() {
         return this.updatedValue;
@@ -78,7 +86,7 @@ public class TemperatureSensor extends SmartObject<Double> {
 
     public static void main(String[] args) {
 
-        TemperatureSensor resource = new TemperatureSensor("thermostat");
+        TemperatureSensor resource = new TemperatureSensor("fridge");
         logger.info("New {} resource created!\t\t\t\tId: {}\t\t{} Starting Value: {}",
                 resource.getType(),
                 resource.getId(),
