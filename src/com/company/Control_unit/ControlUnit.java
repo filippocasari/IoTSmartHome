@@ -158,7 +158,4 @@ class ControlUnit {
 
         System.err.println("ECOMODE IS"+ecomode+": POST REQUESTS FOR EACH DEVICE");
     }
-
-
-
 }

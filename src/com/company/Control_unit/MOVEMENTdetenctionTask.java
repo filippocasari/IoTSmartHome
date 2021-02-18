@@ -11,10 +11,9 @@ import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
 public class MOVEMENTdetenctionTask implements Runnable {
-    public Double Consuption = 0.0;
+
     public static String URLmovement;
 
-    int count = 0;
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public MOVEMENTdetenctionTask(String URLmovement) {
@@ -22,7 +21,6 @@ public class MOVEMENTdetenctionTask implements Runnable {
         this.URLmovement = URLmovement;
 
     }
-
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLmovement);
@@ -37,7 +35,7 @@ public class MOVEMENTdetenctionTask implements Runnable {
 
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
-                System.err.println("MOVEMENT DETENCTION: "+content);
+                System.err.println("MOVEMENT DETENCTION: " + content);
                 if (content.equals("false")) {
                     ControlUnit.settingEcomode(Boolean.getBoolean(content));
                 }
@@ -45,7 +43,7 @@ public class MOVEMENTdetenctionTask implements Runnable {
             }
 
             public void onError() {
-                System.err.println("OBSERVING WASHER FAILED");
+                System.err.println("OBSERVING MOVEMENT FAILED");
                 //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
