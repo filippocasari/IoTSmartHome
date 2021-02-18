@@ -59,7 +59,7 @@ public class HEATINGConsumptionTask implements Runnable {
 
                 };
 
-                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
+                if (ControlUnit.checkConsumption(InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 

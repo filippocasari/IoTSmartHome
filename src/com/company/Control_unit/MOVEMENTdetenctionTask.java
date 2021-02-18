@@ -37,7 +37,18 @@ public class MOVEMENTdetenctionTask implements Runnable {
                 String content = response.getResponseText();
                 System.err.println("MOVEMENT DETENCTION: " + content);
                 if (content.equals("false")) {
-                    ControlUnit.settingEcomode(Boolean.getBoolean(content));
+                    System.err.println("Setting ecomode...");
+                    try {
+                        ControlUnit.settingEcomode(true);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    try {
+                        ControlUnit.disablingEcomode();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }

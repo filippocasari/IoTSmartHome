@@ -22,7 +22,7 @@ public class POSTClient {
 
         Request request = new Request(CoAP.Code.POST);
 
-        request.setConfirmable(true);
+        request.setConfirmable(false);
 
         logger.info("Request Pretty Print to "+URLendpoint+":\n{}", Utils.prettyPrint(request));
 

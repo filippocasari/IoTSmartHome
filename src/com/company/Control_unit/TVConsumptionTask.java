@@ -47,9 +47,10 @@ public class TVConsumptionTask implements Runnable {
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 
-                    // (getClient.isOn(getClient.getResponseString())){
+                    //if (getClient.isOn(getClient.getResponseString())){
                     ControlUnit.Notificationconsumption("TV system");
                     System.err.println("POST REQUEST TO TV SWITCH...");
+
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
@@ -59,7 +60,7 @@ public class TVConsumptionTask implements Runnable {
 
                 };
 
-                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
+                if (ControlUnit.checkConsumption(InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 

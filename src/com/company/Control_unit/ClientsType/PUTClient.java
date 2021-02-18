@@ -26,7 +26,7 @@ public class PUTClient {
         logger.info("PUT Request Random Payload: {}", payload);
         request.setPayload(payload);
 
-        request.setConfirmable(true);
+        request.setConfirmable(false);
 
         logger.info("Request Pretty Print:" +URL+"\n{}", Utils.prettyPrint(request));
 

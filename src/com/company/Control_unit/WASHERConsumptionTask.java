@@ -49,6 +49,7 @@ public class WASHERConsumptionTask implements Runnable {
                     //if (getClient.isOn(getClient.getResponseString())) {
                     ControlUnit.Notificationconsumption("Washer");
                     System.err.println("POST REQUEST TO Washer SWITCH");
+
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
@@ -58,7 +59,7 @@ public class WASHERConsumptionTask implements Runnable {
 
                 };
 
-                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
+                if (ControlUnit.checkConsumption( InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 
