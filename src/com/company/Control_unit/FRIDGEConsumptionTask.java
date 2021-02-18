@@ -15,9 +15,9 @@ public class FRIDGEConsumptionTask implements Runnable {
 
     private final static Logger logger = LoggerFactory.getLogger(FRIDGEConsumptionTask.class);
 
-    public FRIDGEConsumptionTask(String URLenergy) {
+    public FRIDGEConsumptionTask(String URL) {
 
-        this.URLenergy = URLenergy;
+        URLenergy = URL;
 
 
     }
@@ -25,7 +25,7 @@ public class FRIDGEConsumptionTask implements Runnable {
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
-        logger.info("OBSERVING FRIDGE system...  @ " + URLenergy);
+        System.out.println("OBSERVING FRIDGE system...  @ " + URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
