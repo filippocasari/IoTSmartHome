@@ -19,12 +19,13 @@ public class FRIDGEConsumptionTask implements Runnable {
 
         this.URLenergy = URLenergy;
 
+
     }
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
 
-        System.out.println("OBSERVING FRIDGE system...  @ " + URLenergy);
+        logger.info("OBSERVING FRIDGE system...  @ " + URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
@@ -37,9 +38,9 @@ public class FRIDGEConsumptionTask implements Runnable {
                 double InstantConsumption = Double.parseDouble(content);
 
                 Consuption += InstantConsumption;
-                /*if (InstantConsumption > 2.0) {
+                if (InstantConsumption > 2.0) {
                     ControlUnit.Notificationconsumption("FRIDGE system");
-                }*/
+                }
 
                 System.out.println("Total Consumption Fridge : " + Consuption+" W");
                 System.out.println("Instant Consumption Fridge: " + content+" W");
