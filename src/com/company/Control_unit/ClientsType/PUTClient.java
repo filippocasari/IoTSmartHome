@@ -28,7 +28,7 @@ public class PUTClient {
 
         request.setConfirmable(true);
 
-        logger.info("Request Pretty Print: \n{}", Utils.prettyPrint(request));
+        logger.info("Request Pretty Print:" +URL+"\n{}", Utils.prettyPrint(request));
 
         //Synchronously send the POST request (blocking call)
         CoapResponse coapResp = null;
@@ -44,6 +44,7 @@ public class PUTClient {
             logger.info("Payload: {}", text);
             logger.info("Message ID: " + coapResp.advanced().getMID());
             logger.info("Token: " + coapResp.advanced().getTokenString());
+            logger.info("FROM: "+URL);
 
         } catch (ConnectorException | IOException e) {
             e.printStackTrace();

@@ -24,7 +24,7 @@ public class POSTClient {
 
         request.setConfirmable(true);
 
-        logger.info("Request Pretty Print:\n{}", Utils.prettyPrint(request));
+        logger.info("Request Pretty Print to "+URLendpoint+":\n{}", Utils.prettyPrint(request));
 
 
         CoapResponse coapResp = null;
@@ -42,6 +42,7 @@ public class POSTClient {
             logger.info("Payload: {}", text);
             logger.info("Message ID: " + coapResp.advanced().getMID());
             logger.info("Token: " + coapResp.advanced().getTokenString());
+            logger.info("FROM: "+URLendpoint);
 
         } catch (ConnectorException | IOException e) {
             e.printStackTrace();

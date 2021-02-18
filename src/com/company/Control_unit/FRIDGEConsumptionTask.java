@@ -42,8 +42,8 @@ public class FRIDGEConsumptionTask implements Runnable {
                     ControlUnit.Notificationconsumption("FRIDGE system");
                 }
 
-                System.out.println("Total Consumption Fridge : " + Consuption+" kW");
-                System.out.println("Instant Consumption Fridge: " + content+" kW");
+                System.out.println("Total Consumption Fridge : " + Consuption+" W");
+                System.out.println("Instant Consumption Fridge: " + content+" W");
 
             }
 

@@ -15,17 +15,17 @@ class ControlUnit {
         return EcoMode;
     }
 
-    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
-    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
-    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/TV/switch";
-    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/TV/energy";
-    private static final String COAP_ENDPOINT_ENERGY_WASHER= "coap://127.0.0.1:5683/washer/energy";
-    private static final String COAP_ENDPOINT_SWITCH_WASHER= "coap://127.0.0.1:5683/washer/switch";
-    private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
+    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://192.168.1.4:5683/lights/energy";
+    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://192.168.1.4:5683/lights/switch";
+    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://192.168.1.4:5683/TV/switch";
+    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://192.168.1.4:5683/TV/energy";
+    private static final String COAP_ENDPOINT_ENERGY_WASHER = "coap://192.168.1.4:5683/washer/energy";
+    private static final String COAP_ENDPOINT_SWITCH_WASHER = "coap://192.168.1.4:5683/washer/switch";
+    private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://192.168.1.4:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
-    private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
-    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
-    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/detector/movement";
+    private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://192.168.1.4:5683/heating-system/switch";
+    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://192.168.1.4:5683/fridge/energy";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://192.168.1.4:5683/detector/movement";
     private boolean EcoMode = false;
     private String Datedetails = null;
 
@@ -37,9 +37,9 @@ class ControlUnit {
         LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
         //HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
         WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
-        MOVEMENTdetenctionTask movemenTdetenctionTask =new MOVEMENTdetenctionTask(COAP_ENDPOINT_MOVEMENT_SENSOR);
+        MOVEMENTdetenctionTask movemenTdetenctionTask = new MOVEMENTdetenctionTask(COAP_ENDPOINT_MOVEMENT_SENSOR);
 
-        simTime.setSpeed(1000);
+        simTime.setSpeed(20);
         simTime.start();
 
 
@@ -47,9 +47,6 @@ class ControlUnit {
             String day = simTime.getDay().toString();
 
             while (true) {
-
-                Datedetails = createStringDate(simTime);
-                System.out.println(Datedetails);
 
                 if (!day.equals(simTime.getDay().toString())) {
                     printTotalConsumptionfromAll(day, lightsConsumptionTask, fridgeConsumptionTask, tvConsuptionTask);
@@ -60,13 +57,27 @@ class ControlUnit {
                 }
                 day = simTime.getDay().toString();
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
             }
         };
+        Runnable printTimeStampTask = () -> {
+            while (true) {
+                Datedetails = createStringDate(simTime);
+                System.out.println(Datedetails);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        };
+        Thread printTimeStamp = new Thread(printTimeStampTask);
+        printTimeStamp.start();
 
 
         //create new Task for Energy Consumption
@@ -91,10 +102,10 @@ class ControlUnit {
 
     private void printTotalConsumptionfromAll(String day, LIGHTSConsumptionTask lights, FRIDGEConsumptionTask fridge, TVConsumptionTask tv) {
         System.out.println("Daily consumption for the day : " + day + " is : ");
-        System.out.println("for fridge: " + fridge.Consuption+" kW");
-        System.out.println("for tv: " + tv.Consuption+ " kW");
-        System.out.println("for lights: " + lights.Consuption+" kW");
-        TotalCostEuros(lights.Consuption+tv.Consuption+fridge.Consuption);
+        System.out.println("for fridge: " + fridge.Consuption + " W");
+        System.out.println("for tv: " + tv.Consuption + " kW");
+        System.out.println("for lights: " + lights.Consuption + " W");
+        TotalCostEuros(lights.Consuption + tv.Consuption + fridge.Consuption);
         lights.Consuption = 0.0;
         fridge.Consuption = 0.0;
         tv.Consuption = 0.0;
@@ -127,7 +138,7 @@ class ControlUnit {
 
     public boolean checkEcoMode(SimTime simTime) {
         EcoMode = simTime.getDay().toString().equals("Sunday")
-                || ((simTime.getHour() > 0 || simTime.getHour() < 5));
+                || ((simTime.getHour() > 0 && simTime.getHour() < 5));
         logger.info("Eco Mode: " + EcoMode);
 
         settingEcomode(EcoMode);
@@ -139,27 +150,31 @@ class ControlUnit {
     public static void Notificationconsumption(String fromWho) {
         logger.info("Too hight Consumption from " + fromWho + ": switch must be set off");
     }
+
     public static int turnOnSwitchCondition(double instantConsumption, String URLforPost, int count) {
         if (instantConsumption == 0.0) {
             count++;
         }
         if (count == 5) { //se ho piu' volte il fatto che sta consumando 0 kW, accendo lo switch
-            count=0;
+            count = 0;
             new Thread(() -> new POSTClient(URLforPost)).start();
         }
         return count;
     }
-    public static void settingEcomode(boolean ecomode){
+
+    public static void settingEcomode(boolean ecomode) {
+
+        if (ecomode) {
+            new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(!ecomode))).start();
+            new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(!ecomode))).start();
+            new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(!ecomode))).start();
+            System.err.println("ECOMODE IS " + ecomode + ": PUT REQUESTS FOR EACH DEVICE");
+        }
 
 
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(!ecomode))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(!ecomode))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,String.valueOf(!ecomode))).start();
-
-
-        System.err.println("ECOMODE IS "+ecomode+": POST REQUESTS FOR EACH DEVICE");
     }
-    private void TotalCostEuros(Double TotalConsumption){
-        System.out.println("Cost of the day is: "+TotalConsumption*0.06256+" euros");
+
+    private void TotalCostEuros(Double TotalConsumption) {
+        System.out.println("Cost of the day is: " + (TotalConsumption * 0.06256) / 1000 + " euros");
     }
 }
