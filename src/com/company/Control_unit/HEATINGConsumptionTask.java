@@ -15,6 +15,7 @@ public class HEATINGConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
+   // public int count=0;
     private final static Logger logger = LoggerFactory.getLogger(HEATINGConsumptionTask.class);
 
     public HEATINGConsumptionTask(String URLenergy, String URLswitch) {

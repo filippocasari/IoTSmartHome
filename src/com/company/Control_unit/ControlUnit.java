@@ -21,6 +21,8 @@ class ControlUnit {
     public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
     private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/TV/switch";
     public static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/TV/energy";
+    private static final String COAP_ENDPOINT_ENERGY_WASHER= "coap://127.0.0.1:5683/washer/energy";
+    private static final String COAP_ENDPOINT_SWITCH_WASHER= "coap://127.0.0.1:5683/washer/switch";
     private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
@@ -36,8 +38,8 @@ class ControlUnit {
         FRIDGEConsumptionTask fridgeConsumptionTask = new FRIDGEConsumptionTask(COAP_ENDPOINT_ENERGY_FRIDGE);
         LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
         HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
-
-        simTime.setSpeed(1000);
+        WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
+        simTime.setSpeed(4000);
         simTime.start();
 
 
@@ -71,12 +73,14 @@ class ControlUnit {
         Thread t1 = new Thread(fridgeConsumptionTask);
         Thread t2 = new Thread(lightsConsumptionTask);
         Thread t3 = new Thread(tvConsuptionTask);
-        //Thread t4 = new Thread(heatingConsumptionTask);
+        Thread t4 = new Thread(washerConsumptionTask);
+        //Thread t5 = new Thread(heatingConsumptionTask);
         //start thread for observable resource energy
         t1.start();
         t2.start();
         t3.start();
-        //t4.start();
+        t4.start();
+        //t5.start();
         //start periodic task to check ecomode
         periodicTask.start();
 
@@ -128,14 +132,15 @@ class ControlUnit {
     public static void Notificationconsumption(String fromWho) {
         logger.info("Too hight Consumption from " + fromWho + ": switch must be set off");
     }
-    public static void turnOnSwitchCondition(double instantConsumption, String URLforPost, int count) {
+    public static int turnOnSwitchCondition(double instantConsumption, String URLforPost, int count) {
         if (instantConsumption == 0.0) {
             count++;
         }
         if (count == 5) { //se ho piu' volte il fatto che sta consumando 0 kW, accendo lo switch
-            count = 0;
+            count=0;
             new Thread(() -> new POSTClient(URLforPost)).start();
         }
+        return count;
     }
 
 

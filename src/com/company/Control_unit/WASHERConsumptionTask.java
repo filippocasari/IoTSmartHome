@@ -9,14 +9,14 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
-public class TVConsumptionTask implements Runnable {
+public class WASHERConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    public int count=0;
-    //private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
+    int count = 0;
+    //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
-    public TVConsumptionTask(String URLenergy, String URLswitch) {
+    public WASHERConsumptionTask(String URLenergy, String URLswitch) {
 
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
@@ -26,9 +26,9 @@ public class TVConsumptionTask implements Runnable {
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
+        System.out.println("OBSERVING LIGHTS... @ " + URLenergy);
+        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
-        //logger.info("OBSERVING TV... {}", URLenergy);
-        System.out.println("OBSERVING TV... @ "+URLenergy);
         Request request = Request.newGet().setURI(URLenergy).setObserve();
         request.setConfirmable(true);
 
@@ -38,41 +38,37 @@ public class TVConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-
+                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption tv : " + Consuption+" kW");
-                System.out.println("Instant Consumption tv: " + content+" kW");
-                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count);
+                System.out.println("Total Consumption Washer : " + Consuption+" kW");
+                System.out.println("Instant Consumption Washer : " + content+" kW");
                 Runnable runnable = () -> {
                     GETClient getClient = new GETClient(URLswitch);
 
-                    if (getClient.isOn(getClient.getResponseString())){
-                        ControlUnit.Notificationconsumption("TV system");
-                        System.err.println("POST REQUEST TO TV SWITCH...");
+                    if (getClient.isOn(getClient.getResponseString())) {
+                        ControlUnit.Notificationconsumption("Washer");
+                        System.err.println("POST REQUEST TO Washer SWITCH");
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
                     } else {
-                        System.err.println("Switch of Tv just off");
+                        System.err.println("Switch's washer just off");
                         //logger.info("Switch just off");
                     }
 
                 };
 
-                if(ControlUnit.checkConsumption(Consuption, InstantConsumption) ){
+                if (ControlUnit.checkConsumption(Consuption, InstantConsumption)) {
                     Thread t = new Thread(runnable);
                     t.start();
 
                 }
 
-
-
             }
 
-
             public void onError() {
-                System.err.println("OBSERVING TV FAILED");
-                //logger.error("OBSERVING TV FAILED");
+                System.err.println("OBSERVING WASHER FAILED");
+                //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
         try {
@@ -87,11 +83,10 @@ public class TVConsumptionTask implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("CANCELLATION.....");
+        System.err.println("CANCELLATION...");
         //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
     }
-
 
 
     @Override
