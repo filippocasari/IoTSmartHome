@@ -32,7 +32,7 @@ public class TemperatureResource extends CoapResource {
 
     private ObjectMapper objectMapper;
 
-    private Double updatedTemperatureValue = 0.0;
+    private Double updatedTemperatureValue;
 
     private String deviceId;
 

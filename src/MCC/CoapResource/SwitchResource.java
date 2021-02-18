@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class SwitchResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(EnergyResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(SwitchResource.class);
 
     private static final String OBJECT_TITLE = "SwitchActuator";
 

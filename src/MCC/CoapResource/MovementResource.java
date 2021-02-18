@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 public class MovementResource extends CoapResource {
-    private final static Logger logger = LoggerFactory.getLogger(EnergyResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(MovementResource.class);
 
     private static final String OBJECT_TITLE = "MovementSensor";
 
