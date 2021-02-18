@@ -7,9 +7,6 @@ import com.company.Control_unit.UtilsTime.SimTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.util.ResourceBundle;
-
 class ControlUnit {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
@@ -130,9 +127,8 @@ class ControlUnit {
         EcoMode = simTime.getDay().toString().equals("Sunday")
                 || ((simTime.getHour() > 23 || simTime.getHour() < 5));
         logger.info("Eco Mode: " + EcoMode);
-        if(EcoMode){
-            settingEcomodeOn();
-        }
+        settingEcomode(EcoMode);
+
         return EcoMode;
 
     }
@@ -150,12 +146,14 @@ class ControlUnit {
         }
         return count;
     }
-    public static void settingEcomodeOn(){
+    public static void settingEcomode(boolean ecomode){
 
-        String request="false";
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, request)).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, request)).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,request)).start();
+
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(ecomode))).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(ecomode))).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER,String.valueOf(ecomode))).start();
+
+
         System.err.println("ECOMODE ON: POST REQUESTS FOR EACH DEVICE");
     }
 
