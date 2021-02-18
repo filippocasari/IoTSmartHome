@@ -1,7 +1,7 @@
 package com.company.Control_unit;
 
 
-import com.company.Control_unit.ClientsType.GETClient;
+//import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
@@ -9,14 +9,14 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
-public class WASHERConsumptionTask implements Runnable {
+public class THERMOSTATConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
     int count = 0;
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
-    public WASHERConsumptionTask(String URLenergy, String URLswitch) {
+    public THERMOSTATConsumptionTask(String URLenergy, String URLswitch) {
 
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
@@ -26,7 +26,7 @@ public class WASHERConsumptionTask implements Runnable {
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
-        System.out.println("OBSERVING WASHER... @ " + URLenergy);
+        System.out.println("OBSERVING THERMOSTAT... @ " + URLenergy);
         //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
@@ -38,17 +38,17 @@ public class WASHERConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
+                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption Washer : " + Consuption + " kW");
-                System.out.println("Instant Consumption Washer : " + content + " kW");
+                System.out.println("Total Consumption THERMOSTAT : " + Consuption+" kW");
+                System.out.println("Instant Consumption THERMOSTAT : " + content+" kW");
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 
                     //if (getClient.isOn(getClient.getResponseString())) {
-                    ControlUnit.Notificationconsumption("Washer");
-                    System.err.println("POST REQUEST TO Washer SWITCH");
+                    ControlUnit.Notificationconsumption("THERMOSTAT");
+                    System.err.println("POST REQUEST TO THERMOSTAT SWITCH");
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
@@ -67,7 +67,7 @@ public class WASHERConsumptionTask implements Runnable {
             }
 
             public void onError() {
-                System.err.println("OBSERVING WASHER FAILED");
+                System.err.println("OBSERVING THERMOSTAT FAILED");
                 //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
@@ -94,4 +94,5 @@ public class WASHERConsumptionTask implements Runnable {
         createGetRequestObserving();
     }
 }
+
 

@@ -11,12 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-class PUTClientProcess {
+public class PUTClient {
 
-    private final static Logger logger = LoggerFactory.getLogger(PUTClientProcess.class);
+    private final static Logger logger = LoggerFactory.getLogger(PUTClient.class);
     private static String COAP_ENDPOINT = null;
-    public PUTClientProcess(String URL, String payload) {
-        COAP_ENDPOINT=URL;
+
+    public PUTClient(String URL, String payload) {
+        COAP_ENDPOINT = URL;
         CoapClient coapClient = new CoapClient(COAP_ENDPOINT);
 
         Request request = new Request(CoAP.Code.PUT);
