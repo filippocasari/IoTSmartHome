@@ -1,7 +1,7 @@
 package com.company.Control_unit;
 
 
-import com.company.Control_unit.ClientsType.GETClient;
+//import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
