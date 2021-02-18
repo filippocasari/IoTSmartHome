@@ -118,6 +118,7 @@ public class SimTime extends Observable implements Runnable {
         day = newDay;
         setChanged();
         notifyObservers();
+
     }
 
     /**
@@ -166,6 +167,7 @@ public class SimTime extends Observable implements Runnable {
         minute = newMinute;
         setChanged();
         notifyObservers();
+
     }
 
     /**

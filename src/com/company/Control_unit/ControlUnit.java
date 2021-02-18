@@ -47,6 +47,7 @@ class ControlUnit {
 
             while (true) {
                 //control if day is different
+
                 if (!day.equals(simTime.getDay().toString())) {
                     printTotalConsumptionfromAll(day, lightsConsumptionTask, fridgeConsumptionTask, tvConsuptionTask); //print total consumption
                 }
