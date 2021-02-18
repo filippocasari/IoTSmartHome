@@ -94,6 +94,7 @@ class ControlUnit {
         System.out.println("for fridge: " + fridge.Consuption+" kW");
         System.out.println("for tv: " + tv.Consuption+ " kW");
         System.out.println("for lights: " + lights.Consuption+" kW");
+        TotalCostEuros(lights.Consuption+tv.Consuption+fridge.Consuption);
         lights.Consuption = 0.0;
         fridge.Consuption = 0.0;
         tv.Consuption = 0.0;
@@ -157,5 +158,8 @@ class ControlUnit {
 
 
         System.err.println("ECOMODE IS"+ecomode+": POST REQUESTS FOR EACH DEVICE");
+    }
+    private void TotalCostEuros(Double TotalConsumption){
+        System.out.println("Cost of the day is: "+TotalConsumption*0.06256+" euros");
     }
 }
