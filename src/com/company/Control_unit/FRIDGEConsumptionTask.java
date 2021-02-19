@@ -38,9 +38,6 @@ public class FRIDGEConsumptionTask implements Runnable {
                 double InstantConsumption = Double.parseDouble(content);
 
                 Consuption += InstantConsumption;
-                if (InstantConsumption > 2.0) {
-                    ControlUnit.Notificationconsumption("FRIDGE system");
-                }
 
                 System.out.println("Total Consumption Fridge : " + Consuption+" W");
                 System.out.println("Instant Consumption Fridge: " + content+" W");

@@ -58,11 +58,7 @@ public class THERMOSTATConsumptionTask implements Runnable {
 
                 };
 
-                if (ControlUnit.checkConsumption(InstantConsumption)) {
-                    Thread t = new Thread(runnable);
-                    t.start();
 
-                }
 
             }
 
