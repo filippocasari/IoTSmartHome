@@ -28,7 +28,7 @@ public class ThermostatProcess extends CoapServer {
     private CoapResource createThermostatResource (String deviceID){
         CoapResource thermostatRootResource = new CoapResource("thermostat");
 
-        EnergySensor thEnergySensor = new EnergySensor();
+        EnergySensor thEnergySensor = new EnergySensor("thermostat");
         SwitchActuator thSwitchActuator = new SwitchActuator();
         TemperatureSensor thTemperatureSensor = new TemperatureSensor(thermostatRootResource.getName());
 

@@ -17,7 +17,7 @@ public class FridgeProcess extends CoapServer {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
 
-        EnergySensor fridgeEnergySensor = new EnergySensor();
+        EnergySensor fridgeEnergySensor = new EnergySensor("fridge");
         TemperatureSensor fridgeTemperatureSensor = new TemperatureSensor("fridge");
 
         EnergyResource fridgeEnergyResource = new EnergyResource(deviceId, "energy", fridgeEnergySensor);

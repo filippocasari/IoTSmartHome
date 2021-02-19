@@ -14,8 +14,9 @@ public class EnergySensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(EnergySensor.class);
 
     /** ENERGY RANGE VALUE & VARIATION **/
-    private static final double MIN_ENERGY_VALUE = 1.0; //kWh - kilowatt-hour
-    private static final double MAX_ENERGY_VALUE = 3.0;
+    private static double ENERGY_VALUE;
+    private static double MIN_ENERGY_VALUE; //Wh - Watt-hour
+    private static double MAX_ENERGY_VALUE;
     private static final double MIN_ENERGY_VARIATION = 0.1;
     private static final double MAX_ENERGY_VARIATION = 0.5;
 
@@ -32,13 +33,35 @@ public class EnergySensor extends SmartObject<Double> {
     private Timer updateTimer = null;
     private boolean isActive = true;
 
-    public EnergySensor() {
+    public EnergySensor(String device) {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
-        init();
+        init(device);
     }
 
-    private void init(){
+    private void init(String type){
         try{
+            if(type.contentEquals("lights")){
+                ENERGY_VALUE = 10;
+                MIN_ENERGY_VALUE = ENERGY_VALUE - 2;
+                MAX_ENERGY_VALUE = ENERGY_VALUE + 2;
+
+            }else if (type.contentEquals("TV")){
+                ENERGY_VALUE = 55;
+                MIN_ENERGY_VALUE = ENERGY_VALUE - 3;
+                MAX_ENERGY_VALUE = ENERGY_VALUE + 3;
+
+            }else if (type.contentEquals("fridge")){
+                ENERGY_VALUE = 140;
+                MIN_ENERGY_VALUE = ENERGY_VALUE - 5;
+                MAX_ENERGY_VALUE = ENERGY_VALUE + 5;
+
+            }else if(type.contentEquals("washer")){
+                ENERGY_VALUE = 95;
+                MIN_ENERGY_VALUE = ENERGY_VALUE - 3;
+                MAX_ENERGY_VALUE = ENERGY_VALUE + 3;
+
+            }
+
             this.random = new Random(System.currentTimeMillis());
             this.updatedValue = MIN_ENERGY_VALUE + this.random.nextDouble()*(MAX_ENERGY_VALUE - MIN_ENERGY_VALUE);
             startPeriodicEventValueUpdateTask();
@@ -55,7 +78,7 @@ public class EnergySensor extends SmartObject<Double> {
                 @Override
                 public void run() {
                     if(isActive){
-                        double variation = (MIN_ENERGY_VARIATION + MAX_ENERGY_VARIATION *random.nextDouble()) * (random.nextDouble() > 0.5 ? 1.0 : -1.0);
+                        double variation = (MIN_ENERGY_VARIATION + MAX_ENERGY_VARIATION * random.nextDouble()) * (random.nextDouble() > 0.5 ? 1.0 : -1.0);
                         updatedValue = updatedValue + variation;
                     }
                     else { updatedValue = 0.0; }
@@ -84,8 +107,8 @@ public class EnergySensor extends SmartObject<Double> {
 
     public static void main(String[] args) {
 
-        EnergySensor rawResource = new EnergySensor();
-        rawResource.setActive(false);
+        EnergySensor rawResource = new EnergySensor("lights");
+        rawResource.setActive(true);
         logger.info("New {} resource created!\t\t\t\tId: {}\t\t{} Starting Value: {}",
                 rawResource.getType(),
                 rawResource.getId(),
@@ -95,7 +118,6 @@ public class EnergySensor extends SmartObject<Double> {
         rawResource.addDataListener(new DataListener<Double>() {
             @Override
             public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-
                 if(resource != null && updatedValue != null)
                     logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
                 else
