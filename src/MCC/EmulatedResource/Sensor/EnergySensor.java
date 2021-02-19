@@ -28,7 +28,7 @@ public class EnergySensor extends SmartObject<Double> {
     private static final String RESOURCE_TYPE = "sensor.energy";
     private static final String LOG_DISPLAY_NAME = "EnergySensor";
 
-    private Double updatedValue;
+    public Double updatedValue;
     private Random random;
     private Timer updateTimer = null;
     private boolean isActive = true;
@@ -74,7 +74,7 @@ public class EnergySensor extends SmartObject<Double> {
         }
     }
 
-    private void startPeriodicEventValueUpdateTask(){
+    public void startPeriodicEventValueUpdateTask(){
         try{
             logger.info("Starting periodic Update Task with Period: {} ms", UPDATE_PERIOD);
             this.updateTimer = new Timer();
