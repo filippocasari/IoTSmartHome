@@ -157,10 +157,10 @@ public class PCU extends CoapServer {
         EnergyResource washerEnergyResource = new EnergyResource(deviceId, "energy", washerEnergySensor);
         SwitchResource washerSwitchResource = new SwitchResource(deviceId, "switch", washerSwitchActuator);
 
-        if(!washerSwitchActuator.getActive()){
-            washerEnergyResource.setUpdatedEnergyValue(0.0);
+        if(!washerSwitchResource.getOn()){
+            washerEnergySensor.setActive(false);
         }else{
-            washerEnergyResource.setUpdatedEnergyValue(95.0);
+            washerEnergySensor.setActive(true);
         }
 
         washerRootResource.add(washerEnergyResource);
@@ -172,16 +172,6 @@ public class PCU extends CoapServer {
                 logger.info("[WASHER-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[WASHER-BEHAVIOUR] -> Updating energy sensor configuration ...");
                 washerEnergySensor.setActive(updatedValue);
-            }
-        });
-
-        washerEnergySensor.addDataListener(new DataListener<Double>() {
-            @Override
-            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-                if(resource != null && updatedValue != null)
-                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
-                else
-                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
             }
         });
 

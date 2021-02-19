@@ -61,7 +61,6 @@ public class EnergySensor extends SmartObject<Double> {
                 MAX_ENERGY_VALUE = ENERGY_VALUE + 3;
 
             }
-
             this.random = new Random(System.currentTimeMillis());
             this.updatedValue = MIN_ENERGY_VALUE + this.random.nextDouble()*(MAX_ENERGY_VALUE - MIN_ENERGY_VALUE);
             startPeriodicEventValueUpdateTask();
