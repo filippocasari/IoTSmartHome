@@ -13,6 +13,7 @@ public class FRIDGEConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
 
+
     private final static Logger logger = LoggerFactory.getLogger(FRIDGEConsumptionTask.class);
 
     public FRIDGEConsumptionTask(String URL) {

@@ -35,11 +35,11 @@ public class MOVEMENTdetenctionTask implements Runnable {
 
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
-                System.err.println("MOVEMENT DETENCTION: " + content);
+                new Thread(()->System.err.println("MOVEMENT DETENCTION: " + content)).start();
                 if (content.equals("false")) {
                     System.err.println("Setting ecomode...");
                     try {
-                        ControlUnit.settingEcomode(true);
+                        ControlUnit.settingEcomodeON(true);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

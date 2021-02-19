@@ -20,9 +20,9 @@ class ControlUnit {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
-    private static final Double MAX_VALUE_WASHER = 1.0;
-    private static final Double MAX_VALUE_LIGHTS = 1.5;
-    private static final Double MAX_VALUE_TV = 3.0;
+    private static final Double MAX_VALUE_WASHER = 97.5;
+    private static final Double MAX_VALUE_LIGHTS = 4.75;
+    private static final Double MAX_VALUE_TV = 57.5;
 
 
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://192.168.1.4:5683/lights/energy";
@@ -68,7 +68,7 @@ class ControlUnit {
                     if (!isEcoMode()) { //if ecomode is off
                         EcoMode = checkEcoMode(simTime); //check if is time to turn on ecomode
                         if (EcoMode) { // if Ecomode is true, put request to turn all switches off
-                            settingEcomode(EcoMode);
+                            settingEcomodeON(EcoMode);
                         }
                         System.out.println("Periodic Consumption Control...");
                     }
@@ -103,18 +103,18 @@ class ControlUnit {
 
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
-        t1.setPriority(Thread.NORM_PRIORITY);
+        t1.setPriority(6);
         Thread t2 = new Thread(lightsConsumptionTask);
-        t2.setPriority(Thread.NORM_PRIORITY);
+        t2.setPriority(6);
         Thread t3 = new Thread(tvConsuptionTask);
-        t3.setPriority(Thread.NORM_PRIORITY);
+        t3.setPriority(6);
         Thread t4 = new Thread(washerConsumptionTask);
-        t4.setPriority(Thread.NORM_PRIORITY);
+        t4.setPriority(6);
         Thread t5 = new Thread(movemenTdetenctionTask);
-        t5.setPriority(Thread.MAX_PRIORITY);
+        t5.setPriority(8);
         //start periodic task to check ecomode
         Thread periodicTask = new Thread(PeriodicTask);
-        periodicTask.setPriority(Thread.MIN_PRIORITY);
+        periodicTask.setPriority(3);
 
         //Thread t5 = new Thread(heatingConsumptionTask);
 
@@ -204,19 +204,19 @@ class ControlUnit {
             count++;
         }
         if (count == 5) { //se ho piu' volte il fatto che sta consumando 0 kW, accendo lo switch
-            System.err.println("5 value '0.0 W' catch from " + URLforPost + " , now POST request to turn the switch on **SIMULATION");
+            new Thread(()->System.err.println("5 value '0.0 W' catch from " +
+                    URLforPost + " , now POST request to turn the switch on **SIMULATION")).start();
             count = 0;
 
-            new Thread(() -> new POSTClient(URLforPost)).start();
+            new Thread(()->new POSTClient(URLforPost)).start();
         }
         return count;
     }
 
-    public static void settingEcomode(boolean ecomode) throws InterruptedException {
+    public static void settingEcomodeON(boolean ecomode) throws InterruptedException {
 
         if (ecomode) {
             System.err.println("ECOMODE IS " + ecomode + ": PUT REQUESTS FOR EACH DEVICE");
-            Thread.sleep(300);
             new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(false))).start();
             new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(false))).start();
             new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(false))).start();
@@ -227,8 +227,7 @@ class ControlUnit {
     }
 
     public static void disablingEcomode() throws InterruptedException {
-        System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
-        Thread.sleep(300);
+        new Thread(()->System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE")).start();
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(true))).start();
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(true))).start();
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(true))).start();

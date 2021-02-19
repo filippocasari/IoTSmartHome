@@ -14,11 +14,17 @@ import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.UUID;
 
+import java.util.Random;
+import java.util.Random.*;
+import java.util.UUID;
+import java.math.*;
 
 public class PCU extends CoapServer {
     private final static Logger logger = LoggerFactory.getLogger(PCU.class);
+    private Random randomLights;
+    private Random randomWasher = new Random();
+    private Random randomTV;
 
     public PCU (){
         super();
@@ -58,13 +64,17 @@ public class PCU extends CoapServer {
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
                 logger.info("[LIGHTS-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[LIGHTS-BEHAVIOUR] -> Updating energy sensor configuration ...");
-                if(!lightsSwitchActuator.getActive()){
-                    lightsEnergySensor.setActive(updatedValue);
-                    lightsEnergyResource.setConsumptionNull();
-                }else{
-                    lightsEnergySensor.setActive(updatedValue);
-                    lightsEnergySensor.setUpdatedValue(10.0);
-                }
+                lightsEnergySensor.setActive(updatedValue);
+            }
+        });
+
+        lightsEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
             }
         });
 
@@ -83,6 +93,16 @@ public class PCU extends CoapServer {
         fridgeRootResource.add(fridgeEnergyResource);
         fridgeRootResource.add(fridgeTemperatureResource);
 
+        fridgeEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
+            }
+        });
+
         return fridgeRootResource;
     }
 
@@ -95,6 +115,14 @@ public class PCU extends CoapServer {
         EnergyResource tvEnergyResource = new EnergyResource(deviceId, "energy", tvEnergySensor);
         SwitchResource tvSwitchResource = new SwitchResource(deviceId, "switch", tvSwitchActuator);
 
+        if(!tvSwitchResource.getOn()){
+            tvEnergyResource.setUpdatedEnergyValue(0.0);
+        }else{
+            tvEnergySensor.setActive(true);
+            //random = (Math.random() * ((55 - 50) + 1)) + 50;
+            //tvEnergyResource.setUpdatedEnergyValue(random);
+        }
+
         tvRootResource.add(tvEnergyResource);
         tvRootResource.add(tvSwitchResource);
 
@@ -103,15 +131,20 @@ public class PCU extends CoapServer {
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
                 logger.info("[TV-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[TV-BEHAVIOUR] -> Updating energy sensor configuration ...");
-                if(!tvSwitchActuator.getActive()){
-                    tvEnergySensor.setActive(updatedValue);
-                    tvEnergyResource.setConsumptionNull();
-                }else{
-                    tvEnergySensor.setActive(updatedValue);
-                    tvEnergySensor.setUpdatedValue(55.0);
-                }
+                tvEnergySensor.setActive(updatedValue);
             }
         });
+
+        tvEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
+            }
+        });
+
         return tvRootResource;
     }
 
@@ -124,6 +157,12 @@ public class PCU extends CoapServer {
         EnergyResource washerEnergyResource = new EnergyResource(deviceId, "energy", washerEnergySensor);
         SwitchResource washerSwitchResource = new SwitchResource(deviceId, "switch", washerSwitchActuator);
 
+        if(!washerSwitchResource.getOn()){
+            washerEnergySensor.setActive(false);
+        }else{
+            washerEnergySensor.setActive(true);
+        }
+
         washerRootResource.add(washerEnergyResource);
         washerRootResource.add(washerSwitchResource);
 
@@ -132,13 +171,7 @@ public class PCU extends CoapServer {
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
                 logger.info("[WASHER-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[WASHER-BEHAVIOUR] -> Updating energy sensor configuration ...");
-                if(!washerSwitchActuator.getActive()){
-                    washerEnergySensor.setActive(updatedValue);
-                    washerEnergyResource.setConsumptionNull();
-                }else{
-                    washerEnergySensor.setActive(updatedValue);
-                    washerEnergySensor.setUpdatedValue(95.0);
-                }
+                washerEnergySensor.setActive(updatedValue);
             }
         });
 
