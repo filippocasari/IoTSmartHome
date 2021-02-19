@@ -14,15 +14,15 @@ public class TemperatureSensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(TemperatureSensor.class);
 
     /** TEMPERATURE RANGE VALUE & VARIATION **/
-    private static double TEMPERATURE_VALUE;
+    private double TEMPERATURE_VALUE;
     private static double MIN_TEMPERATURE_VALUE;
     private static double MAX_TEMPERATURE_VALUE;
     private static final double MIN_TEMPERATURE_VARIATION = 0.1;
     private static final double MAX_TEMPERATURE_VARIATION = 1.0;
 
     /** TIME CONSTRAINTS **/
-    public static final long UPDATE_PERIOD = 2000;
-    private static final long TASK_DELAY_TIME = 2000;
+    public static final long UPDATE_PERIOD = 10000;
+    private static final long TASK_DELAY_TIME = 10000;
 
     /** LABEL **/
     private static final String LOG_DISPLAY_NAME = "TemperatureSensor";
@@ -40,7 +40,7 @@ public class TemperatureSensor extends SmartObject<Double> {
     private void init(String type){
         try{
             if (type.contentEquals("fridge")){
-                TEMPERATURE_VALUE = 4;
+                TEMPERATURE_VALUE = 3;
                 MIN_TEMPERATURE_VALUE = TEMPERATURE_VALUE - 1;
                 MAX_TEMPERATURE_VALUE = TEMPERATURE_VALUE + 1;
             }else if (type.contentEquals("thermostat")){
@@ -75,8 +75,7 @@ public class TemperatureSensor extends SmartObject<Double> {
     }
 
     public void updateValue (Double updateVal){
-        TEMPERATURE_VALUE = updateVal;
-        notifyUpdate(updatedValue);
+        this.TEMPERATURE_VALUE = updateVal;
     }
 
     @Override

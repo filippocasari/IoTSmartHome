@@ -14,15 +14,15 @@ public class EnergySensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(EnergySensor.class);
 
     /** ENERGY RANGE VALUE & VARIATION **/
-    private static double ENERGY_VALUE;
+    public  double ENERGY_VALUE;
     private static double MIN_ENERGY_VALUE; //Wh - Watt-hour
     private static double MAX_ENERGY_VALUE;
     private static final double MIN_ENERGY_VARIATION = 0.1;
     private static final double MAX_ENERGY_VARIATION = 0.5;
 
     /** TIME CONSTRAINTS **/
-    private static final long UPDATE_PERIOD = 2000;
-    private static final long TASK_DELAY_TIME = 2000;
+    private static final long UPDATE_PERIOD = 10000;
+    private static final long TASK_DELAY_TIME = 10000;
 
     /** LABEL **/
     private static final String RESOURCE_TYPE = "sensor.energy";
@@ -42,10 +42,11 @@ public class EnergySensor extends SmartObject<Double> {
         this.updatedValue = updatedValue;
     }
 
+
     private void init(String type){
         try{
             if(type.contentEquals("lights")){
-                ENERGY_VALUE = 10;
+                ENERGY_VALUE = 3;
                 MIN_ENERGY_VALUE = ENERGY_VALUE - 2;
                 MAX_ENERGY_VALUE = ENERGY_VALUE + 2;
 

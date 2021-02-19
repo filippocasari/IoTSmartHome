@@ -41,14 +41,6 @@ public class PCU extends CoapServer {
         EnergyResource lightsEnergyResource = new EnergyResource(deviceId, "energy", lightsEnergySensor);
         SwitchResource lightsSwitchResource = new SwitchResource(deviceId, "switch", lightsSwitchActuator);
 
-        if(!lightsSwitchResource.getOn()){
-            lightsEnergyResource.setUpdatedEnergyValue(0.0);
-        }else{
-            lightsEnergySensor.setActive(true);
-            //random = (Math.random() * ((3 - 1) + 1)) + 1;
-            //lightsEnergyResource.setUpdatedEnergyValue(random);
-        }
-
         lightsRootResource.add(lightsEnergyResource);
         lightsRootResource.add(lightsSwitchResource);
 
@@ -63,7 +55,7 @@ public class PCU extends CoapServer {
                     lightsEnergyResource.setConsumptionNull();
                 }else{
                     lightsEnergySensor.setActive(updatedValue);
-                    lightsEnergySensor.setUpdatedValue(10.0);
+                    lightsEnergySensor.setUpdatedValue(3.0);
                 }
             }
         });
@@ -76,12 +68,15 @@ public class PCU extends CoapServer {
 
         EnergySensor fridgeEnergySensor = new EnergySensor(fridgeRootResource.getName());
         TemperatureSensor fridgeTemperatureSensor = new TemperatureSensor(fridgeRootResource.getName());
+        SwitchActuator fridgeSwitchActuator = new SwitchActuator();
 
         EnergyResource fridgeEnergyResource = new EnergyResource(deviceId, "energy", fridgeEnergySensor);
         TemperatureResource fridgeTemperatureResource = new TemperatureResource(deviceId, "temperature", fridgeTemperatureSensor);
+        SwitchResource fridgeSwitchResource = new SwitchResource(deviceId, "switch", fridgeSwitchActuator);
 
         fridgeRootResource.add(fridgeEnergyResource);
         fridgeRootResource.add(fridgeTemperatureResource);
+        fridgeRootResource.add(fridgeSwitchResource);
 
         return fridgeRootResource;
     }
@@ -191,6 +186,15 @@ public class PCU extends CoapServer {
         thermostatRootResource.add(thEnergyResource);
         thermostatRootResource.add(thTemperatureResource);
         thermostatRootResource.add(thSwitchResource);
+
+        thTemperatureSensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                logger.info("[TEMPERATURE-BEHAVIOUR] -> Updated temperature Value: {}", updatedValue);
+                logger.info("[TEMPERATURE-BEHAVIOUR] -> Updating temperature sensor configuration ...");
+
+            }
+        });
 
         return thermostatRootResource;
     }

@@ -24,7 +24,6 @@ public class EnergyResource extends CoapResource {
     private static final String OBJECT_TITLE = "EnergyConsumptionSensor";
     private static final Number SENSOR_VERSION = 0.1;
 
-    //Resource Unit according to SenML Units Registry (http://www.iana.org/assignments/senml/senml.xhtml)
     private String UNIT = "kWh";
     private EnergySensor rawSensor;
     private ObjectMapper objectMapper;

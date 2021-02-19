@@ -25,14 +25,13 @@ public class TemperatureResource extends CoapResource {
 
     private static final Number SENSOR_VERSION = 0.1;
 
-    //Resource Unit according to SenML Units Registry (http://www.iana.org/assignments/senml/senml.xhtml)
     private String UNIT = "Cel";
 
-    private TemperatureSensor temperatureRawSensor;
+    private TemperatureSensor temperatureSensor;
 
     private ObjectMapper objectMapper;
 
-    private Double updatedTemperatureValue = 0.0;
+    private Double updatedTemperatureValue;
 
     private String deviceId;
 
@@ -44,7 +43,7 @@ public class TemperatureResource extends CoapResource {
 
             this.deviceId = deviceId;
 
-            this.temperatureRawSensor = temperatureRawSensor;
+            this.temperatureSensor = temperatureRawSensor;
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -63,7 +62,7 @@ public class TemperatureResource extends CoapResource {
         else
             logger.error("Error -> NULL Raw Reference !");
 
-        this.temperatureRawSensor.addDataListener(new DataListener<Double>() {
+        this.temperatureSensor.addDataListener(new DataListener<Double>() {
             @Override
             public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
                 updatedTemperatureValue = updatedValue;
@@ -125,7 +124,7 @@ public class TemperatureResource extends CoapResource {
                 logger.info("Submitted value: {}", submittedValue);
 
                 this.updatedTemperatureValue = submittedValue;
-                this.temperatureRawSensor.updateValue(updatedTemperatureValue);
+                this.temperatureSensor.updateValue(updatedTemperatureValue);
 
                 logger.info("Resource Status Updated: {}", this.updatedTemperatureValue);
                 exchange.respond(CoAP.ResponseCode.CHANGED);
