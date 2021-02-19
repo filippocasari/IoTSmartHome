@@ -38,6 +38,10 @@ public class EnergySensor extends SmartObject<Double> {
         init(device);
     }
 
+    public void setUpdatedValue(Double updatedValue) {
+        this.updatedValue = updatedValue;
+    }
+
     private void init(String type){
         try{
             if(type.contentEquals("lights")){
@@ -80,7 +84,9 @@ public class EnergySensor extends SmartObject<Double> {
                         double variation = (MIN_ENERGY_VARIATION + MAX_ENERGY_VARIATION * random.nextDouble()) * (random.nextDouble() > 0.5 ? 1.0 : -1.0);
                         updatedValue = updatedValue + variation;
                     }
-                    else { updatedValue = 0.0; }
+                    else {
+                        updatedValue = 0.0;
+                    }
                     notifyUpdate(updatedValue);
                 }
             }, TASK_DELAY_TIME, UPDATE_PERIOD);
@@ -102,6 +108,7 @@ public class EnergySensor extends SmartObject<Double> {
 
     public void setActive(boolean active) {
         isActive = active;
+        startPeriodicEventValueUpdateTask();
     }
 
     public static void main(String[] args) {

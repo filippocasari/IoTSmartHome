@@ -29,8 +29,9 @@ public class EnergyResource extends CoapResource {
     private EnergySensor rawSensor;
     private ObjectMapper objectMapper;
 
-    private Double updatedEnergyValue = 0.0;
+    public Double updatedEnergyValue = 0.0;
     private String deviceId;
+
 
     public void setConsumptionNull(){
         this.updatedEnergyValue = 0.0;
