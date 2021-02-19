@@ -17,7 +17,7 @@ public class DetectorProcess extends CoapServer {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
 
-        EnergySensor detectorEnergySensor = new EnergySensor();
+        EnergySensor detectorEnergySensor = new EnergySensor("detector");
         MovementSensor detectorMovementSensor = new MovementSensor();
 
         EnergyResource detectorEnergyResource = new EnergyResource(deviceId, "energy", detectorEnergySensor);

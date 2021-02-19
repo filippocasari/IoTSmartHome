@@ -19,7 +19,7 @@ public class WasherProcess extends CoapServer {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
 
-        EnergySensor washerEnergySensor = new EnergySensor();
+        EnergySensor washerEnergySensor = new EnergySensor("washer");
         SwitchActuator washerSwitchActuator = new SwitchActuator();
 
         EnergyResource washerEnergyResource = new EnergyResource(deviceId, "energy", washerEnergySensor);

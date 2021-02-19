@@ -1,6 +1,7 @@
 package MCC.ProcessControlUnit.Process;
 
 import MCC.DataListener;
+import MCC.ProcessControlUnit.PCU;
 import MCC.SmartObject;
 import MCC.CoapResource.EnergyResource;
 import MCC.CoapResource.SwitchResource;
@@ -18,7 +19,7 @@ public class LightProcess extends CoapServer {
     public LightProcess() {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
-        EnergySensor lightsEnergySensor = new EnergySensor();
+        EnergySensor lightsEnergySensor = new EnergySensor("lights");
         SwitchActuator lightsSwitchActuator = new SwitchActuator();
 
         EnergyResource lightsEnergyResource = new EnergyResource(deviceId, "energy", lightsEnergySensor);
@@ -44,4 +45,18 @@ public class LightProcess extends CoapServer {
         this.add(lightsSwitchResource);
     }
 
+    public static void main(String[] args){
+        LightProcess process = new LightProcess();
+        process.start();
+        logger.info("Coap Server Started! Available resources: ");
+
+        process.getRoot().getChildren().stream().forEach(resource -> {
+            logger.info("Resource {} -> URI: {} (Observable: {})", resource.getName(), resource.getURI(), resource.isObservable());
+            if(!resource.getURI().equals("/.well-known")){
+                resource.getChildren().stream().forEach(childResource -> {
+                    logger.info("\t Resource {} -> URI: {} (Observable: {})", childResource.getName(), childResource.getURI(), childResource.isObservable());
+                });
+            }
+        });
+    }
 }

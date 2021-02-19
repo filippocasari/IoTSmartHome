@@ -91,27 +91,6 @@ public class SwitchResource extends CoapResource {
         }
     }
 
-    @Override
-    public void handleGET(CoapExchange exchange) {
-
-        //If the request specify the MediaType as JSON or JSON+SenML
-        if(exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_SENML_JSON ||
-                exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_JSON){
-
-            Optional<String> senmlPayload = getJsonSenmlResponse();
-
-            if(senmlPayload.isPresent())
-                exchange.respond(CoAP.ResponseCode.CONTENT, senmlPayload.get(), exchange.getRequestOptions().getAccept());
-            else
-                exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
-        }
-        //Otherwise respond with the default textplain payload
-        else
-            exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(isOn), MediaTypeRegistry.TEXT_PLAIN);
-
-
-    }
-
     public Boolean getOn() {
         return isOn;
     }
@@ -167,6 +146,27 @@ public class SwitchResource extends CoapResource {
             logger.error("Error Handling POST -> {}", e.getLocalizedMessage());
             exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
         }
+
+    }
+
+    @Override
+    public void handleGET(CoapExchange exchange) {
+
+        //If the request specify the MediaType as JSON or JSON+SenML
+        if(exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_SENML_JSON ||
+                exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_JSON){
+
+            Optional<String> senmlPayload = getJsonSenmlResponse();
+
+            if(senmlPayload.isPresent())
+                exchange.respond(CoAP.ResponseCode.CONTENT, senmlPayload.get(), exchange.getRequestOptions().getAccept());
+            else
+                exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+        //Otherwise respond with the default textplain payload
+        else
+            exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(isOn), MediaTypeRegistry.TEXT_PLAIN);
+
 
     }
 }

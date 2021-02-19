@@ -18,7 +18,7 @@ public class TvProcess extends CoapServer {
         super();
         String deviceId = String.format("dipi:iot:%s", UUID.randomUUID().toString());
 
-        EnergySensor tvEnergySensor = new EnergySensor();
+        EnergySensor tvEnergySensor = new EnergySensor("TV");
         SwitchActuator tvSwitchActuator = new SwitchActuator();
 
         EnergyResource tvEnergyResource = new EnergyResource(deviceId, "energy", tvEnergySensor);

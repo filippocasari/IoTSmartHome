@@ -15,10 +15,16 @@ import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+import java.util.Random.*;
 import java.util.UUID;
+import java.math.*;
 
 public class PCU extends CoapServer {
     private final static Logger logger = LoggerFactory.getLogger(PCU.class);
+    private Random randomLights;
+    private Random randomWasher = new Random();
+    private Random randomTV;
 
     public PCU (){
         super();
@@ -28,20 +34,25 @@ public class PCU extends CoapServer {
         this.add(createTvResource(deviceId));
         this.add(createWasherResource(deviceId));
         this.add(createDetectorResource(deviceId));
+        this.add(createThermostatResource(deviceId));
     }
 
     private CoapResource createLightResource(String deviceId){
 
         CoapResource lightsRootResource = new CoapResource("lights");
 
-        EnergySensor lightsEnergySensor = new EnergySensor();
+        EnergySensor lightsEnergySensor = new EnergySensor(lightsRootResource.getName());
         SwitchActuator lightsSwitchActuator = new SwitchActuator();
 
         EnergyResource lightsEnergyResource = new EnergyResource(deviceId, "energy", lightsEnergySensor);
         SwitchResource lightsSwitchResource = new SwitchResource(deviceId, "switch", lightsSwitchActuator);
+
         if(!lightsSwitchResource.getOn()){
             lightsEnergyResource.setUpdatedEnergyValue(0.0);
-
+        }else{
+            lightsEnergySensor.setActive(true);
+            //random = (Math.random() * ((3 - 1) + 1)) + 1;
+            //lightsEnergyResource.setUpdatedEnergyValue(random);
         }
 
         lightsRootResource.add(lightsEnergyResource);
@@ -57,13 +68,23 @@ public class PCU extends CoapServer {
             }
         });
 
+        lightsEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
+            }
+        });
+
         return lightsRootResource;
     }
 
     private CoapResource createFridgeResource(String deviceId){
         CoapResource fridgeRootResource = new CoapResource("fridge");
 
-        EnergySensor fridgeEnergySensor = new EnergySensor();
+        EnergySensor fridgeEnergySensor = new EnergySensor(fridgeRootResource.getName());
         TemperatureSensor fridgeTemperatureSensor = new TemperatureSensor(fridgeRootResource.getName());
 
         EnergyResource fridgeEnergyResource = new EnergyResource(deviceId, "energy", fridgeEnergySensor);
@@ -72,13 +93,23 @@ public class PCU extends CoapServer {
         fridgeRootResource.add(fridgeEnergyResource);
         fridgeRootResource.add(fridgeTemperatureResource);
 
+        fridgeEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
+            }
+        });
+
         return fridgeRootResource;
     }
 
     private CoapResource createTvResource (String deviceId){
         CoapResource tvRootResource = new CoapResource("TV");
 
-        EnergySensor tvEnergySensor = new EnergySensor();
+        EnergySensor tvEnergySensor = new EnergySensor(tvRootResource.getName());
         SwitchActuator tvSwitchActuator = new SwitchActuator();
 
         EnergyResource tvEnergyResource = new EnergyResource(deviceId, "energy", tvEnergySensor);
@@ -86,7 +117,10 @@ public class PCU extends CoapServer {
 
         if(!tvSwitchResource.getOn()){
             tvEnergyResource.setUpdatedEnergyValue(0.0);
-
+        }else{
+            tvEnergySensor.setActive(true);
+            //random = (Math.random() * ((55 - 50) + 1)) + 50;
+            //tvEnergyResource.setUpdatedEnergyValue(random);
         }
 
         tvRootResource.add(tvEnergyResource);
@@ -100,21 +134,33 @@ public class PCU extends CoapServer {
                 tvEnergySensor.setActive(updatedValue);
             }
         });
+
+        tvEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
+            }
+        });
+
         return tvRootResource;
     }
 
     private CoapResource createWasherResource(String deviceId){
         CoapResource washerRootResource = new CoapResource("washer");
 
-        EnergySensor washerEnergySensor = new EnergySensor();
+        EnergySensor washerEnergySensor = new EnergySensor(washerRootResource.getName());
         SwitchActuator washerSwitchActuator = new SwitchActuator();
 
         EnergyResource washerEnergyResource = new EnergyResource(deviceId, "energy", washerEnergySensor);
         SwitchResource washerSwitchResource = new SwitchResource(deviceId, "switch", washerSwitchActuator);
 
-        if(!washerSwitchResource.getOn()){
+        if(!washerSwitchActuator.getActive()){
             washerEnergyResource.setUpdatedEnergyValue(0.0);
-
+        }else{
+            washerEnergyResource.setUpdatedEnergyValue(95.0);
         }
 
         washerRootResource.add(washerEnergyResource);
@@ -126,6 +172,16 @@ public class PCU extends CoapServer {
                 logger.info("[WASHER-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[WASHER-BEHAVIOUR] -> Updating energy sensor configuration ...");
                 washerEnergySensor.setActive(updatedValue);
+            }
+        });
+
+        washerEnergySensor.addDataListener(new DataListener<Double>() {
+            @Override
+            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+                if(resource != null && updatedValue != null)
+                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
+                else
+                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
             }
         });
 
@@ -146,7 +202,7 @@ public class PCU extends CoapServer {
                 try{
                     for(int i=0; i<100; i++){
                         detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
-                        Thread.sleep(4000);
+                        Thread.sleep(30000);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -162,6 +218,24 @@ public class PCU extends CoapServer {
         });
 
         return detectorRootResource;
+    }
+
+    private CoapResource createThermostatResource(String deviceId){
+        CoapResource thermostatRootResource = new CoapResource("thermostat");
+
+        EnergySensor thEnergySensor = new EnergySensor("thermostat");
+        SwitchActuator thSwitchActuator = new SwitchActuator();
+        TemperatureSensor thTemperatureSensor = new TemperatureSensor(thermostatRootResource.getName());
+
+        EnergyResource thEnergyResource = new EnergyResource(deviceId, "energy", thEnergySensor);
+        TemperatureResource thTemperatureResource = new TemperatureResource(deviceId, "temperature", thTemperatureSensor);
+        SwitchResource thSwitchResource= new SwitchResource(deviceId, "switch", thSwitchActuator);
+
+        thermostatRootResource.add(thEnergyResource);
+        thermostatRootResource.add(thTemperatureResource);
+        thermostatRootResource.add(thSwitchResource);
+
+        return thermostatRootResource;
     }
 
     public static void main(String[] args){

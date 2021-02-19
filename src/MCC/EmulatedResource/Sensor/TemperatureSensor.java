@@ -40,9 +40,9 @@ public class TemperatureSensor extends SmartObject<Double> {
     private void init(String type){
         try{
             if (type.contentEquals("fridge")){
-                TEMPERATURE_VALUE = 3;
-                MIN_TEMPERATURE_VALUE = TEMPERATURE_VALUE - 2;
-                MAX_TEMPERATURE_VALUE = TEMPERATURE_VALUE + 2;
+                TEMPERATURE_VALUE = 4;
+                MIN_TEMPERATURE_VALUE = TEMPERATURE_VALUE - 1;
+                MAX_TEMPERATURE_VALUE = TEMPERATURE_VALUE + 1;
             }else if (type.contentEquals("thermostat")){
                 TEMPERATURE_VALUE = 23;
                 MIN_TEMPERATURE_VALUE = TEMPERATURE_VALUE - 2;
