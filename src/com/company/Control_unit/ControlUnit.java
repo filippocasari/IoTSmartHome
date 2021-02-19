@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-/** created by Filippo Casari
- *     centralina / Control Unit
+/**
+ * @author Filippo Casari
+ * @version final
+ * @ControlUnit
  * @collaboration with: Luca Mantovani, Davide Casnici
  */
 
@@ -18,19 +20,23 @@ class ControlUnit {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
+    private static final Double MAX_VALUE_WASHER = 1.0;
+    private static final Double MAX_VALUE_LIGHTS = 1.5;
+    private static final Double MAX_VALUE_TV = 3.0;
 
 
-    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
-    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
-    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/TV/switch";
-    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/TV/energy";
-    private static final String COAP_ENDPOINT_ENERGY_WASHER = "coap://127.0.0.1:5683/washer/energy";
-    private static final String COAP_ENDPOINT_SWITCH_WASHER = "coap://127.0.0.1:5683/washer/switch";
+    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://192.168.1.4:5683/lights/energy";
+    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://192.168.1.4:5683/lights/switch";
+    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://192.168.1.4:5683/TV/switch";
+    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://192.168.1.4:5683/TV/energy";
+    private static final String COAP_ENDPOINT_ENERGY_WASHER = "coap://192.168.1.4:5683/washer/energy";
+    private static final String COAP_ENDPOINT_SWITCH_WASHER = "coap://192.168.1.4:5683/washer/switch";
     //private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     //private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
-    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
-    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/detector/movement";
+    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://192.168.1.4:5683/fridge/energy";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://192.168.1.4:5683/detector/movement";
+
     private boolean EcoMode = false;
     private String Datedetails = null;
 
@@ -128,10 +134,6 @@ class ControlUnit {
         periodicTask.join(1000);
 
 
-
-
-
-
     }
 
     public boolean isEcoMode() {
@@ -168,8 +170,21 @@ class ControlUnit {
 
     }
 
-    public static boolean checkConsumption(Double InstantConsumption) {
-        return InstantConsumption > 2.0;
+    public static boolean checkConsumption(Double InstantConsumption, String fromWho) {
+        double max_value = 0.0;
+        switch (fromWho) {
+            case ("washer"):
+                max_value = MAX_VALUE_WASHER;
+                break;
+            case ("tv"):
+                max_value = MAX_VALUE_TV;
+                break;
+
+            case ("lights"):
+                max_value = MAX_VALUE_LIGHTS;
+                break;
+        }
+        return InstantConsumption > max_value;
 
     }
 

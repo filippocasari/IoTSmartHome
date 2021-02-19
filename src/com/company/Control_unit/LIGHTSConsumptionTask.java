@@ -3,6 +3,7 @@ package com.company.Control_unit;
 
 //import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
+import com.company.Control_unit.ClientsType.PUTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
@@ -48,9 +49,9 @@ public class LIGHTSConsumptionTask implements Runnable {
 
                     //if (getClient.isOn(getClient.getResponseString())) {
                     ControlUnit.Notificationconsumption("LIGHTS");
-                    System.err.println("POST REQUEST TO LIGHTS SWITCH");
+                    System.err.println("PUT REQUEST TO LIGHTS SWITCH");
 
-                    new Thread(() -> new POSTClient(URLswitch)).start();
+                    new Thread(() -> new PUTClient(URLswitch, "false")).start();
 
                     /*} else {
                         System.err.println("Switch just off");
@@ -59,7 +60,7 @@ public class LIGHTSConsumptionTask implements Runnable {
 
                 };
 
-                if (ControlUnit.checkConsumption(InstantConsumption)) {
+                if (ControlUnit.checkConsumption(InstantConsumption, "lights")) {
                     Thread t = new Thread(runnable);
                     t.start();
 
