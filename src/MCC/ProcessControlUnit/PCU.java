@@ -94,23 +94,30 @@ public class PCU extends CoapServer {
         tvRootResource.add(tvSwitchResource);
 
         tvSwitchActuator.addDataListener(new DataListener<Boolean>() {
+
             @Override
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
+
                 logger.info("[TV-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[TV-BEHAVIOUR] -> Updating energy sensor configuration ...");
+
                 if(!tvSwitchActuator.getActive()){
+
                     tvEnergySensor.setActive(updatedValue);
                     tvEnergyResource.setConsumptionNull();
+
                 }else{
+
                     tvEnergySensor.setActive(updatedValue);
                     tvEnergySensor.setUpdatedValue(55.0);
+ 
                 }
             }
         });
         return tvRootResource;
     }
 
-    private CoapResource createWasherResource(String deviceId){
+       private CoapResource createWasherResource(String deviceId){
         CoapResource washerRootResource = new CoapResource("washer");
 
         EnergySensor washerEnergySensor = new EnergySensor(washerRootResource.getName());
@@ -123,16 +130,23 @@ public class PCU extends CoapServer {
         washerRootResource.add(washerSwitchResource);
 
         washerSwitchActuator.addDataListener(new DataListener<Boolean>() {
+
             @Override
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
+
                 logger.info("[WASHER-BEHAVIOUR] -> Updated Switch Value: {}", updatedValue);
                 logger.info("[WASHER-BEHAVIOUR] -> Updating energy sensor configuration ...");
+
                 if(!washerSwitchActuator.getActive()){
+
                     washerEnergySensor.setActive(updatedValue);
                     washerEnergyResource.setConsumptionNull();
+
                 }else{
+
                     washerEnergySensor.setActive(updatedValue);
                     washerEnergySensor.setUpdatedValue(95.0);
+
                 }
             }
         });
@@ -149,24 +163,33 @@ public class PCU extends CoapServer {
         detectorRootResource.add(detectorMovementResource);
 
         new Thread(new Runnable() {
+
             @Override
             public void run() {
                 try{
+
                     for(int i=0; i<100; i++){
                         detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
                         Thread.sleep(30000);
                     }
+
                 }catch (Exception e){
+
                     e.printStackTrace();
+
                 }
+
             }
         }).start();
 
         detectorMovementSensor.addDataListener(new DataListener<Boolean>() {
+
             @Override
+
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
                 logger.info("[MOVEMENT-BEHAVIOUR] -> Updated Movement Value: {}", updatedValue);
             }
+
         });
 
         return detectorRootResource;
@@ -188,12 +211,16 @@ public class PCU extends CoapServer {
         thermostatRootResource.add(thSwitchResource);
 
         thTemperatureSensor.addDataListener(new DataListener<Double>() {
+
             @Override
             public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
+
                 logger.info("[TEMPERATURE-BEHAVIOUR] -> Updated temperature Value: {}", updatedValue);
                 logger.info("[TEMPERATURE-BEHAVIOUR] -> Updating temperature sensor configuration ...");
 
+
             }
+
         });
 
         return thermostatRootResource;
