@@ -39,11 +39,15 @@ public class LIGHTSConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
+                try {
+                    count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption Lights : " + Consuption + " W");
-                System.out.println("Instant Consumption Lights : " + content + " W");
+                System.out.println("\n\nTotal Consumption Lights : " + Consuption + " W");
+                System.out.println("Instant Consumption Lights : " + content + " W\n\n");
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 

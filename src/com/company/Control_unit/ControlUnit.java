@@ -45,14 +45,15 @@ class ControlUnit {
 
     public ControlUnit(SimTime simTime) throws InterruptedException {
 
-        //Creation of Energy Consumption Monitoring Tasks
+
         TVConsumptionTask tvConsuptionTask = new TVConsumptionTask(COAP_ENDPOINT_ENERGY_TV, COAP_ENDPOINT_SWITCH_TV);
         FRIDGEConsumptionTask fridgeConsumptionTask = new FRIDGEConsumptionTask(COAP_ENDPOINT_ENERGY_FRIDGE);
         LIGHTSConsumptionTask lightsConsumptionTask = new LIGHTSConsumptionTask(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS);
-        //HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
+
         WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
         MOVEMENTdetenctionTask movemenTdetenctionTask = new MOVEMENTdetenctionTask(COAP_ENDPOINT_MOVEMENT_SENSOR);
-        THERMOSTATMonitoringTask thermostatMonitoringTask = new THERMOSTATMonitoringTask(COAP_ENDPOINT_ENERGY_THERMOSTAT, COAP_ENDPOINT_SWITCH_THERMOSTAT,
+        THERMOSTATMonitoringTask thermostatMonitoringTask = new THERMOSTATMonitoringTask(COAP_ENDPOINT_ENERGY_THERMOSTAT,
+                COAP_ENDPOINT_SWITCH_THERMOSTAT,
                 COAP_ENDPOINT_TEMPERATURE_THERMOSTAT);
         simTime.setSpeed(1); //or 1000 speed, if we want to check total daily consumption
         simTime.start();
@@ -106,29 +107,29 @@ class ControlUnit {
 
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
-        t1.setPriority(6);
         t1.setName("THREAD FRIDGE");
+
         Thread t2 = new Thread(lightsConsumptionTask);
-        t2.setPriority(6);
         t1.setName("THREAD LIGHTS");
+
         Thread t3 = new Thread(tvConsuptionTask);
-        t3.setPriority(6);
+
         t1.setName("THREAD TV");
         Thread t4 = new Thread(washerConsumptionTask);
-        t4.setPriority(6);
+
         t1.setName("THREAD WASHER");
         Thread t5 = new Thread(movemenTdetenctionTask);
-        t5.setPriority(8);
+        t5.setPriority(Thread.MAX_PRIORITY);
         t1.setName("THREAD MOVEMENT");
+
         Thread t6 = new Thread(thermostatMonitoringTask);
-        t6.setPriority(6);
         t1.setName("THREAD THERMOSTAT");
+
         //start periodic task to check ecomode
         Thread periodicTask = new Thread(PeriodicTask);
         periodicTask.setName("THREAD PERIODICTASK");
         periodicTask.setPriority(Thread.MAX_PRIORITY);
 
-        //Thread t5 = new Thread(heatingConsumptionTask);
 
         //start thread for observable resource energy
         t1.start();
@@ -155,10 +156,10 @@ class ControlUnit {
 
     private void printTotalConsumptionfromAll(String day, LIGHTSConsumptionTask lights, FRIDGEConsumptionTask fridge, TVConsumptionTask tv, WASHERConsumptionTask washer) {
         System.out.println("Daily consumption for the day : " + day + " is : ");
-        System.out.println("for fridge: " + fridge.Consuption + " W");
-        System.out.println("for tv: " + tv.Consuption + " W");
-        System.out.println("for lights: " + lights.Consuption + " W");
-        System.out.println("for washer: " + washer.Consuption + " W");
+        System.out.println("\nfor fridge: " + fridge.Consuption + " W");
+        System.out.println("\nfor tv: " + tv.Consuption + " W");
+        System.out.println("\nfor lights: " + lights.Consuption + " W");
+        System.out.println("\nfor washer: " + washer.Consuption + " W");
         TotalCostEuros(lights.Consuption + tv.Consuption + fridge.Consuption + washer.Consuption);
         lights.Consuption = 0.0;
         fridge.Consuption = 0.0;
@@ -211,17 +212,19 @@ class ControlUnit {
     }
 
     public static void Notificationconsumption(String fromWho) {
-        System.err.println("Too hight Consumption from " + fromWho + ": switch must be set off");
-        System.err.println("POST REQUEST TO " + fromWho + "-- SWITCH");
+        System.err.println("\nToo hight Consumption from " + fromWho + ": switch must be set off");
+        System.err.println("\nPOST REQUEST TO " + fromWho + "-- SWITCH");
     }
 
-    public static int turnOnSwitchCondition(double instantConsumption, String URLforPost, int count, String URLenergy) {
+    public static int turnOnSwitchCondition(double instantConsumption, String URLforPost, int count, String URLenergy) throws InterruptedException {
         if (instantConsumption == 0.0) {
             count++;
         }
         if (count == 5) { //if energy consumption of device is for 5 times 0.0 W ==> turn its switch on
-            new Thread(() -> System.err.println("5 value '0.0 W' caught from " +
-                    URLenergy + " , now POST request to turn the switch on **SIMULATION")).start();
+            Thread t =new Thread(() -> System.err.println("\n \n5 value '0.0 W' caught from " +
+                    URLenergy + " , now POST request to turn the switch on **SIMULATION"));
+            t.start();
+            t.join(300);
             count = 0;
 
             new Thread(() -> new POSTClient(URLforPost)).start();
@@ -229,23 +232,37 @@ class ControlUnit {
         return count;
     }
 
-    public static void settingEcomodeON() {
+    public static void settingEcomodeON() throws InterruptedException {
 
 
         System.err.println("ECOMODE IS TRUE: PUT REQUESTS FOR EACH DEVICE");
 
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(false))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(false))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(false))).start();
+        Thread t1 =new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(false)));
+
+        Thread t2 =new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(false)));
+        Thread t3 =new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(false)));
+        t1.start();
+        t2.start();
+        t3.start();
+        t1.join(500);
+        t2.join(500);
+        t3.join(500);
 
 
     }
 
-    public static void disablingEcomode() {
+    public static void disablingEcomode() throws InterruptedException {
         System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(true))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(true))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(true))).start();
+        Thread t1 =new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(true)));
+
+        Thread t2 =new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(true)));
+        Thread t3 =new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(true)));
+        t1.start();
+        t2.start();
+        t3.start();
+        t1.join(500);
+        t2.join(500);
+        t3.join(500);
     }
 
     private void TotalCostEuros(Double TotalConsumption) {

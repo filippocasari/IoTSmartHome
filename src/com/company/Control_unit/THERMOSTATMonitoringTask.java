@@ -45,6 +45,8 @@ public class THERMOSTATMonitoringTask implements Runnable {
                     double temperaturecaught = Double.parseDouble(content);
                     printTemperature(temperaturecaught);
                     checkTemperatureRange(temperaturecaught);
+                }else{
+                    System.err.println("TEMPERATURE NULL");
                 }
 
 
@@ -71,15 +73,15 @@ public class THERMOSTATMonitoringTask implements Runnable {
     }
 
     private void printTemperature(double temperaturecaught) {
-        System.out.println("Home's Temperature: "+temperaturecaught);
+        System.out.println("\n\nHome's Temperature: "+temperaturecaught+"\n\n");
     }
 
     private void checkTemperatureRange(double temperaturecaught) {
-        if (temperaturecaught > 24.3) {
-            System.err.println("Temperature out of range, TOO HIGH TEMPERATURE!!! ==> TURN SWITCH OFF");
+        if (temperaturecaught > 25.0) {
+            System.err.println("\n\nTemperature out of range, TOO HIGH TEMPERATURE!!! ==> TURN SWITCH OFF\n\n");
             new Thread(() -> new POSTClient(URLswitch));
         } else if (temperaturecaught < 21.5) {
-            System.err.println("Temperature out of range, TOO LOW TEMPERATURE!!!==> TURN SWITCH ON");
+            System.err.println("\n\nTemperature out of range, TOO LOW TEMPERATURE!!!==> TURN SWITCH ON\n\n");
             new Thread(() -> new POSTClient(URLswitch));
         }
     }
