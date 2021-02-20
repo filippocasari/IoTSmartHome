@@ -39,7 +39,7 @@ public class WASHERConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
+                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
                 System.out.println("Total Consumption Washer : " + Consuption + " W");
@@ -49,9 +49,8 @@ public class WASHERConsumptionTask implements Runnable {
 
                     //if (getClient.isOn(getClient.getResponseString())) {
                     ControlUnit.Notificationconsumption("Washer");
-                    System.err.println("PUT REQUEST TO Washer SWITCH");
 
-                    new Thread(() -> new PUTClient(URLswitch, "false")).start();
+                    new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
                         System.err.println("Switch's washer just off");

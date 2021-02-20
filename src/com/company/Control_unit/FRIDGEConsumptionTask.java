@@ -40,8 +40,8 @@ public class FRIDGEConsumptionTask implements Runnable {
 
                 Consuption += InstantConsumption;
 
-                System.out.println("Total Consumption Fridge : " + Consuption+" W");
-                System.out.println("Instant Consumption Fridge: " + content+" W");
+                System.out.println("Total Consumption Fridge : " + Consuption + " W");
+                System.out.println("Instant Consumption Fridge: " + content + " W");
 
             }
 

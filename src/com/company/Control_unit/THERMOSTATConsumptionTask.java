@@ -38,7 +38,7 @@ public class THERMOSTATConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
+                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
                 System.out.println("Total Consumption THERMOSTAT : " + Consuption+" kW");
@@ -48,7 +48,7 @@ public class THERMOSTATConsumptionTask implements Runnable {
 
                     //if (getClient.isOn(getClient.getResponseString())) {
                     ControlUnit.Notificationconsumption("THERMOSTAT");
-                    System.err.println("POST REQUEST TO THERMOSTAT SWITCH");
+
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {

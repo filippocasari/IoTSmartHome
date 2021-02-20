@@ -39,7 +39,7 @@ public class LIGHTSConsumptionTask implements Runnable {
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
                 double InstantConsumption = Double.parseDouble(content);
-                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count); //turn on the switch if lights are off for too much time
+                count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
                 Consuption += InstantConsumption;
 
                 System.out.println("Total Consumption Lights : " + Consuption + " W");
@@ -48,10 +48,9 @@ public class LIGHTSConsumptionTask implements Runnable {
                     //GETClient getClient = new GETClient(URLswitch);
 
                     //if (getClient.isOn(getClient.getResponseString())) {
-                    ControlUnit.Notificationconsumption("LIGHTS");
-                    System.err.println("PUT REQUEST TO LIGHTS SWITCH");
+                    new Thread(()->ControlUnit.Notificationconsumption("LIGHTS")).start();
 
-                    new Thread(() -> new PUTClient(URLswitch, "false")).start();
+                    new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
                         System.err.println("Switch just off");
@@ -75,11 +74,6 @@ public class LIGHTSConsumptionTask implements Runnable {
                 //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
-        try {
-            Thread.sleep(60 * 3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // Observes the coap resource for 30 seconds then the observing relation is deleted
         try {
