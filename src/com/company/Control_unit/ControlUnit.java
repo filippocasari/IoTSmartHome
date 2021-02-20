@@ -24,7 +24,9 @@ class ControlUnit {
     private static final Double MAX_VALUE_LIGHTS = 3.5;
     private static final Double MAX_VALUE_TV = 57.0;
 
-
+    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/energy";
+    public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/switch";
+    public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/temperature";
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
     public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
     private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/TV/switch";
@@ -50,7 +52,8 @@ class ControlUnit {
         //HEATINGConsumptionTask heatingConsumptionTask = new HEATINGConsumptionTask(COAP_ENDPOINT_ENERGY_HEATING, COAP_ENDPOINT_SWITCH_HEATING);
         WASHERConsumptionTask washerConsumptionTask = new WASHERConsumptionTask(COAP_ENDPOINT_ENERGY_WASHER, COAP_ENDPOINT_SWITCH_WASHER);
         MOVEMENTdetenctionTask movemenTdetenctionTask = new MOVEMENTdetenctionTask(COAP_ENDPOINT_MOVEMENT_SENSOR);
-
+        THERMOSTATMonitoringTask thermostatMonitoringTask = new THERMOSTATMonitoringTask(COAP_ENDPOINT_ENERGY_THERMOSTAT, COAP_ENDPOINT_SWITCH_THERMOSTAT,
+                COAP_ENDPOINT_TEMPERATURE_THERMOSTAT);
         simTime.setSpeed(1); //or 1000 speed, if we want to check total daily consumption
         simTime.start();
 
@@ -74,13 +77,12 @@ class ControlUnit {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                day = simTime.getDay().toString();
+                day = simTime.getDay().toString(); //day of the week
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //check the day
 
 
             }
@@ -105,16 +107,25 @@ class ControlUnit {
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
         t1.setPriority(6);
+        t1.setName("THREAD FRIDGE");
         Thread t2 = new Thread(lightsConsumptionTask);
         t2.setPriority(6);
+        t1.setName("THREAD LIGHTS");
         Thread t3 = new Thread(tvConsuptionTask);
         t3.setPriority(6);
+        t1.setName("THREAD TV");
         Thread t4 = new Thread(washerConsumptionTask);
         t4.setPriority(6);
+        t1.setName("THREAD WASHER");
         Thread t5 = new Thread(movemenTdetenctionTask);
         t5.setPriority(8);
+        t1.setName("THREAD MOVEMENT");
+        Thread t6 = new Thread(thermostatMonitoringTask);
+        t6.setPriority(6);
+        t1.setName("THREAD THERMOSTAT");
         //start periodic task to check ecomode
         Thread periodicTask = new Thread(PeriodicTask);
+        periodicTask.setName("THREAD PERIODICTASK");
         periodicTask.setPriority(Thread.MAX_PRIORITY);
 
         //Thread t5 = new Thread(heatingConsumptionTask);
@@ -125,6 +136,7 @@ class ControlUnit {
         t3.start();
         t4.start();
         t5.start();
+        t6.start();
         periodicTask.start();
 
         t1.join();
@@ -132,7 +144,7 @@ class ControlUnit {
         t3.join();
         t4.join();
         t5.join();
-
+        t6.join();
 
     }
 
@@ -208,7 +220,7 @@ class ControlUnit {
             count++;
         }
         if (count == 5) { //if energy consumption of device is for 5 times 0.0 W ==> turn its switch on
-            new Thread(() -> System.err.println("5 value '0.0 W' catch from " +
+            new Thread(() -> System.err.println("5 value '0.0 W' caught from " +
                     URLenergy + " , now POST request to turn the switch on **SIMULATION")).start();
             count = 0;
 

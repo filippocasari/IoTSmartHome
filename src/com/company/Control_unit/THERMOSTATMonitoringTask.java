@@ -2,34 +2,38 @@ package com.company.Control_unit;
 
 
 //import com.company.Control_unit.ClientsType.GETClient;
+
+import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
+import com.company.Control_unit.ClientsType.PUTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
-public class THERMOSTATConsumptionTask implements Runnable {
-    public Double Consuption = 0.0;
+public class THERMOSTATMonitoringTask implements Runnable {
+    //public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    int count = 0;
+    public static String URLtemperature;
+
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
-    public THERMOSTATConsumptionTask(String URLenergy, String URLswitch) {
+    public THERMOSTATMonitoringTask(String URLenergy, String URLswitch, String URLtemperature) {
 
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
+        this.URLtemperature = URLtemperature;
 
     }
 
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
-        System.out.println("OBSERVING THERMOSTAT... @ " + URLenergy);
-        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
+        System.out.println("OBSERVING THERMOSTAT... @ " + URLtemperature);
 
-        Request request = Request.newGet().setURI(URLenergy).setObserve();
+        Request request = Request.newGet().setURI(URLtemperature).setObserve();
         request.setConfirmable(true);
 
 
@@ -37,41 +41,23 @@ public class THERMOSTATConsumptionTask implements Runnable {
 
             public void onLoad(CoapResponse response) {
                 String content = response.getResponseText();
-                double InstantConsumption = Double.parseDouble(content);
-                count=ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
-                Consuption += InstantConsumption;
+                if(!content.equals("null")){
+                    double temperaturecaught = Double.parseDouble(content);
+                    printTemperature(temperaturecaught);
+                    checkTemperatureRange(temperaturecaught);
+                }
 
-                System.out.println("Total Consumption THERMOSTAT : " + Consuption+" kW");
-                System.out.println("Instant Consumption THERMOSTAT : " + content+" kW");
-                Runnable runnable = () -> {
-                    //GETClient getClient = new GETClient(URLswitch);
-
-                    //if (getClient.isOn(getClient.getResponseString())) {
-                    ControlUnit.Notificationconsumption("THERMOSTAT");
-
-                    new Thread(() -> new POSTClient(URLswitch)).start();
-
-                    /*} else {
-                        System.err.println("Switch's washer just off");
-                        logger.info("Switch just off");
-                    }*/
-
-                };
 
 
 
             }
+
 
             public void onError() {
                 System.err.println("OBSERVING THERMOSTAT FAILED");
-                //logger.error("OBSERVING LIGHTS FAILED");
+
             }
         });
-        try {
-            Thread.sleep(60 * 3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // Observes the coap resource for 30 seconds then the observing relation is deleted
         try {
@@ -84,11 +70,24 @@ public class THERMOSTATConsumptionTask implements Runnable {
         relation.proactiveCancel();
     }
 
+    private void printTemperature(double temperaturecaught) {
+        System.out.println("Home's Temperature: "+temperaturecaught);
+    }
+
+    private void checkTemperatureRange(double temperaturecaught) {
+        if (temperaturecaught > 24.3) {
+            System.err.println("Temperature out of range, TOO HIGH TEMPERATURE!!! ==> TURN SWITCH OFF");
+            new Thread(() -> new POSTClient(URLswitch));
+        } else if (temperaturecaught < 21.5) {
+            System.err.println("Temperature out of range, TOO LOW TEMPERATURE!!!==> TURN SWITCH ON");
+            new Thread(() -> new POSTClient(URLswitch));
+        }
+    }
+
 
     @Override
     public void run() {
         createGetRequestObserving();
     }
 }
-
 
