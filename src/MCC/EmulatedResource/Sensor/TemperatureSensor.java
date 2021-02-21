@@ -21,8 +21,8 @@ public class TemperatureSensor extends SmartObject<Double> {
     private static final double MAX_TEMPERATURE_VARIATION = 1.0;
 
     /** TIME CONSTRAINTS **/
-    public static final long UPDATE_PERIOD = 1000;
-    private static final long TASK_DELAY_TIME = 0;
+    public static final long UPDATE_PERIOD = 10000;
+    private static final long TASK_DELAY_TIME = 10000;
 
     /** LABEL **/
     private static final String LOG_DISPLAY_NAME = "TemperatureSensor";
@@ -74,8 +74,8 @@ public class TemperatureSensor extends SmartObject<Double> {
         }
     }
 
-    public void updateValue (Double updateVal){
-        this.TEMPERATURE_VALUE = updateVal;
+    public void setTemperatureValue(Double updatedValue) {
+        this.updatedValue = updatedValue;
     }
 
     @Override

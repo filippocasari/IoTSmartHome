@@ -117,7 +117,7 @@ public class PCU extends CoapServer {
         return tvRootResource;
     }
 
-       private CoapResource createWasherResource(String deviceId){
+    private CoapResource createWasherResource(String deviceId){
         CoapResource washerRootResource = new CoapResource("washer");
 
         EnergySensor washerEnergySensor = new EnergySensor(washerRootResource.getName());
@@ -214,11 +214,7 @@ public class PCU extends CoapServer {
 
             @Override
             public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-
-                logger.info("[TEMPERATURE-BEHAVIOUR] -> Updated temperature Value: {}", updatedValue);
-                logger.info("[TEMPERATURE-BEHAVIOUR] -> Updating temperature sensor configuration ...");
-
-
+                thTemperatureSensor.setTemperatureValue(updatedValue);
             }
 
         });
