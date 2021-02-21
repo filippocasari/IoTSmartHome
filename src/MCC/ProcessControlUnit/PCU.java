@@ -126,6 +126,9 @@ public class PCU extends CoapServer {
         EnergyResource washerEnergyResource = new EnergyResource(deviceId, "energy", washerEnergySensor);
         SwitchResource washerSwitchResource = new SwitchResource(deviceId, "switch", washerSwitchActuator);
 
+        washerSwitchActuator.setActive(false);
+        washerEnergySensor.setUpdatedValue(0.0);
+
         washerRootResource.add(washerEnergyResource);
         washerRootResource.add(washerSwitchResource);
 
