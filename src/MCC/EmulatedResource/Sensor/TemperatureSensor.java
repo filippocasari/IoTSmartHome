@@ -14,7 +14,7 @@ public class TemperatureSensor extends SmartObject<Double> {
     private static Logger logger = LoggerFactory.getLogger(TemperatureSensor.class);
 
     /** TEMPERATURE RANGE VALUE & VARIATION **/
-    private double TEMPERATURE_VALUE;
+    private static double TEMPERATURE_VALUE;
     private static double MIN_TEMPERATURE_VALUE;
     private static double MAX_TEMPERATURE_VALUE;
     private static final double MIN_TEMPERATURE_VARIATION = 0.1;

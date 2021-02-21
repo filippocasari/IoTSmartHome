@@ -124,7 +124,7 @@ public class TemperatureResource extends CoapResource {
                 logger.info("Submitted value: {}", submittedValue);
 
                 this.updatedTemperatureValue = submittedValue;
-                this.temperatureSensor.updateValue(updatedTemperatureValue);
+                this.temperatureSensor.setTemperatureValue(updatedTemperatureValue);
 
                 logger.info("Resource Status Updated: {}", this.updatedTemperatureValue);
                 exchange.respond(CoAP.ResponseCode.CHANGED);
