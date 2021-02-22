@@ -28,7 +28,7 @@ public class PCU extends CoapServer {
         this.add(createTvResource(deviceId));
         this.add(createWasherResource(deviceId));
         this.add(createDetectorResource(deviceId));
-        this.add(createThermostatResource(deviceId));
+        this.add(createHomeTemperatureResource(deviceId));
     }
 
     private CoapResource createLightResource(String deviceId){
@@ -198,31 +198,22 @@ public class PCU extends CoapServer {
         return detectorRootResource;
     }
 
-    private CoapResource createThermostatResource(String deviceId){
-        CoapResource thermostatRootResource = new CoapResource("thermostat");
+    private CoapResource createHomeTemperatureResource(String deviceId){
+        CoapResource homeTemperatureRootResource = new CoapResource("homeTs");
 
-        EnergySensor thEnergySensor = new EnergySensor("thermostat");
-        SwitchActuator thSwitchActuator = new SwitchActuator();
-        TemperatureSensor thTemperatureSensor = new TemperatureSensor(thermostatRootResource.getName());
+        EnergySensor htEnergySensor = new EnergySensor("homeTs");
+        SwitchActuator htSwitchActuator = new SwitchActuator();
+        TemperatureSensor htTemperatureSensor = new TemperatureSensor(homeTemperatureRootResource.getName());
 
-        EnergyResource thEnergyResource = new EnergyResource(deviceId, "energy", thEnergySensor);
-        TemperatureResource thTemperatureResource = new TemperatureResource(deviceId, "temperature", thTemperatureSensor);
-        SwitchResource thSwitchResource= new SwitchResource(deviceId, "switch", thSwitchActuator);
+        EnergyResource htEnergyResource = new EnergyResource(deviceId, "energy", htEnergySensor);
+        TemperatureResource htTemperatureResource = new TemperatureResource(deviceId, "temperature", htTemperatureSensor);
+        SwitchResource htSwitchResource= new SwitchResource(deviceId, "switch", htSwitchActuator);
 
-        thermostatRootResource.add(thEnergyResource);
-        thermostatRootResource.add(thTemperatureResource);
-        thermostatRootResource.add(thSwitchResource);
+        homeTemperatureRootResource.add(htEnergyResource);
+        homeTemperatureRootResource.add(htTemperatureResource);
+        homeTemperatureRootResource.add(htSwitchResource);
 
-        thTemperatureSensor.addDataListener(new DataListener<Double>() {
-
-            @Override
-            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-                thTemperatureSensor.setTemperatureValue(updatedValue);
-            }
-
-        });
-
-        return thermostatRootResource;
+        return homeTemperatureRootResource;
     }
 
     public static void main(String[] args){

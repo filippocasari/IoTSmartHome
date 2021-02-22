@@ -74,10 +74,6 @@ public class TemperatureSensor extends SmartObject<Double> {
         }
     }
 
-    public void setTemperatureValue(Double updatedValue) {
-        this.updatedValue = updatedValue;
-    }
-
     @Override
     public Double loadUpdatedValue() {
         return this.updatedValue;
