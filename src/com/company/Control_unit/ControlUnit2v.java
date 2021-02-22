@@ -32,7 +32,7 @@ class ControlUnit2v {
 
     private Double Consumption = 0.0;
 
-    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/temperture/energy";
+    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/energy";
     public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/switch";
     public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/temperature";
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
@@ -48,7 +48,7 @@ class ControlUnit2v {
     private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/detector/movement";
 
     public boolean EcoMode = false;
-    private String Datedetails = null;
+
 
 
     public ControlUnit2v() {
@@ -101,10 +101,11 @@ class ControlUnit2v {
 
 
         String day = simTime.getDay().toString();
+        String Datedetails;
 
         while (true) {
             //control if day is different
-            String Datedetails = createStringDate(simTime); // create a string of timestamp
+            Datedetails = createStringDate(simTime); // create a string of timestamp
             System.out.println(Datedetails + " ...checking Consumptions and Ecomode...");
             if (!day.equals(simTime.getDay().toString())) {
 
