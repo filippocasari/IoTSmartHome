@@ -103,6 +103,7 @@ class ControlUnit2v {
         simTime.start();
 
 
+
         String day = simTime.getDay().toString();
 
         while (true) {
@@ -129,7 +130,7 @@ class ControlUnit2v {
             }
             day = simTime.getDay().toString(); //day of the week
             try {
-                Thread.sleep(4000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

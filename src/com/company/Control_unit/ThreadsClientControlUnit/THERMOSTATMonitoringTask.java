@@ -35,11 +35,11 @@ public class THERMOSTATMonitoringTask implements Runnable {
 
 
     private void createGetRequestObserving() {
-        CoapClient client = new CoapClient(URLenergy);
+        CoapClient client = new CoapClient(URLtemperature);
         System.out.println("OBSERVING THERMOSTAT... @ " + URLtemperature);
 
         Request request = new Request(CoAP.Code.GET);
-        request.setOptions(new OptionSet().setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
+
         request.setObserve();
         request.setConfirmable(true);
 
@@ -51,15 +51,12 @@ public class THERMOSTATMonitoringTask implements Runnable {
                 logger.info("Payload: {}", text);
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
+                if(!text.equals("null")){
+                    printTemperature(Double.parseDouble(text));
+                }
 
 
-                String[] ValuesSring = text.split(",");
-                String value = ValuesSring[3].split(":")[1];
 
-
-                double temperaturecaught = Double.parseDouble(value);
-                printTemperature(temperaturecaught);
-                //checkTemperatureRange(temperaturecaught);
 
             }
 
@@ -81,7 +78,7 @@ public class THERMOSTATMonitoringTask implements Runnable {
     }
 
     private void printTemperature(double temperaturecaught) {
-        System.out.println("\n\nHome's Temperature: " + temperaturecaught + "\n\n");
+        System.out.println("\n\nHome's Temperature: " + temperaturecaught + " Cel\n\n");
     }
 
     private void checkTemperatureRange(double temperaturecaught) {
