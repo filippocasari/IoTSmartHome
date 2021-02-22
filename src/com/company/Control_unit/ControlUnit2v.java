@@ -85,7 +85,7 @@ class ControlUnit2v {
         System.out.println("Second: " + simTime.getSecond());
 
         ControlUnit2v controlUnit2v = new ControlUnit2v();
-        simTime.setSpeed(1); //or 1000 speed, if we want to check total daily consumption
+        simTime.setSpeed(500); //or from 1 to 10000 speed, if we want to check total daily consumption
         simTime.start();
 
 
@@ -196,7 +196,7 @@ class ControlUnit2v {
     }
 
     private void TotalCostEuros() {
-        System.out.println("Cost of the day is: " + (Consumption * 0.06256) / 1000 + " euros");
+        System.out.println("Cost of the day is: " + (Consumption * 0.06256) + " euros");
 
     }
 
