@@ -30,9 +30,9 @@ public class DetectorProcess extends CoapServer {
             @Override
             public void run() {
                 try{
-                    for(int i=0; i<100; i++){
+                    for(int i=0; i<1000; i++){
                         detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
-                        Thread.sleep(4000);
+                        Thread.sleep(9000);
                     }
                 }catch (Exception e){
                     e.printStackTrace();

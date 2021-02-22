@@ -1,9 +1,10 @@
-package com.company.Control_unit;
+package com.company.Control_unit.ThreadsClientControlUnit;
 
 
 //import com.company.Control_unit.ClientsType.GETClient;
 //import com.company.Control_unit.ClientsType.POSTClient;
 
+import com.company.Control_unit.ThreadsClientControlUnit.ControlUnit;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
@@ -38,6 +39,7 @@ public class MOVEMENTdetenctionTask implements Runnable {
                 System.err.println("MOVEMENT DETENCTION: " + content);
                 if (content.equals("false")) {
                     try {
+
                         ControlUnit.settingEcomodeON();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
