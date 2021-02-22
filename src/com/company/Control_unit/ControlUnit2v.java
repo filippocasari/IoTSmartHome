@@ -21,31 +21,36 @@ import org.slf4j.LoggerFactory;
  */
 
 
+/**set UPDATE_PERIOD and TASK_DELAY_TIME to 10 seconds for TEMPERATURE SENSOR AND  20 secs for ENERGY SENSOR
+ * set Thread.sleep to 7.5 second for MOVEMENT (Switch Actuator)
+ * to have better responses
+  */
+
 class ControlUnit2v {
 
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit2v.class);
 
     private static final Double MAX_VALUE_WASHER = 97.0;
-    private static final Double MAX_VALUE_LIGHTS = 2.0;
+    private static final Double MAX_VALUE_LIGHTS = 2.3;
     private static final Double MAX_VALUE_TV = 57.0;
 
     private Double Consumption = 0.0;
 
-    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/energy";
-    public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/switch";
-    public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/temperature";
-    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
-    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://127.0.0.1:5683/lights/switch";
-    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://127.0.0.1:5683/TV/switch";
-    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://127.0.0.1:5683/TV/energy";
-    private static final String COAP_ENDPOINT_ENERGY_WASHER = "coap://127.0.0.1:5683/washer/energy";
-    private static final String COAP_ENDPOINT_SWITCH_WASHER = "coap://127.0.0.1:5683/washer/switch";
+    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/energy";
+    public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/switch";
+    public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/temperature";
+    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://192.168.0.132:5683/lights/energy";
+    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://192.168.0.132:5683/lights/switch";
+    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://192.168.0.132:5683/TV/switch";
+    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://192.168.0.132:5683/TV/energy";
+    private static final String COAP_ENDPOINT_ENERGY_WASHER = "coap://192.168.0.132:5683/washer/energy";
+    private static final String COAP_ENDPOINT_SWITCH_WASHER = "coap://192.168.0.132:5683/washer/switch";
     //private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     //private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
-    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
-    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/detector/movement";
+    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://192.168.0.132:5683/fridge/energy";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://192.168.0.132:5683/detector/movement";
 
     public boolean EcoMode = false;
 
