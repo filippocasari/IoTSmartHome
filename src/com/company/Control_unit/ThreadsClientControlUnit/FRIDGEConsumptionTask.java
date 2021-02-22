@@ -1,4 +1,4 @@
-package com.company.Control_unit;
+package com.company.Control_unit.ThreadsClientControlUnit;
 
 
 import org.eclipse.californium.core.*;

@@ -1,9 +1,8 @@
-package com.company.Control_unit;
+package com.company.Control_unit.ThreadsClientControlUnit;
 
 
-import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
-import com.company.Control_unit.ClientsType.PUTClient;
+import com.company.Control_unit.ThreadsClientControlUnit.ControlUnit;
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -12,14 +11,14 @@ import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TVConsumptionTask implements Runnable {
+public class WASHERConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    public int count = 0;
-    private final static Logger logger = LoggerFactory.getLogger(TVConsumptionTask.class);
+    int count = 0;
+    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
-    public TVConsumptionTask(String URLenergy, String URLswitch) {
+    public WASHERConsumptionTask(String URLenergy, String URLswitch) {
 
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
@@ -29,9 +28,9 @@ public class TVConsumptionTask implements Runnable {
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
+        System.out.println("OBSERVING WASHER... @ " + URLenergy);
+        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
-        //logger.info("OBSERVING TV... {}", URLenergy);
-        System.out.println("OBSERVING TV... @ " + URLenergy);
         Request request = new Request(CoAP.Code.GET);
         request.setOptions(new OptionSet().setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
         request.setObserve();
@@ -52,44 +51,41 @@ public class TVConsumptionTask implements Runnable {
                 String[] ValuesSring = text.split(",");
                 String value = ValuesSring[3].split(":")[1];
                 double InstantConsumption = Double.parseDouble(value);
-
-                Consuption += InstantConsumption;
-
-                System.out.println("\n\nTotal Consumption tv : " + Consuption + " W");
-                System.out.println("Instant Consumption tv: " + InstantConsumption + " W\n\n");
                 try {
-                    count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy);
+                    count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                Consuption += InstantConsumption;
+
+                System.out.println("\n\nTotal Consumption Washer : " + Consuption + " W");
+                System.out.println("Instant Consumption Washer : " + InstantConsumption + " W\n\n");
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 
-                    //if (getClient.isOn(getClient.getResponseString())){
-                    ControlUnit.Notificationconsumption("TV system");
+                    //if (getClient.isOn(getClient.getResponseString())) {
+                    ControlUnit.Notificationconsumption("Washer");
 
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
                     /*} else {
-                        System.err.println("Switch of Tv just off");
-                        //logger.info("Switch just off");
+                        System.err.println("Switch's washer just off");
+                        logger.info("Switch just off");
                     }*/
 
                 };
 
-                if (ControlUnit.checkConsumption(InstantConsumption, "tv")) {
+                if (ControlUnit.checkConsumption( InstantConsumption, "washer")) {
                     Thread t = new Thread(runnable);
                     t.start();
 
                 }
 
-
             }
 
-
             public void onError() {
-                System.err.println("OBSERVING TV FAILED");
-                //logger.error("OBSERVING TV FAILED");
+                System.err.println("OBSERVING WASHER FAILED");
+                //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
         try {
@@ -104,7 +100,7 @@ public class TVConsumptionTask implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("CANCELLATION.....");
+        System.err.println("CANCELLATION...");
         //logger.info("CANCELLATION.....");
         relation.proactiveCancel();
     }
