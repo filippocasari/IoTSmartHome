@@ -21,10 +21,11 @@ import org.slf4j.LoggerFactory;
  */
 
 
-/**set UPDATE_PERIOD and TASK_DELAY_TIME to 10 seconds for TEMPERATURE SENSOR AND  20 secs for ENERGY SENSOR
+/**
+ * set UPDATE_PERIOD and TASK_DELAY_TIME to 10 seconds for TEMPERATURE SENSOR AND  20 secs for ENERGY SENSOR
  * set Thread.sleep to 7.5 second for MOVEMENT (Switch Actuator)
  * to have better responses
-  */
+ */
 
 class ControlUnit2v {
 
@@ -55,7 +56,6 @@ class ControlUnit2v {
     public boolean EcoMode = false;
 
 
-
     public ControlUnit2v() {
         CoapClient client = new CoapClient();
 
@@ -72,22 +72,6 @@ class ControlUnit2v {
         createNewCoapClientObserving(COAP_ENDPOINT_ENERGY_FRIDGE, "fridge", client);
 
 
-    }
-
-
-    public boolean isEcoMode() {
-        return EcoMode;
-    }
-
-
-    private void printTotalConsumptionfromAll(String day) {
-        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption);
-        TotalCostEuros();
-        Consumption = 0.0;
-    }
-
-    private static String createStringDate(SimTime simTime) {
-        return simTime.getDay() + ", " + simTime.getHour() + " : " + simTime.getMinute();
     }
 
 
@@ -123,7 +107,7 @@ class ControlUnit2v {
                     if (checkEcoMode(simTime)) { // if Ecomode is true, put request to turn all switches off
                         System.err.println("HOUR > " + simTime.getHour());
                         settingEcomodeON();
-                        controlUnit2v.EcoMode=true;
+                        controlUnit2v.EcoMode = true;
                     } else {
                         System.err.println("Not time to set Ecomode ON");
                     }
@@ -142,6 +126,21 @@ class ControlUnit2v {
 
         }
 
+    }
+
+    public boolean isEcoMode() {
+        return EcoMode;
+    }
+
+
+    private void printTotalConsumptionfromAll(String day) {
+        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption);
+        TotalCostEuros();
+        Consumption = 0.0;
+    }
+
+    private static String createStringDate(SimTime simTime) {
+        return simTime.getDay() + ", " + simTime.getHour() + " : " + simTime.getMinute();
     }
 
     public static boolean checkConsumption(Double InstantConsumption, String fromWho) {
@@ -183,7 +182,6 @@ class ControlUnit2v {
 
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(false))).start();
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(false))).start();
-
 
 
     }
