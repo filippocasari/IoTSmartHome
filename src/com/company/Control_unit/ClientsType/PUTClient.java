@@ -22,11 +22,9 @@ public class PUTClient {
 
         Request request = new Request(CoAP.Code.PUT);
 
-
-        logger.info("PUT Request Random Payload: {}", payload);
         request.setPayload(payload);
 
-        request.setConfirmable(false);
+        request.setConfirmable(true);
 
         logger.info("Request Pretty Print:" +URL+"\n{}", Utils.prettyPrint(request));
 
@@ -36,8 +34,6 @@ public class PUTClient {
         try {
 
             coapResp = coapClient.advanced(request);
-
-            logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(coapResp));
 
 
             String text = coapResp.getResponseText();
