@@ -1,23 +1,24 @@
-package com.company.Control_unit;
+package com.company.Control_unit.ThreadsClientControlUnit;
 
 
 //import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
-import com.company.Control_unit.ClientsType.PUTClient;
+
+import com.company.Control_unit.ThreadsClientControlUnit.ControlUnit;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
-public class LIGHTSConsumptionTask implements Runnable {
+public class HEATINGConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
     int count = 0;
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
-    public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
+    public HEATINGConsumptionTask(String URLenergy, String URLswitch) {
 
         this.URLenergy = URLenergy;
         this.URLswitch = URLswitch;
@@ -27,7 +28,7 @@ public class LIGHTSConsumptionTask implements Runnable {
 
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
-        System.out.println("OBSERVING LIGHTS... @ " + URLenergy);
+        System.out.println("OBSERVING HEATING SYSTEM... @ " + URLenergy);
         //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = Request.newGet().setURI(URLenergy).setObserve();
@@ -46,13 +47,13 @@ public class LIGHTSConsumptionTask implements Runnable {
                 }
                 Consuption += InstantConsumption;
 
-                System.out.println("\n\nTotal Consumption Lights : " + Consuption + " W");
-                System.out.println("Instant Consumption Lights : " + content + " W\n\n");
+                System.out.println("Total Consumption HEATING SYSTEM : " + Consuption + " W");
+                System.out.println("Instant Consumption HEATING SYSTEM : " + content + " W");
                 Runnable runnable = () -> {
                     //GETClient getClient = new GETClient(URLswitch);
 
                     //if (getClient.isOn(getClient.getResponseString())) {
-                    new Thread(()->ControlUnit.Notificationconsumption("LIGHTS")).start();
+                    new Thread(()-> ControlUnit.Notificationconsumption("HEATING SYSTEM")).start();
 
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
@@ -63,7 +64,7 @@ public class LIGHTSConsumptionTask implements Runnable {
 
                 };
 
-                if (ControlUnit.checkConsumption(InstantConsumption, "lights")) {
+                if (ControlUnit.checkConsumption(InstantConsumption, "heating system")) {
                     Thread t = new Thread(runnable);
                     t.start();
 
@@ -74,7 +75,7 @@ public class LIGHTSConsumptionTask implements Runnable {
 
 
             public void onError() {
-                System.err.println("OBSERVING LIGHTS FAILED");
+                System.err.println("OBSERVING HEATING SYSTEM FAILED");
                 //logger.error("OBSERVING LIGHTS FAILED");
             }
         });

@@ -1,4 +1,4 @@
-package com.company.Control_unit;
+package com.company.Control_unit.ThreadsClientControlUnit;
 
 
 //import com.company.Control_unit.ClientsType.GETClient;
@@ -9,8 +9,13 @@ import com.company.Control_unit.ClientsType.PUTClient;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class THERMOSTATMonitoringTask implements Runnable {
     //public Double Consuption = 0.0;
@@ -18,7 +23,7 @@ public class THERMOSTATMonitoringTask implements Runnable {
     public static String URLswitch;
     public static String URLtemperature;
 
-    //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
+    private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public THERMOSTATMonitoringTask(String URLenergy, String URLswitch, String URLtemperature) {
 
@@ -33,21 +38,28 @@ public class THERMOSTATMonitoringTask implements Runnable {
         CoapClient client = new CoapClient(URLenergy);
         System.out.println("OBSERVING THERMOSTAT... @ " + URLtemperature);
 
-        Request request = Request.newGet().setURI(URLtemperature).setObserve();
+        Request request = new Request(CoAP.Code.GET);
+        request.setOptions(new OptionSet().setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
+        request.setObserve();
         request.setConfirmable(true);
 
 
         CoapObserveRelation relation = client.observe(request, new CoapHandler() {
 
             public void onLoad(CoapResponse response) {
+                String text = response.getResponseText();
+                logger.info("Payload: {}", text);
+                logger.info("Message ID: " + response.advanced().getMID());
+                logger.info("Token: " + response.advanced().getTokenString());
                 String content = response.getResponseText();
-                if(!content.equals("null")){
-                    double temperaturecaught = Double.parseDouble(content);
-                    printTemperature(temperaturecaught);
-                    checkTemperatureRange(temperaturecaught);
-                }else{
-                    System.err.println("TEMPERATURE NULL");
-                }
+                String[] ValuesSring=text.split(",");
+                String value = ValuesSring[3].split(":")[1];
+
+
+                double temperaturecaught = Double.parseDouble(value);
+                printTemperature(temperaturecaught);
+                checkTemperatureRange(temperaturecaught);
+
 
 
 

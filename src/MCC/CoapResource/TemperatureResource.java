@@ -116,25 +116,4 @@ public class TemperatureResource extends CoapResource {
 
     }
 
-    @Override
-    public void handlePUT(CoapExchange exchange) {
-        try{
-            if(exchange.getRequestPayload() != null){
-                Double submittedValue = Double.parseDouble(new String(exchange.getRequestPayload()));
-                logger.info("Submitted value: {}", submittedValue);
-
-                this.updatedTemperatureValue = submittedValue;
-                this.temperatureSensor.setTemperatureValue(updatedTemperatureValue);
-
-                logger.info("Resource Status Updated: {}", this.updatedTemperatureValue);
-                exchange.respond(CoAP.ResponseCode.CHANGED);
-
-            }else
-                exchange.respond(CoAP.ResponseCode.BAD_REQUEST);
-
-        }catch(Exception e){
-            logger.error("Error Handling PUT -> {}", e.getLocalizedMessage());
-            exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
