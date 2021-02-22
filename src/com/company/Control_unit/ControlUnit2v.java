@@ -22,9 +22,6 @@ import org.slf4j.LoggerFactory;
 
 
 class ControlUnit2v {
-    public boolean lightSwitch = false;
-    public boolean tvSwitch = true;
-    public boolean washerSwitch = false;
 
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit2v.class);
