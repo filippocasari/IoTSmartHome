@@ -214,14 +214,6 @@ public class PCU extends CoapServer {
         thermostatRootResource.add(thTemperatureResource);
         thermostatRootResource.add(thSwitchResource);
 
-        thTemperatureSensor.addDataListener(new DataListener<Double>() {
-
-            @Override
-            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-                thTemperatureSensor.setTemperatureValue(updatedValue);
-            }
-
-        });
 
         return thermostatRootResource;
     }
