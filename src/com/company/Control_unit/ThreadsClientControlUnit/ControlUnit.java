@@ -30,7 +30,6 @@ public class ControlUnit {
     private static final Double MAX_VALUE_TV = 57.0;
 
 
-
     private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/energy";
     public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/switch";
     public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/temperature";
@@ -46,7 +45,7 @@ public class ControlUnit {
     private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://127.0.0.1:5683/fridge/energy";
     private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://127.0.0.1:5683/detector/movement";
 
-    TVConsumptionTask tvConsuptionTask ;
+    TVConsumptionTask tvConsuptionTask;
     FRIDGEConsumptionTask fridgeConsumptionTask;
     LIGHTSConsumptionTask lightsConsumptionTask;
     WASHERConsumptionTask washerConsumptionTask;
@@ -71,9 +70,6 @@ public class ControlUnit {
                 COAP_ENDPOINT_TEMPERATURE_THERMOSTAT);
 
 
-
-
-
         //create new Task for Energy Consumption
         Thread t1 = new Thread(fridgeConsumptionTask);
         t1.setName("THREAD FRIDGE");
@@ -88,7 +84,7 @@ public class ControlUnit {
 
         t1.setName("THREAD WASHER");
         Thread t5 = new Thread(movemenTdetenctionTask);
-        t5.setPriority(Thread.MAX_PRIORITY);
+
         t1.setName("THREAD MOVEMENT");
 
         Thread t6 = new Thread(thermostatMonitoringTask);
@@ -97,26 +93,22 @@ public class ControlUnit {
 
         //start thread for observable resource energy
         t1.setPriority(5);
-        t1.start();
         t2.setPriority(5);
-        t2.start();
         t3.setPriority(5);
-        t3.start();
         t4.setPriority(5);
-        t4.start();
-        t5.setPriority(Thread.MAX_PRIORITY);
-        t5.start();
         t6.setPriority(5);
+
+        t5.setPriority(Thread.MAX_PRIORITY);
+
+
+        t1.start();
+
+        t2.start();
+        t3.start();
+        t4.start();
+        t5.start();
         t6.start();
 
-
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
-        t5.join();
-        t6.join();
-        //start periodic task to check ecomode
 
 
     }
@@ -139,7 +131,6 @@ public class ControlUnit {
         washer.Consuption = 0.0;
 
     }
-
 
 
     private static String createStringDate(SimTime simTime) {

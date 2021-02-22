@@ -93,15 +93,7 @@ public class LIGHTSConsumptionTask implements Runnable {
             }
         });
 
-        // Observes the coap resource for 30 seconds then the observing relation is deleted
-        try {
-            Thread.sleep(60 * 3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.err.println("CANCELLATION...");
-        //logger.info("CANCELLATION.....");
-        relation.proactiveCancel();
+
     }
 
 

@@ -55,9 +55,6 @@ public class THERMOSTATMonitoringTask implements Runnable {
                     printTemperature(Double.parseDouble(text));
                 }
 
-
-
-
             }
 
             public void onError() {
@@ -66,15 +63,6 @@ public class THERMOSTATMonitoringTask implements Runnable {
             }
         });
 
-        // Observes the coap resource for 30 seconds then the observing relation is deleted
-        try {
-            Thread.sleep(60 * 3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.err.println("CANCELLATION...");
-        //logger.info("CANCELLATION.....");
-        relation.proactiveCancel();
     }
 
     private void printTemperature(double temperaturecaught) {

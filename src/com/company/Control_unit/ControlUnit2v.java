@@ -103,7 +103,6 @@ class ControlUnit2v {
         simTime.start();
 
 
-
         String day = simTime.getDay().toString();
 
         while (true) {
@@ -121,9 +120,12 @@ class ControlUnit2v {
                     if (checkEcoMode(simTime)) { // if Ecomode is true, put request to turn all switches off
                         System.err.println("HOUR > " + simTime.getHour());
                         settingEcomodeON();
+                        controlUnit2v.EcoMode=true;
                     } else {
-                        System.err.println("Ecomode just set");
+                        System.err.println("Not time to set Ecomode ON");
                     }
+                } else {
+                    System.err.println("Ecomode just set");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -180,6 +182,7 @@ class ControlUnit2v {
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(false))).start();
 
 
+
     }
 
     public static void disablingEcomode() throws InterruptedException {
@@ -213,7 +216,7 @@ class ControlUnit2v {
             public void onLoad(CoapResponse response) {
                 logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(response));
 
-                //The "CoapResponse" message contains the response.
+
                 String text = response.getResponseText();
                 logger.info("Payload: {}", text);
                 logger.info("Message ID: " + response.advanced().getMID());
@@ -287,34 +290,34 @@ class ControlUnit2v {
 
                 String[] ValuesSring = text.split(",");
                 String value = ValuesSring[2].split(":")[1];
-                if(URL.equals(COAP_ENDPOINT_ENERGY_FRIDGE) && ((ValuesSring[3]).split(":"))[0].equals("v")){
-                    Consumption+=Double.parseDouble(value);
+                if (URL.equals(COAP_ENDPOINT_ENERGY_FRIDGE) && ((ValuesSring[3]).split(":"))[0].equals("v")) {
+                    Consumption += Double.parseDouble(value);
                     System.out.println("\n\nTotal Consumption: " + Consumption + " W");
                     System.out.println("Instant Consumption " + Who + " : " + Consumption + " W\n\n");
-                }
+                } else if (URL.equals(COAP_ENDPOINT_MOVEMENT_SENSOR)) {
+                    if (value.equals("false")) {
+                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + value);
+                        try {
+                            if (!isEcoMode()) {
+                                ControlUnit2v.settingEcomodeON();
+                                EcoMode = true;
+                            }
 
-                if (value.equals("false")) {
-                    System.err.println("VALUE OF MOVEMENT SENSOR IS: " + value);
-                    try {
-                        if (!isEcoMode()) {
-                            ControlUnit2v.settingEcomodeON();
-                            EcoMode = true;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    } else if (value.equals("true")) {
+                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + value);
+                        try {
+                            if (isEcoMode()) {
+                                ControlUnit2v.disablingEcomode();
+                                EcoMode = false;
+                            }
 
-                } else if (value.equals("true")) {
-                    System.err.println("VALUE OF MOVEMENT SENSOR IS: " + value);
-                    try {
-                        if (isEcoMode()) {
-                            ControlUnit2v.disablingEcomode();
-                            EcoMode = false;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
 
@@ -325,6 +328,7 @@ class ControlUnit2v {
                 System.err.println("OBSERVING" + Who + " FAILED");
             }
         });
+
     }
 
 }

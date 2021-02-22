@@ -9,16 +9,19 @@ import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ArrayBlockingQueue;
+
 public class FRIDGEConsumptionTask implements Runnable {
     public Double Consuption = 0.0;
     public static String URLenergy;
-
+    public ArrayBlockingQueue queue;
 
     private final static Logger logger = LoggerFactory.getLogger(FRIDGEConsumptionTask.class);
 
     public FRIDGEConsumptionTask(String URL) {
 
         URLenergy = URL;
+        this.queue=queue;
 
 
     }
@@ -53,6 +56,7 @@ public class FRIDGEConsumptionTask implements Runnable {
                 System.out.println("\n\nTotal Consumption Fridge : " + Consuption + " W");
                 System.out.println("Instant Consumption Fridge: " + value + " W\n\n");
 
+
             }
 
 
@@ -61,20 +65,13 @@ public class FRIDGEConsumptionTask implements Runnable {
             }
         });
 
-        try {
-            Thread.sleep(60 * 3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        logger.info("CANCELLATION.....");
-        relation.proactiveCancel();
     }
 
 
     @Override
     public void run() {
         createGetRequestObserving();
+
     }
 }
 
