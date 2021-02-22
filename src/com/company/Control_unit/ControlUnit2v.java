@@ -35,7 +35,7 @@ class ControlUnit2v {
 
     private Double Consumption = 0.0;
 
-    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/energy";
+    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/temperture/energy";
     public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/switch";
     public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/temperature";
     private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://127.0.0.1:5683/lights/energy";
@@ -99,7 +99,7 @@ class ControlUnit2v {
         System.out.println("Second: " + simTime.getSecond());
 
         ControlUnit2v controlUnit2v = new ControlUnit2v();
-        simTime.setSpeed(1000); //or 1000 speed, if we want to check total daily consumption
+        simTime.setSpeed(1); //or 1000 speed, if we want to check total daily consumption
         simTime.start();
 
 
@@ -134,9 +134,7 @@ class ControlUnit2v {
                 e.printStackTrace();
             }
 
-
         }
-
 
     }
 
@@ -228,13 +226,7 @@ class ControlUnit2v {
 
                     double temperaturecaught = Double.parseDouble(value);
                     System.out.println("TEMPERATURE?S HOME IS : " + temperaturecaught);
-                    if (temperaturecaught > 25.0) {
-                        System.err.println("\n\nTemperature out of range, TOO HIGH TEMPERATURE!!! ==> TURN SWITCH OFF\n\n");
-                        new Thread(() -> new POSTClient(URLswitch));
-                    } else if (temperaturecaught < 21.5) {
-                        System.err.println("\n\nTemperature out of range, TOO LOW TEMPERATURE!!!==> TURN SWITCH ON\n\n");
-                        new Thread(() -> new POSTClient(URLswitch));
-                    }
+
                 } else if (!URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT)) {
                     double InstantConsumption = Double.parseDouble(value);
                     Consumption += InstantConsumption;
@@ -258,7 +250,6 @@ class ControlUnit2v {
 
                     }
                 }
-
 
             }
 

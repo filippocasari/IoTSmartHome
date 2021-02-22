@@ -51,21 +51,17 @@ public class THERMOSTATMonitoringTask implements Runnable {
                 logger.info("Payload: {}", text);
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
-                String content = response.getResponseText();
-                String[] ValuesSring=text.split(",");
+
+
+                String[] ValuesSring = text.split(",");
                 String value = ValuesSring[3].split(":")[1];
 
 
                 double temperaturecaught = Double.parseDouble(value);
                 printTemperature(temperaturecaught);
-                checkTemperatureRange(temperaturecaught);
-
-
-
-
+                //checkTemperatureRange(temperaturecaught);
 
             }
-
 
             public void onError() {
                 System.err.println("OBSERVING THERMOSTAT FAILED");
@@ -85,7 +81,7 @@ public class THERMOSTATMonitoringTask implements Runnable {
     }
 
     private void printTemperature(double temperaturecaught) {
-        System.out.println("\n\nHome's Temperature: "+temperaturecaught+"\n\n");
+        System.out.println("\n\nHome's Temperature: " + temperaturecaught + "\n\n");
     }
 
     private void checkTemperatureRange(double temperaturecaught) {
