@@ -139,7 +139,7 @@ class ControlUnit2v {
 
 
     private void printTotalConsumptionfromAll(String day) {
-        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption);
+        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption+" Watt");
         TotalCostEuros();
         Consumption = 0.0;
     }
@@ -201,7 +201,7 @@ class ControlUnit2v {
     }
 
     private void TotalCostEuros() {
-        System.out.println("Cost of the day is: " + (Consumption * 0.06256) + " euros");
+        System.out.println("Cost of the day is: " + (Consumption * 0.06256)/1000 + " euros");
 
     }
 
