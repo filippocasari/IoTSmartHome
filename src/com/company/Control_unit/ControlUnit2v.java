@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * set UPDATE_PERIOD and TASK_DELAY_TIME to 10 seconds for TEMPERATURE SENSOR AND  20 secs for ENERGY SENSOR
- * set Thread.sleep to 7.5 second for MOVEMENT (Switch Actuator)
+ * set Thread.sleep to 10 seconds for MOVEMENT (Switch Actuator)
  * to have better responses
  */
 
@@ -32,33 +32,38 @@ class ControlUnit2v {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit2v.class);
 
+    //if value > MAX_VALUES ==> turn specific switch off
     private static final Double MAX_VALUE_WASHER = 97.0;
     private static final Double MAX_VALUE_LIGHTS = 2.3;
     private static final Double MAX_VALUE_TV = 57.0;
 
     private Double Consumption = 0.0;
 
-    private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/energy";
-    public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/switch";
-    public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/temperature";
-    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = "coap://192.168.0.132:5683/lights/energy";
-    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = "coap://192.168.0.132:5683/lights/switch";
-    private static final String COAP_ENDPOINT_SWITCH_TV = "coap://192.168.0.132:5683/TV/switch";
-    public static final String COAP_ENDPOINT_ENERGY_TV = "coap://192.168.0.132:5683/TV/energy";
-    private static final String COAP_ENDPOINT_ENERGY_WASHER = "coap://192.168.0.132:5683/washer/energy";
-    private static final String COAP_ENDPOINT_SWITCH_WASHER = "coap://192.168.0.132:5683/washer/switch";
     //private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
     //private static final String COAP_ENDPOINT_SWITCH_HEATING = "coap://127.0.0.1:5683/heating-system/switch";
-    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = "coap://192.168.0.132:5683/fridge/energy";
-    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = "coap://192.168.0.132:5683/detector/movement";
+    //private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://192.168.0.132:5683/thermostat/energy";
+    public static final String LOCALHOST = "127.0.0.1";
+    public static final String IP_AND_PORT = "coap://" + LOCALHOST + ":5683"; //192.168.0.132
+    public static final String COAP_ENDPOINT_SWITCH_THERMOSTAT = IP_AND_PORT + "/switch";
+    public static final String COAP_ENDPOINT_TEMPERATURE_THERMOSTAT = IP_AND_PORT + "/thermostat/temperature";
+    private static final String COAP_ENDPOINT_ENERGY_LIGHTS = IP_AND_PORT + "/lights/energy";
+    public static final String COAP_ENDPOINT_SWITCH_LIGHTS = IP_AND_PORT + "/lights/switch";
+    private static final String COAP_ENDPOINT_SWITCH_TV = IP_AND_PORT + "/TV/switch";
+    public static final String COAP_ENDPOINT_ENERGY_TV = IP_AND_PORT + "/TV/energy";
+    private static final String COAP_ENDPOINT_ENERGY_WASHER = IP_AND_PORT + "/washer/energy";
+    private static final String COAP_ENDPOINT_SWITCH_WASHER = IP_AND_PORT + "/washer/switch";
+    private static final String COAP_ENDPOINT_ENERGY_FRIDGE = IP_AND_PORT + "/fridge/energy";
+    private static final String COAP_ENDPOINT_MOVEMENT_SENSOR = IP_AND_PORT + "/detector/movement";
 
-    public boolean EcoMode = false;
+    public boolean EcoMode = false; // Eco-mode is false at the beginning
 
 
     public ControlUnit2v() {
+        //start new Client coap for every obs request/response
         CoapClient client = new CoapClient();
 
+        //invoking function that starts the communication for every obj
         createNewCoapClientObserving(COAP_ENDPOINT_ENERGY_LIGHTS, COAP_ENDPOINT_SWITCH_LIGHTS,
                 "lights", client);
         createNewCoapClientObserving(COAP_ENDPOINT_ENERGY_TV, COAP_ENDPOINT_SWITCH_TV,
@@ -76,35 +81,35 @@ class ControlUnit2v {
 
 
     public static void main(String[] args) throws InterruptedException {
-
+        //Simulationg Real Time
         SimTime simTime = new SimTime();
+        simTime.setSpeed(1); // from 1 to 10000 (speed)
+        simTime.start(); //start thread
 
-        System.out.println("Starting Time...\nDay: " + simTime.getDay().toString());
-        System.out.println("Hour: " + simTime.getHour());
-        System.out.println("Minute: " + simTime.getMinute());
-        System.out.println("Second: " + simTime.getSecond());
+        System.out.println("Starting Time...\n: ");
+        createStringDate(simTime);
 
+        //now create The Control Unit
         ControlUnit2v controlUnit2v = new ControlUnit2v();
-        simTime.setSpeed(500); //or from 1 to 10000 speed, if we want to check total daily consumption
-        simTime.start();
 
 
-        String day = simTime.getDay().toString();
+        String day = simTime.getDay().toString(); //create a variable day to store the current day
         String Datedetails;
 
         while (true) {
-            //control if day is different
+            //checking if day is different
             Datedetails = createStringDate(simTime); // create a string of timestamp
-            System.out.println(Datedetails + " ...checking Consumptions and Ecomode...");
+            System.out.println(Datedetails + " ...checking Consumptions and Eco-mode...");
             if (!day.equals(simTime.getDay().toString())) {
 
                 controlUnit2v.printTotalConsumptionfromAll(day);
+
             }
 
             try {
-                if (!controlUnit2v.isEcoMode()) { //if ecomode is off
-                    //check if it's time to turn ecomode on
-                    if (checkEcoMode(simTime)) { // if Ecomode is true, put request to turn all switches off
+                if (!controlUnit2v.isEcoMode()) { //if eco-mode is off
+                    //check if it's time to turn eco-mode on
+                    if (checkEcoMode(simTime)) { // if Eco-mode is true, put request to turn all switches off
                         System.err.println("HOUR > " + simTime.getHour());
                         settingEcomodeON();
                         controlUnit2v.EcoMode = true;
@@ -117,9 +122,9 @@ class ControlUnit2v {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            day = simTime.getDay().toString(); //day of the week
+            day = simTime.getDay().toString(); //update the day of the week
             try {
-                Thread.sleep(2000);
+                Thread.sleep(2000); //delay loop
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -134,7 +139,7 @@ class ControlUnit2v {
 
 
     private void printTotalConsumptionfromAll(String day) {
-        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption);
+        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption+" Watt");
         TotalCostEuros();
         Consumption = 0.0;
     }
@@ -161,7 +166,7 @@ class ControlUnit2v {
 
     }
 
-    public static boolean checkEcoMode(SimTime simTime) throws InterruptedException {
+    public static boolean checkEcoMode(SimTime simTime) {
 
         return ((simTime.getHour() > 0 && simTime.getHour() < 5));
 
@@ -178,25 +183,25 @@ class ControlUnit2v {
 
         System.err.println("ECOMODE IS TRUE: PUT REQUESTS FOR EACH DEVICE");
 
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(false))).start();
-
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(false))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(false))).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, "false")).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, "false")).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, "false")).start();
 
 
     }
 
     public static void disablingEcomode() throws InterruptedException {
-        System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, String.valueOf(true))).start();
 
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, String.valueOf(true))).start();
-        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, String.valueOf(true))).start();
+        System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
+
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, "true")).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, "true")).start();
+        new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, "true")).start();
 
     }
 
     private void TotalCostEuros() {
-        System.out.println("Cost of the day is: " + (Consumption * 0.06256) + " euros");
+        System.out.println("Cost of the day is: " + (Consumption * 0.06256)/1000 + " euros");
 
     }
 
@@ -217,8 +222,8 @@ class ControlUnit2v {
             public void onLoad(CoapResponse response) {
                 logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(response));
 
-
                 String text = response.getResponseText();
+
                 logger.info("Payload: {}", text);
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
@@ -227,13 +232,16 @@ class ControlUnit2v {
                 String[] ValuesSring = text.split(",");
                 String value = ValuesSring[3].split(":")[1];
 
-                if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && ((ValuesSring[3]).split(":"))[0].equals("v")) {
+                if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && ValuesSring.length>4) {
 
                     double temperaturecaught = Double.parseDouble(value);
-                    System.out.println("TEMPERATURE?S HOME IS : " + temperaturecaught);
+                    System.out.println("\nTEMPERATURE'S HOME IS : " + temperaturecaught+"Celsius\n");
 
                 } else if (!URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT)) {
                     double InstantConsumption = Double.parseDouble(value);
+                    if (InstantConsumption < 0.0) {
+                        InstantConsumption = 0.0;
+                    }
                     Consumption += InstantConsumption;
 
                     System.out.println("\n\nTotal Consumption: " + Consumption + " W");
@@ -242,15 +250,14 @@ class ControlUnit2v {
 
                     Runnable runnable = () -> {
 
-
                         new Thread(() -> ControlUnit2v.Notificationconsumption(Who)).start();
-
                         new Thread(() -> new POSTClient(URLswitch)).start();
 
 
                     };
                     if (ControlUnit2v.checkConsumption(InstantConsumption, Who) && !isEcoMode()) {
                         Thread t = new Thread(runnable);
+
                         t.start();
 
                     }

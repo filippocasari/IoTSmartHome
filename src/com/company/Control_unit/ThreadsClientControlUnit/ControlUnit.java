@@ -26,7 +26,7 @@ public class ControlUnit {
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
     private static final Double MAX_VALUE_WASHER = 97.0;
-    private static final Double MAX_VALUE_LIGHTS = 2.0;
+    private static final Double MAX_VALUE_LIGHTS = 2.4;
     private static final Double MAX_VALUE_TV = 57.0;
 
 
@@ -147,16 +147,18 @@ public class ControlUnit {
         System.out.println("Second: " + simTime.getSecond());
 
         ControlUnit controlUnit = new ControlUnit();
-        simTime.setSpeed(1); //or 1000 speed, if we want to check total daily consumption
+        simTime.setSpeed(1000); //or 1000 speed, if we want to check total daily consumption
         simTime.start();
 
 
-        String day = simTime.getDay().toString();
 
-        while (true) {
+
+        new Thread(()->{
+            String day = simTime.getDay().toString();
+            while (true) {
             //control if day is different
             String Datedetails = createStringDate(simTime); // create a string of timestamp
-            System.out.println(Datedetails);
+            System.out.println("\n\n"+Datedetails+"\n\n");
             if (!day.equals(simTime.getDay().toString())) {
 
                 printTotalConsumptionfromAll(day, controlUnit.lightsConsumptionTask,
@@ -179,13 +181,13 @@ public class ControlUnit {
             }
             day = simTime.getDay().toString(); //day of the week
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
 
-        }
+        }}).start();
 
 
     }
