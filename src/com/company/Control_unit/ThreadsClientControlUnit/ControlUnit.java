@@ -25,9 +25,10 @@ public class ControlUnit {
 
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit.class);
 
-    private static final Double MAX_VALUE_WASHER = 97.0;
-    private static final Double MAX_VALUE_LIGHTS = 2.4;
-    private static final Double MAX_VALUE_TV = 57.0;
+    //if value > MAX_VALUES ==> turn specific switch off
+    private static final double MAX_VALUE_WASHER = 96.5;
+    private static final double MAX_VALUE_LIGHTS = 4.0;
+    private static final double MAX_VALUE_TV = 57.0;
 
 
     private static final String COAP_ENDPOINT_ENERGY_THERMOSTAT = "coap://127.0.0.1:5683/thermostat/energy";
@@ -53,7 +54,7 @@ public class ControlUnit {
     THERMOSTATMonitoringTask thermostatMonitoringTask;
 
     public boolean EcoMode = false;
-    private String Datedetails = null;
+
 
 
     public ControlUnit() throws InterruptedException {
@@ -102,7 +103,6 @@ public class ControlUnit {
 
 
         t1.start();
-
         t2.start();
         t3.start();
         t4.start();
@@ -172,9 +172,13 @@ public class ControlUnit {
                     if (checkEcoMode(simTime)) { // if Ecomode is true, put request to turn all switches off
                         System.err.println("HOUR > " + simTime.getHour());
                         settingEcomodeON();
+                        controlUnit.EcoMode=true;
                     } else {
-                        System.err.println("Ecomode just set");
+                        System.err.println("It's not time to set Ecomode");
                     }
+                }
+                else{
+                    System.err.println("Ecomode just set");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -233,6 +237,9 @@ public class ControlUnit {
             count = 0;
 
             new Thread(() -> new POSTClient(URLforPost)).start();
+        }
+        else{
+            count=0;
         }
         return count;
     }

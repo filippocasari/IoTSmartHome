@@ -4,7 +4,9 @@ package com.company.Control_unit.ThreadsClientControlUnit;
 //import com.company.Control_unit.ClientsType.GETClient;
 
 import com.company.Control_unit.ClientsType.POSTClient;
-import com.company.Control_unit.ThreadsClientControlUnit.ControlUnit;
+import com.company.Control_unit.Utils.SenMLPack;
+import com.company.Control_unit.Utils.SenMLRecord;
+import com.google.gson.Gson;
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -14,10 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LIGHTSConsumptionTask implements Runnable {
-    public Double Consuption = 0.0;
+    public double Consuption = 0.0;
     public static String URLenergy;
     public static String URLswitch;
-    int count = 0;
+    public int count = 0;
     private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
     public LIGHTSConsumptionTask(String URLenergy, String URLswitch) {
@@ -31,7 +33,6 @@ public class LIGHTSConsumptionTask implements Runnable {
     private void createGetRequestObserving() {
         CoapClient client = new CoapClient(URLenergy);
         System.out.println("OBSERVING LIGHTS... @ " + URLenergy);
-        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = new Request(CoAP.Code.GET);
         request.setOptions(new OptionSet().setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
@@ -50,9 +51,13 @@ public class LIGHTSConsumptionTask implements Runnable {
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
 
-                String[] ValuesSring = text.split(",");
-                String value = ValuesSring[3].split(":")[1];
-                double InstantConsumption = Double.parseDouble(value);
+                Gson gson = new Gson();
+                SenMLPack senMLPack = gson.fromJson(text, SenMLPack.class);
+                SenMLRecord senMLRecord = senMLPack.get(0);
+
+
+
+                double InstantConsumption = Double.parseDouble(senMLRecord.getV().toString());
                 try {
                     count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy); //turn on the switch if lights are off for too much time
                 } catch (InterruptedException e) {
@@ -60,20 +65,14 @@ public class LIGHTSConsumptionTask implements Runnable {
                 }
                 Consuption += InstantConsumption;
 
-                System.out.println("\n\nTotal Consumption Lights : " + Consuption + " W");
-                System.out.println("Instant Consumption Lights : " + InstantConsumption + " W\n\n");
+                System.out.println("\n\nTotal Consumption Lights : " + Consuption +" "+senMLRecord.getU());
+                System.out.println("Instant Consumption Lights : " + InstantConsumption +" "+senMLRecord.getU()+ " \n\n");
                 Runnable runnable = () -> {
-                    //GETClient getClient = new GETClient(URLswitch);
 
-                    //if (getClient.isOn(getClient.getResponseString())) {
                     new Thread(() -> ControlUnit.Notificationconsumption("LIGHTS")).start();
 
                     new Thread(() -> new POSTClient(URLswitch)).start();
 
-                    /*} else {
-                        System.err.println("Switch just off");
-                        //logger.info("Switch just off");
-                    }*/
 
                 };
 
@@ -86,10 +85,8 @@ public class LIGHTSConsumptionTask implements Runnable {
 
             }
 
-
             public void onError() {
                 System.err.println("OBSERVING LIGHTS FAILED");
-                //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
 

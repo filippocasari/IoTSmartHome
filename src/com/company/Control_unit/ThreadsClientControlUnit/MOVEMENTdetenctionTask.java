@@ -1,19 +1,22 @@
 package com.company.Control_unit.ThreadsClientControlUnit;
 
 
-//import com.company.Control_unit.ClientsType.GETClient;
-//import com.company.Control_unit.ClientsType.POSTClient;
-
-import com.company.Control_unit.ThreadsClientControlUnit.ControlUnit;
+import com.company.Control_unit.Utils.SenMLPack;
+import com.company.Control_unit.Utils.SenMLRecord;
+import com.google.gson.Gson;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.CoapHandler;
 
 public class MOVEMENTdetenctionTask implements Runnable {
 
     public static String URLmovement;
+    public boolean vb;
 
     //private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
@@ -27,16 +30,23 @@ public class MOVEMENTdetenctionTask implements Runnable {
         CoapClient client = new CoapClient(URLmovement);
         System.out.println("OBSERVING MOVEMENT sensor... @ " + URLmovement);
 
-        Request request = Request.newGet().setURI(URLmovement).setObserve();
+        Request request = new Request(CoAP.Code.GET);
+        request.setOptions(new OptionSet().setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
+        request.setObserve();
         request.setConfirmable(true);
 
 
         CoapObserveRelation relation = client.observe(request, new CoapHandler() {
 
             public void onLoad(CoapResponse response) {
-                String content = response.getResponseText();
-                System.err.println("MOVEMENT DETENCTION: " + content);
-                if (content.equals("false")) {
+
+                Gson gson = new Gson();
+                String text = response.getResponseText();
+                SenMLPack senMLPack = gson.fromJson(text, SenMLPack.class);
+                SenMLRecord senMLRecord = senMLPack.get(0);
+                vb=senMLRecord.getVb();
+                System.err.println("MOVEMENT DETENCTION: " + vb);
+                if (!vb) {
                     try {
 
                         ControlUnit.settingEcomodeON();
@@ -57,7 +67,6 @@ public class MOVEMENTdetenctionTask implements Runnable {
 
             public void onError() {
                 System.err.println("OBSERVING MOVEMENT FAILED");
-                //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
 

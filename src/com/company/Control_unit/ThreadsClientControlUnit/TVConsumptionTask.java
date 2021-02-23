@@ -3,6 +3,9 @@ package com.company.Control_unit.ThreadsClientControlUnit;
 
 import com.company.Control_unit.ClientsType.POSTClient;
 import com.company.Control_unit.ThreadsClientControlUnit.ControlUnit;
+import com.company.Control_unit.Utils.SenMLPack;
+import com.company.Control_unit.Utils.SenMLRecord;
+import com.google.gson.Gson;
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -48,14 +51,19 @@ public class TVConsumptionTask implements Runnable {
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
 
-                String[] ValuesSring = text.split(",");
-                String value = ValuesSring[3].split(":")[1];
-                double InstantConsumption = Double.parseDouble(value);
+                Gson gson = new Gson();
+                SenMLPack senMLPack = gson.fromJson(text, SenMLPack.class);
+                SenMLRecord senMLRecord = senMLPack.get(0);
+
+                double InstantConsumption = Double.parseDouble(senMLRecord.getV().toString());
+                if (InstantConsumption < 0.0) {
+                    InstantConsumption = 0.0;
+                }
 
                 Consuption += InstantConsumption;
 
-                System.out.println("\n\nTotal Consumption tv : " + Consuption + " W");
-                System.out.println("Instant Consumption tv: " + InstantConsumption + " W\n\n");
+                System.out.println("\n\nTotal Consumption tv : " + Consuption + senMLRecord.getU());
+                System.out.println("Instant Consumption tv: " + InstantConsumption +" "+senMLRecord.getU()+ " \n\n");
                 try {
                     count = ControlUnit.turnOnSwitchCondition(InstantConsumption, URLswitch, count, URLenergy);
                 } catch (InterruptedException e) {

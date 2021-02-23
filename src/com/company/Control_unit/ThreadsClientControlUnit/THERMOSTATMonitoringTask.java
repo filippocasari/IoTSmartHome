@@ -6,6 +6,9 @@ package com.company.Control_unit.ThreadsClientControlUnit;
 import com.company.Control_unit.ClientsType.GETClient;
 import com.company.Control_unit.ClientsType.POSTClient;
 import com.company.Control_unit.ClientsType.PUTClient;
+import com.company.Control_unit.Utils.SenMLPack;
+import com.company.Control_unit.Utils.SenMLRecord;
+import com.google.gson.Gson;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
@@ -22,6 +25,7 @@ public class THERMOSTATMonitoringTask implements Runnable {
     public static String URLenergy;
     public static String URLswitch;
     public static String URLtemperature;
+    public double V;
 
     private final static Logger logger = LoggerFactory.getLogger(LIGHTSConsumptionTask.class);
 
@@ -39,7 +43,7 @@ public class THERMOSTATMonitoringTask implements Runnable {
         System.out.println("OBSERVING THERMOSTAT... @ " + URLtemperature);
 
         Request request = new Request(CoAP.Code.GET);
-
+        request.setOptions(new OptionSet().setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
         request.setObserve();
         request.setConfirmable(true);
 
@@ -51,13 +55,22 @@ public class THERMOSTATMonitoringTask implements Runnable {
                 logger.info("Payload: {}", text);
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
-                if(!text.equals("null")){
-                    printTemperature(Double.parseDouble(text));
+
+                Gson gson = new Gson();
+                SenMLPack senMLPack = gson.fromJson(text, SenMLPack.class);
+                if(senMLPack!=null){
+                    SenMLRecord senMLRecord = senMLPack.get(0);
+                    if (senMLRecord.getV() != null) {
+                        V = Double.parseDouble(senMLRecord.getV().toString());
+                        printTemperature(V);
+                    }
                 }
+
 
             }
 
             public void onError() {
+
                 System.err.println("OBSERVING THERMOSTAT FAILED");
 
             }

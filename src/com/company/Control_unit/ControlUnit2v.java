@@ -36,11 +36,11 @@ class ControlUnit2v {
     public final static Logger logger = LoggerFactory.getLogger(ControlUnit2v.class);
 
     //if value > MAX_VALUES ==> turn specific switch off
-    private static final Double MAX_VALUE_WASHER = 97.0;
-    private static final Double MAX_VALUE_LIGHTS = 2.3;
-    private static final Double MAX_VALUE_TV = 57.0;
+    private static final double MAX_VALUE_WASHER = 96.5;
+    private static final double MAX_VALUE_LIGHTS = 4.0;
+    private static final double MAX_VALUE_TV = 57.0;
 
-    private Double Consumption = 0.0;
+    private double Consumption = 0.0;
 
     //private static final String COAP_ENDPOINT_ENERGY_HEATING = "coap://127.0.0.1:5683/heating-system/energy";
     //private static final String COAP_ENDPOINT_SWITCH_FRIDGE = "coap://127.0.0.1:5683/fridge/switch";
@@ -244,7 +244,7 @@ class ControlUnit2v {
                 if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && senMLRecord.getV()!=null) {
 
                     double temperaturecaught = Double.parseDouble(senMLRecord.getV().toString());
-                    System.out.println("\nTEMPERATURE'S HOME IS : " + temperaturecaught +" "+ senMLRecord.getU());
+                    System.out.println("\nTEMPERATURE'S HOME IS : " + temperaturecaught +" "+ senMLRecord.getU()+"\n\n");
 
                 } else if (!URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT)) {
                     double InstantConsumption = Double.parseDouble(senMLRecord.getV().toString());
@@ -254,7 +254,7 @@ class ControlUnit2v {
                     Consumption += InstantConsumption;
 
                     System.out.println("\n\nTotal Consumption: " + Consumption +" "+ senMLRecord.getU());
-                    System.out.println("Instant Consumption " + Who + " : " + InstantConsumption +" "+ senMLRecord.getU());
+                    System.out.println("Instant Consumption " + Who + " : " + InstantConsumption +" "+ senMLRecord.getU()+"\n\n");
 
 
                     Runnable runnable = () -> {
@@ -324,7 +324,7 @@ class ControlUnit2v {
                 } else if (URL.equals(COAP_ENDPOINT_MOVEMENT_SENSOR)) {
 
                     boolean vb = senMLRecord.getVb();
-                    System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb);
+                    System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb+"\n\n");
 
                     if (!vb) {
                         try {
@@ -340,7 +340,7 @@ class ControlUnit2v {
                     } else {
                         try {
                             if (isEcoMode()) {
-                                System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
+                                System.err.println("\nECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE\n");
                                 ControlUnit2v.disablingEcomode();
                                 EcoMode = false;
                             }
