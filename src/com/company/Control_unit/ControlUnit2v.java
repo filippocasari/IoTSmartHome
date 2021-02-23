@@ -235,7 +235,7 @@ class ControlUnit2v {
                 if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && ValuesSring.length>4) {
 
                     double temperaturecaught = Double.parseDouble(value);
-                    System.out.println("\nTEMPERATURE?S HOME IS : " + temperaturecaught+"\n");
+                    System.out.println("\nTEMPERATURE'S HOME IS : " + temperaturecaught+"Celsius\n");
 
                 } else if (!URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT)) {
                     double InstantConsumption = Double.parseDouble(value);
