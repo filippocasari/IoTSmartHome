@@ -3,7 +3,10 @@ package com.company.Control_unit;
 
 import com.company.Control_unit.ClientsType.POSTClient;
 import com.company.Control_unit.ClientsType.PUTClient;
+import com.company.Control_unit.Utils.SenMLPack;
+import com.company.Control_unit.Utils.SenMLRecord;
 import com.company.Control_unit.UtilsTime.SimTime;
+import com.google.gson.Gson;
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -139,7 +142,7 @@ class ControlUnit2v {
 
 
     private void printTotalConsumptionfromAll(String day) {
-        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption+" Watt");
+        System.out.println("Daily consumption for the day : " + day + " is : " + Consumption + " Watt");
         TotalCostEuros();
         Consumption = 0.0;
     }
@@ -191,9 +194,7 @@ class ControlUnit2v {
     }
 
     public static void disablingEcomode() throws InterruptedException {
-
-        System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
-
+        System.err.println("ECOMODE IS FALSE: PUT REQUESTS FOR EACH DEVICE");
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_LIGHTS, "true")).start();
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_TV, "true")).start();
         new Thread(() -> new PUTClient(COAP_ENDPOINT_SWITCH_WASHER, "true")).start();
@@ -201,14 +202,13 @@ class ControlUnit2v {
     }
 
     private void TotalCostEuros() {
-        System.out.println("Cost of the day is: " + (Consumption * 0.06256)/1000 + " euros");
+        System.out.println("Cost of the day is: " + (Consumption * 0.06256) / 1000 + " euros");
 
     }
 
     private void createNewCoapClientObserving(String URLenergy, String URLswitch, String Who, CoapClient client) {
 
         System.out.println("OBSERVING " + Who + "... @ " + URLenergy);
-        //logger.info("OBSERVING LIGHTS... {}", URLenergy);
 
         Request request = new Request(CoAP.Code.GET);
         client.setURI(URLenergy);
@@ -222,30 +222,34 @@ class ControlUnit2v {
             public void onLoad(CoapResponse response) {
                 logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(response));
 
+                Gson gson = new Gson();
                 String text = response.getResponseText();
+                SenMLPack senMLPack = gson.fromJson(text, SenMLPack.class);
+                SenMLRecord senMLRecord = senMLPack.get(0);
 
                 logger.info("Payload: {}", text);
+                logger.info(senMLRecord.toString());
                 logger.info("Message ID: " + response.advanced().getMID());
                 logger.info("Token: " + response.advanced().getTokenString());
                 logger.info("FROM : " + URLenergy);
 
-                String[] ValuesSring = text.split(",");
-                String value = ValuesSring[3].split(":")[1];
+                //String[] ValuesSring = text.split(",");
+                //String value = ValuesSring[3].split(":")[1];
 
-                if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && ValuesSring.length>4) {
+                if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && senMLRecord.getV()!=null) {
 
-                    double temperaturecaught = Double.parseDouble(value);
-                    System.out.println("\nTEMPERATURE'S HOME IS : " + temperaturecaught+"Celsius\n");
+                    double temperaturecaught = Double.parseDouble(senMLRecord.getV().toString());
+                    System.out.println("\nTEMPERATURE'S HOME IS : " + temperaturecaught +" "+ senMLRecord.getU());
 
                 } else if (!URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT)) {
-                    double InstantConsumption = Double.parseDouble(value);
+                    double InstantConsumption = Double.parseDouble(senMLRecord.getV().toString());
                     if (InstantConsumption < 0.0) {
                         InstantConsumption = 0.0;
                     }
                     Consumption += InstantConsumption;
 
-                    System.out.println("\n\nTotal Consumption: " + Consumption + " W");
-                    System.out.println("Instant Consumption " + Who + " : " + InstantConsumption + " W\n\n");
+                    System.out.println("\n\nTotal Consumption: " + Consumption +" "+ senMLRecord.getU());
+                    System.out.println("Instant Consumption " + Who + " : " + InstantConsumption +" "+ senMLRecord.getU());
 
 
                     Runnable runnable = () -> {
@@ -256,8 +260,8 @@ class ControlUnit2v {
 
                     };
                     if (ControlUnit2v.checkConsumption(InstantConsumption, Who) && !isEcoMode()) {
-                        Thread t = new Thread(runnable);
 
+                        Thread t = new Thread(runnable);
                         t.start();
 
                     }
@@ -287,24 +291,35 @@ class ControlUnit2v {
         CoapObserveRelation relation = client.observe(request, new CoapHandler() {
 
             public void onLoad(CoapResponse response) {
+
+                Gson gson = new Gson();
+                String text = response.getResponseText();
+                SenMLPack senMLPack = gson.fromJson(text, SenMLPack.class);
+                SenMLRecord senMLRecord = senMLPack.get(0);
+
+
                 logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(response));
 
-                //The "CoapResponse" message contains the response.
-                String text = response.getResponseText();
-                logger.info("Payload: {}", text);
-                logger.info("Message ID: " + response.advanced().getMID());
-                logger.info("Token: " + response.advanced().getTokenString());
+                /*logger.info("Message ID: " + response.advanced().getMID());
+                logger.info("Token: " + response.advanced().getTokenString());*/
                 logger.info("FROM " + URL);
+                logger.info(senMLRecord.toString());
 
-                String[] ValuesSring = text.split(",");
-                String value = ValuesSring[2].split(":")[1];
-                if (URL.equals(COAP_ENDPOINT_ENERGY_FRIDGE) && ((ValuesSring[3]).split(":"))[0].equals("v")) {
-                    Consumption += Double.parseDouble(value);
+                //String[] ValuesSring = text.split(",");
+                //String value = ValuesSring[2].split(":")[1];
+
+                if (URL.equals(COAP_ENDPOINT_ENERGY_FRIDGE) && senMLRecord.getV() != null) {
+                    double value = Double.parseDouble(senMLRecord.getV().toString());
+                    Consumption += value;
                     System.out.println("\n\nTotal Consumption: " + Consumption + " W");
                     System.out.println("Instant Consumption " + Who + " : " + Consumption + " W\n\n");
+
                 } else if (URL.equals(COAP_ENDPOINT_MOVEMENT_SENSOR)) {
-                    if (value.equals("false")) {
-                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + value);
+
+                    boolean vb = senMLRecord.getVb();
+
+                    if (!vb) {
+                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb);
                         try {
                             if (!isEcoMode()) {
                                 ControlUnit2v.settingEcomodeON();
@@ -315,10 +330,11 @@ class ControlUnit2v {
                             e.printStackTrace();
                         }
 
-                    } else if (value.equals("true")) {
-                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + value);
+                    } else {
+                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb);
                         try {
                             if (isEcoMode()) {
+                                System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");
                                 ControlUnit2v.disablingEcomode();
                                 EcoMode = false;
                             }
