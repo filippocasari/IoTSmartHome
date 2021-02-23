@@ -27,7 +27,6 @@ public class MOVEMENTdetenctionTask implements Runnable {
         CoapClient client = new CoapClient(URLmovement);
         System.out.println("OBSERVING MOVEMENT sensor... @ " + URLmovement);
 
-
         Request request = Request.newGet().setURI(URLmovement).setObserve();
         request.setConfirmable(true);
 
@@ -61,17 +60,7 @@ public class MOVEMENTdetenctionTask implements Runnable {
                 //logger.error("OBSERVING LIGHTS FAILED");
             }
         });
-        try {
-            Thread.sleep(60 * 3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        // Observes the coap resource for 30 seconds then the observing relation is deleted
-
-        System.err.println("CANCELLATION...");
-        //logger.info("CANCELLATION.....");
-        relation.proactiveCancel();
     }
 
 

@@ -49,7 +49,7 @@ public class SwitchActuator extends SmartObject<Boolean> {
                 try{
                     for(int i=0; i<100; i++){
                         rawResource.setActive(!rawResource.loadUpdatedValue());
-                        Thread.sleep(1000);
+                        Thread.sleep(7500);
                     }
                 }catch (Exception e){
                     e.printStackTrace();

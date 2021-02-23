@@ -195,7 +195,6 @@ public class PCU extends CoapServer {
     private CoapResource createThermostatResource(String deviceId){
         CoapResource thermostatRootResource = new CoapResource("thermostat");
 
-
         EnergySensor thEnergySensor = new EnergySensor("thermostat");
         SwitchActuator thSwitchActuator = new SwitchActuator();
         TemperatureSensor thTemperatureSensor = new TemperatureSensor(thermostatRootResource.getName());
@@ -207,8 +206,6 @@ public class PCU extends CoapServer {
         thermostatRootResource.add(thEnergyResource);
         thermostatRootResource.add(thTemperatureResource);
         thermostatRootResource.add(thSwitchResource);
-
-
         return thermostatRootResource;
     }
 
