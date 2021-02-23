@@ -110,26 +110,4 @@ public class EnergySensor extends SmartObject<Double> {
         isActive = active;
         startPeriodicEventValueUpdateTask();
     }
-
-    public static void main(String[] args) {
-
-        EnergySensor rawResource = new EnergySensor("lights");
-        rawResource.setActive(true);
-        logger.info("New {} resource created!\t\t\t\tId: {}\t\t{} Starting Value: {}",
-                rawResource.getType(),
-                rawResource.getId(),
-                LOG_DISPLAY_NAME,
-                rawResource.loadUpdatedValue());
-
-        rawResource.addDataListener(new DataListener<Double>() {
-            @Override
-            public void onDataChanged(SmartObject<Double> resource, Double updatedValue) {
-                if(resource != null && updatedValue != null)
-                    logger.info("Device: {} \tNew Value Received: {}", resource.getId(), updatedValue);
-                else
-                    logger.error("onDataChanged Callback -> Null Resource or Updated Value !");
-            }
-        });
-
-    }
 }

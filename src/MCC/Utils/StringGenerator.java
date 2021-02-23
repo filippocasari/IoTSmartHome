@@ -2,15 +2,6 @@ package MCC.Utils;
 
 import java.util.Random;
 
-/**
- *
- * Utility class to generate random strings for internal use and demo
- * applications.
- *
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-playground
- * @created 21/10/2020 - 09:46
- */
 public class StringGenerator {
 
     public static String generateRandomAlphanumericString() {

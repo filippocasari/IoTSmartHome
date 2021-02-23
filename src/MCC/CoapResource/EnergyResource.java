@@ -24,7 +24,7 @@ public class EnergyResource extends CoapResource {
     private static final String OBJECT_TITLE = "EnergyConsumptionSensor";
     private static final Number SENSOR_VERSION = 0.1;
 
-    private String UNIT = "kWh";
+    private String UNIT = "Wh";
     private EnergySensor rawSensor;
     private ObjectMapper objectMapper;
 

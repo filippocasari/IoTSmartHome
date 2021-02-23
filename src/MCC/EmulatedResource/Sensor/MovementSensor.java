@@ -10,8 +10,8 @@ import java.util.UUID;
 public class MovementSensor extends SmartObject<Boolean> {
     /** LABEL **/
     private static Logger logger = LoggerFactory.getLogger(MCC.EmulatedResource.Actuator.SwitchActuator.class);
-    private static final String LOG_DISPLAY_NAME = "SwitchActuator";
-    private static final String RESOURCE_TYPE = "actuator.switch";
+    private static final String LOG_DISPLAY_NAME = "MovementSensor";
+    private static final String RESOURCE_TYPE = "sensor.movement";
 
     private Boolean isActive;
 
