@@ -21,8 +21,8 @@ public class EnergySensor extends SmartObject<Double> {
     private static final double MAX_ENERGY_VARIATION = 0.5;
 
     /** TIME CONSTRAINTS **/
-    private static final long UPDATE_PERIOD = 20000;
-    private static final long TASK_DELAY_TIME = 20000;
+    private static final long UPDATE_PERIOD = 10000;
+    private static final long TASK_DELAY_TIME = 10000;
 
     /** LABEL **/
     private static final String RESOURCE_TYPE = "sensor.energy";
@@ -80,7 +80,7 @@ public class EnergySensor extends SmartObject<Double> {
             this.updateTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if(isActive){
+                    if(isActive && updatedValue != 0.0){
                         double variation = (MIN_ENERGY_VARIATION + MAX_ENERGY_VARIATION * random.nextDouble()) * (random.nextDouble() > 0.5 ? 1.0 : -1.0);
                         updatedValue = updatedValue + variation;
                     }
