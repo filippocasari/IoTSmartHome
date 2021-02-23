@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * set UPDATE_PERIOD and TASK_DELAY_TIME to 10 seconds for TEMPERATURE SENSOR AND  20 secs for ENERGY SENSOR
- * set Thread.sleep to 7.5 second for MOVEMENT (Switch Actuator)
+ * set Thread.sleep to 10 seconds for MOVEMENT (Switch Actuator)
  * to have better responses
  */
 
