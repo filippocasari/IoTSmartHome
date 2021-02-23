@@ -49,6 +49,7 @@ public class GETClient {
             logger.info("Payload: {}", text);
             logger.info("Message ID: " + coapResp.advanced().getMID());
             logger.info("Token: " + coapResp.advanced().getTokenString());
+            logger.info("FROM " + URLendpoint);
 
             logger.info(Arrays.toString(coapResp.getPayload()));
 
