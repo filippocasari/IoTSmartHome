@@ -140,17 +140,18 @@ class ControlUnit2v {
         return EcoMode;
     }
 
-
+    //print all daily Consumption
     private void printTotalConsumptionfromAll(String day) {
         System.out.println("Daily consumption for the day : " + day + " is : " + Consumption + " Watt");
         TotalCostEuros();
         Consumption = 0.0;
     }
-
+    //create a string of timestamp
     private static String createStringDate(SimTime simTime) {
         return simTime.getDay() + ", " + simTime.getHour() + " : " + simTime.getMinute();
     }
 
+    //verify if Instant Consumption is out of range
     public static boolean checkConsumption(Double InstantConsumption, String fromWho) {
         double max_value = 0.0;
         switch (fromWho) {
@@ -169,12 +170,14 @@ class ControlUnit2v {
 
     }
 
+    //verify if eco-mode must be set
     public static boolean checkEcoMode(SimTime simTime) {
 
         return ((simTime.getHour() > 0 && simTime.getHour() < 5));
 
     }
 
+    //call when a smart object consumes too much
     public static void Notificationconsumption(String fromWho) {
         System.err.println("\nToo hight Consumption from " + fromWho + ": switch must be set off");
         System.err.println("\nPOST REQUEST TO " + fromWho + "-- SWITCH");
@@ -201,11 +204,13 @@ class ControlUnit2v {
 
     }
 
+    // print the daily cost
     private void TotalCostEuros() {
         System.out.println("Cost of the day is: " + (Consumption * 0.06256) / 1000 + " euros");
 
     }
 
+    //main function to create a new obs request
     private void createNewCoapClientObserving(String URLenergy, String URLswitch, String Who, CoapClient client) {
 
         System.out.println("OBSERVING " + Who + "... @ " + URLenergy);
@@ -300,10 +305,12 @@ class ControlUnit2v {
 
                 logger.info("Response Pretty Print: \n{}", Utils.prettyPrint(response));
 
-                /*logger.info("Message ID: " + response.advanced().getMID());
-                logger.info("Token: " + response.advanced().getTokenString());*/
                 logger.info("FROM " + URL);
                 logger.info(senMLRecord.toString());
+
+                //logger.info("Message ID: " + response.advanced().getMID());
+                //logger.info("Token: " + response.advanced().getTokenString());*/
+
 
                 //String[] ValuesSring = text.split(",");
                 //String value = ValuesSring[2].split(":")[1];
@@ -317,9 +324,9 @@ class ControlUnit2v {
                 } else if (URL.equals(COAP_ENDPOINT_MOVEMENT_SENSOR)) {
 
                     boolean vb = senMLRecord.getVb();
+                    System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb);
 
                     if (!vb) {
-                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb);
                         try {
                             if (!isEcoMode()) {
                                 ControlUnit2v.settingEcomodeON();
@@ -331,7 +338,6 @@ class ControlUnit2v {
                         }
 
                     } else {
-                        System.err.println("VALUE OF MOVEMENT SENSOR IS: " + vb);
                         try {
                             if (isEcoMode()) {
                                 System.err.println("ECOMODE IS FALSE : PUT REQUESTS FOR EACH DEVICE");

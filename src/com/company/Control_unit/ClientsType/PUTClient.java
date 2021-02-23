@@ -24,7 +24,7 @@ public class PUTClient {
 
         request.setPayload(payload);
 
-        request.setConfirmable(true);
+        request.setConfirmable(false);
 
         logger.info("Request Pretty Print:" + URL + "\n{}", Utils.prettyPrint(request));
 
