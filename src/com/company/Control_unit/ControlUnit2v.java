@@ -83,7 +83,7 @@ class ControlUnit2v {
     public static void main(String[] args) throws InterruptedException {
         //Simulationg Real Time
         SimTime simTime = new SimTime();
-        simTime.setSpeed(500); // from 1 to 10000 (speed)
+        simTime.setSpeed(1); // from 1 to 10000 (speed)
         simTime.start(); //start thread
 
         System.out.println("Starting Time...\n: ");
@@ -257,6 +257,7 @@ class ControlUnit2v {
                     };
                     if (ControlUnit2v.checkConsumption(InstantConsumption, Who) && !isEcoMode()) {
                         Thread t = new Thread(runnable);
+
                         t.start();
 
                     }
