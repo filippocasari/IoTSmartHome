@@ -232,10 +232,10 @@ class ControlUnit2v {
                 String[] ValuesSring = text.split(",");
                 String value = ValuesSring[3].split(":")[1];
 
-                if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && ((ValuesSring[3]).split(":"))[0].equals("v")) {
+                if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && ValuesSring.length>4) {
 
                     double temperaturecaught = Double.parseDouble(value);
-                    System.out.println("TEMPERATURE?S HOME IS : " + temperaturecaught);
+                    System.out.println("\nTEMPERATURE?S HOME IS : " + temperaturecaught+"\n");
 
                 } else if (!URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT)) {
                     double InstantConsumption = Double.parseDouble(value);
