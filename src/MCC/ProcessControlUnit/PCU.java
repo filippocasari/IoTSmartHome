@@ -170,25 +170,19 @@ public class PCU extends CoapServer {
             @Override
             public void run() {
                 try{
-
                     for(int i=0; i<100; i++){
                         detectorMovementSensor.setActive(!detectorMovementSensor.loadUpdatedValue());
                         Thread.sleep(30000);
                     }
-
                 }catch (Exception e){
-
                     e.printStackTrace();
-
                 }
 
             }
         }).start();
 
         detectorMovementSensor.addDataListener(new DataListener<Boolean>() {
-
             @Override
-
             public void onDataChanged(SmartObject<Boolean> resource, Boolean updatedValue) {
                 logger.info("[MOVEMENT-BEHAVIOUR] -> Updated Movement Value: {}", updatedValue);
             }
