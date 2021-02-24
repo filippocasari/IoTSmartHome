@@ -4,11 +4,6 @@ package com.company.Control_unit.ThreadsClientControlUnit;
 import com.company.Control_unit.ClientsType.POSTClient;
 import com.company.Control_unit.ClientsType.PUTClient;
 import com.company.Control_unit.UtilsTime.SimTime;
-import org.eclipse.californium.core.*;
-import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.core.coap.OptionSet;
-import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +51,6 @@ public class ControlUnit {
     public boolean EcoMode = false;
 
 
-
     public ControlUnit() throws InterruptedException {
 
 
@@ -76,20 +70,20 @@ public class ControlUnit {
         t1.setName("THREAD FRIDGE");
 
         Thread t2 = new Thread(lightsConsumptionTask);
-        t1.setName("THREAD LIGHTS");
+        t2.setName("THREAD LIGHTS");
 
         Thread t3 = new Thread(tvConsuptionTask);
 
-        t1.setName("THREAD TV");
+        t3.setName("THREAD TV");
         Thread t4 = new Thread(washerConsumptionTask);
 
-        t1.setName("THREAD WASHER");
+        t4.setName("THREAD WASHER");
         Thread t5 = new Thread(movemenTdetenctionTask);
 
-        t1.setName("THREAD MOVEMENT");
+        t5.setName("THREAD MOVEMENT");
 
         Thread t6 = new Thread(thermostatMonitoringTask);
-        t1.setName("THREAD THERMOSTAT");
+        t6.setName("THREAD THERMOSTAT");
 
 
         //start thread for observable resource energy
@@ -108,7 +102,6 @@ public class ControlUnit {
         t4.start();
         t5.start();
         t6.start();
-
 
 
     }
@@ -147,51 +140,49 @@ public class ControlUnit {
         System.out.println("Second: " + simTime.getSecond());
 
         ControlUnit controlUnit = new ControlUnit();
-        simTime.setSpeed(1000); //or 1000 speed, if we want to check total daily consumption
+        simTime.setSpeed(1500); //or 1000 speed, if we want to check total daily consumption
         simTime.start();
 
 
-
-
-        new Thread(()->{
+        new Thread(() -> {
             String day = simTime.getDay().toString();
             while (true) {
-            //control if day is different
-            String Datedetails = createStringDate(simTime); // create a string of timestamp
-            System.out.println("\n\n"+Datedetails+"\n\n");
-            if (!day.equals(simTime.getDay().toString())) {
+                //control if day is different
+                String Datedetails = createStringDate(simTime); // create a string of timestamp
+                System.out.println("\n\n" + Datedetails + "\n\n");
+                if (!day.equals(simTime.getDay().toString())) {
 
-                printTotalConsumptionfromAll(day, controlUnit.lightsConsumptionTask,
-                        controlUnit.fridgeConsumptionTask, controlUnit.tvConsuptionTask, controlUnit.washerConsumptionTask); //print total consumption
+                    printTotalConsumptionfromAll(day, controlUnit.lightsConsumptionTask,
+                            controlUnit.fridgeConsumptionTask, controlUnit.tvConsuptionTask, controlUnit.washerConsumptionTask); //print total consumption
 
-            }
+                }
 
-            try {
-                if (!controlUnit.isEcoMode()) { //if ecomode is off
-                    //check if it's time to turn ecomode on
-                    if (checkEcoMode(simTime)) { // if Ecomode is true, put request to turn all switches off
-                        System.err.println("HOUR > " + simTime.getHour());
-                        settingEcomodeON();
-                        controlUnit.EcoMode=true;
+                try {
+                    if (!controlUnit.isEcoMode()) { //if ecomode is off
+                        //check if it's time to turn ecomode on
+                        if (checkEcoMode(simTime)) { // if Ecomode is true, put request to turn all switches off
+                            System.err.println("HOUR > " + simTime.getHour());
+                            settingEcomodeON();
+                            controlUnit.EcoMode = true;
+                        } else {
+                            System.err.println("It's not time to set Ecomode");
+                        }
                     } else {
-                        System.err.println("It's not time to set Ecomode");
+                        System.err.println("Ecomode just set");
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                else{
-                    System.err.println("Ecomode just set");
+                day = simTime.getDay().toString(); //day of the week
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            day = simTime.getDay().toString(); //day of the week
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
 
-        }}).start();
+            }
+        }).start();
 
 
     }
@@ -237,9 +228,8 @@ public class ControlUnit {
             count = 0;
 
             new Thread(() -> new POSTClient(URLforPost)).start();
-        }
-        else{
-            count=0;
+        } else {
+            count = 0;
         }
         return count;
     }
