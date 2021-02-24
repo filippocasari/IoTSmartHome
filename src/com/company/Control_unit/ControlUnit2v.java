@@ -238,8 +238,6 @@ class ControlUnit2v {
                 logger.info("Token: " + response.advanced().getTokenString());
                 logger.info("FROM : " + URLenergy);
 
-                //String[] ValuesSring = text.split(",");
-                //String value = ValuesSring[3].split(":")[1];
 
                 if (URLenergy.equals(COAP_ENDPOINT_TEMPERATURE_THERMOSTAT) && senMLRecord.getV()!=null) {
 
