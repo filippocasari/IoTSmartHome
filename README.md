@@ -1,8 +1,10 @@
 # IoT SmartHome by F. Casari, D. Casnici, L. Mantovani
+### Application protocol used: CoAP 
 Smart Home
 ## Components: PCU, CU, Application UI
-## Application protocol used: CoAP 
+
 
 PCU: Mantovani \
 CU: Casari \
-Application UI: Casnici 
+Application UI: Casnici
+
