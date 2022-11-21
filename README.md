@@ -4,7 +4,7 @@ Smart Home
 ## Components: PCU, CU, Application UI
 
 
-PCU: Mantovani \
+PCU: Mantovani github: LucaMantovani2577 \
 CU: Casari \
 Application UI: Casnici
 
